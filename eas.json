@@ -1,0 +1,15 @@
+{
+  "build": {
+    "release": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "EXPO_UPDATES_ENABLED": "true"
+      },
+      "channel": "production",
+      "distribution": "internal"
+    }
+  }
+}

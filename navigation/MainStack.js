@@ -5,8 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Importer les composants et écrans que ce Stack va gérer
 import TabNavigator from './TabNavigator';
-import CustomHeader from '../components/navigation/CustomHeader';
-import PropertyDetailsScreen from '../screens/stack/PropertyDetailsScreen';
+
+// import PropertyDetailsScreen from '../screens/stack/PropertyDetailsScreen';
 // import SearchResultsScreen from '../screens/stack/SearchResultsScreen';
 import HelpScreen from '../screens/drawer/HelpScreen'; // Écran d'aide
 import MyListingsScreen from '../screens/drawer/MyListingScreen'; // Écran de mes annonces
@@ -31,12 +31,7 @@ export default function MainStack() {
      screenOptions={{
         headerShown: false,
       }}
-      // On définit ici les options par défaut pour tous les écrans de ce Stack
-    //   screenOptions={{
-    //     // On remplace le header par défaut par notre composant personnalisé.
-    //     // C'est ce qui permet d'avoir le bouton menu (☰) partout.
-    //     header: (props) => <CustomHeader {...props} />,
-    //   }}
+     
     >
       {/* 
         ÉCRAN N°1 : Le TabNavigator.
@@ -54,13 +49,12 @@ export default function MainStack() {
         ÉCRAN N°2 : La page de détail d'une propriété.
         Cet écran s'affichera par-dessus la barre d'onglets.
       */}
-      <Stack.Screen
+      {/* <Stack.Screen
         name="PropertyDetails"
-        component={PropertyDetailsScreen}
-        // Le titre sera utilisé par notre CustomHeader.
-        // Il peut être modifié dynamiquement lors de la navigation.
+        component={Property}
+        
         options={{ title: 'Détails du bien' }} 
-      />
+      /> */}
 
       {/* 
         ÉCRAN N°3 : L'écran des résultats de recherche.

@@ -1,8 +1,14 @@
 {
   "expo": {
-    "name": "MonToit.bj",
-    "slug": "MonToit.bj",
+    "name": "MonToit",
+    "slug": "montoibj",
+    "owner": "jey_9658",
     "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/df8e546b-90f2-4dd2-8c16-d42aa9643ca4",
+      "fallbackToCacheTimeout": 0
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,10 +26,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.jey1nd.montoit",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "df8e546b-90f2-4dd2-8c16-d42aa9643ca4"
+      }
+    },
+    "plugins": [
+      "expo-video"
+    ]
   }
 }

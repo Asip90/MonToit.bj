@@ -6,6 +6,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'; // 
 import SettingScreen from '../screens/drawer/SettingScreen';
 import FavoritesScreen from '../screens/main/FavoritesScreen';
 import MyListingsScreen from '../screens/drawer/MyListingScreen';
+import PostAdScreen from '../screens/modals/PostAdScreen';
+import AuthStack from './AuthStack';
 const ProfileStack = createNativeStackNavigator(); // Ou createStackNavigator
 
 const ProfileStackNavigator = () => (
@@ -15,6 +17,8 @@ const ProfileStackNavigator = () => (
     <ProfileStack.Screen name="Settings" component={SettingScreen} options={{headerShown: false}} />
     <ProfileStack.Screen name="Favorites" component={FavoritesScreen} options={{headerShown: false}} />
     <ProfileStack.Screen name="MyProperties" component={MyListingsScreen} options={{headerShown: false}}/>
+    <ProfileStack.Screen name="PostAd" component={PostAdScreen} options={{headerShown: false}}/>
+    <ProfileStack.Screen name="Auth" component={AuthStack} options={{headerShown: false}}/>
     
   </ProfileStack.Navigator>
 );

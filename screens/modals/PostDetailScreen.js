@@ -1097,13 +1097,16 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { db } from '../../src/api/FirebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { COLORS, SIZES, FONTS } from '../../constants/Theme'; // Modifié pour utiliser le thème
-import ImageViewer from 'react-native-image-zoom-viewer';
+import GallerySwiper from 'react-native-gallery-swiper';
 import * as Linking from 'expo-linking';
 import { UserContext } from '../../context/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { isPostFavorite, toggleFavorite } from '../../services/favorites';
 import { Video } from 'expo-av';
+
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+
 
 const { width } = Dimensions.get('window');
 
@@ -1324,6 +1327,14 @@ const PostDetailScreen = ({ navigation }) => {
                   <Image source={{ uri: media.url }} style={styles.mainImage} />
                 ) : (
                   <View style={styles.videoContainer}>
+                    {/* <Video
+                      source={{ uri: media.url }}
+                      style={styles.video}
+                      shouldPlay={!paused && index === activeSlide}
+                      resizeMode="cover"
+                      isLooping
+                      useNativeControls={false}
+                    /> */}
                     <Video
                       source={{ uri: media.url }}
                       style={styles.video}
@@ -1332,6 +1343,7 @@ const PostDetailScreen = ({ navigation }) => {
                       isLooping
                       useNativeControls={false}
                     />
+
                     {paused && (
                       <View style={styles.playButton}>
                         <Icon name="play-circle" size={50} color="rgba(255,255,255,0.8)" />
@@ -1497,7 +1509,7 @@ const PostDetailScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* Image Viewer Modal */}
-      <Modal
+       <Modal
         visible={imageViewerVisible}
         transparent={true}
         onRequestClose={closeImage}
@@ -1510,17 +1522,18 @@ const PostDetailScreen = ({ navigation }) => {
             <Icon name="close" size={30} color="white" />
           </TouchableOpacity>
           
-          <ImageViewer
-            imageUrls={imagesForViewer}
-            index={currentImageIndex}
-            enableSwipeDown
-            onSwipeDown={closeImage}
-            backgroundColor="rgba(0,0,0,0.9)"
-            renderIndicator={() => null}
+         <GallerySwiper
+            images={imagesForViewer} // Array of { uri: 'https://...' }
+            initialIndex={currentImageIndex}
+            onSwipeToClose={closeImage}
+            style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
           />
         </SafeAreaView>
       </Modal>
-    </SafeAreaView>
+
+
+</SafeAreaView>
+   
   );
 };
 

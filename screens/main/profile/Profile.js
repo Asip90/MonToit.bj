@@ -19,7 +19,8 @@ import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebas
 import { COLORS, SIZES, FONTS } from '../../../constants/Theme';
 
 const ProfileScreen = ({ navigation }) => {
-  const { userData } = useContext(UserContext);
+  
+  const { userData , logoutUser } = useContext(UserContext);
   const [userProfile, setUserProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [favoritesCount, setFavoritesCount] = useState(0);
@@ -132,7 +133,7 @@ const ProfileScreen = ({ navigation }) => {
     );
   }
 
-  const { logoutUser } = useContext(UserContext);
+ 
 
   const handleLogout = () => {
     Alert.alert(
