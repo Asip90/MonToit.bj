@@ -1,194 +1,4 @@
-// import React, { useState, useEffect, useContext } from 'react';
-// import { 
-//   View, 
-//   Text, 
-//   StyleSheet, 
-//   FlatList, 
-//   Image, 
-//   TouchableOpacity, 
-//   ActivityIndicator,
-//   RefreshControl 
-// } from 'react-native';
-// import { getFavoritePosts } from '../../services/favorites';
-// import { getUserFavoritesIds, getPostsByIds } from '../../services/favorites';
-// import { UserContext } from '../../context/AuthContext';
-// import { COLORS } from '../../constants/Theme';
 
-// const FavoritesScreen = ({ navigation }) => {
-//   const {userData } = useContext(UserContext);
-//   const [favorites, setFavorites] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [refreshing, setRefreshing] = useState(false);
-
-//   // const loadFavorites = async () => {
-//   //   try {
-//   //     // 1. Récupère les IDs
-//   //     const postIds = await getUserFavoritesIds(userData.uid);
-      
-//   //     // 2. Récupère les posts complets
-//   //     if (postIds.length > 0) {
-//   //       const posts = await getPostsByIds(postIds);
-//   //       // Trie par date de favori
-//   //       const sorted = postIds
-//   //         .map(id => posts.find(p => p.id === id))
-//   //         .filter(p => p); // Enlève les undefined si post supprimé
-//   //       setFavorites(sorted);
-//   //     } else {
-//   //       setFavorites([]);
-//   //     }
-//   //   } catch (error) {
-//   //     console.error("Failed to load favorites:", error);
-//   //   }
-//   // };
-
-//   // Rafraîchir à chaque focus
-  
-//   const loadFavorites = async () => {
-//   try {
-//     setLoading(true);  // <-- démarrer le chargement
-//     const postIds = await getUserFavoritesIds(userData.uid);
-//     if (postIds.length > 0) {
-//       const posts = await getPostsByIds(postIds);
-//       const sorted = postIds
-//         .map(id => posts.find(p => p.id === id))
-//         .filter(p => p);
-//       setFavorites(sorted);
-//     } else {
-//       setFavorites([]);
-//     }
-//   } catch (error) {
-//     console.error("Failed to load favorites:", error);
-//   } finally {
-//     setLoading(false); // <-- arrêter le chargement
-//     setRefreshing(false); // aussi arrêter le refresh control si actif
-//   }
-// };
-
-//   useEffect(() => {
-//     const unsubscribe = navigation.addListener('focus', loadFavorites);
-//     return unsubscribe;
-//   }, [navigation]);
-
-//  const onRefresh = async () => {
-//   setRefreshing(true);
-//   await loadFavorites();
-//   setRefreshing(false);
-// };
-
-
-//   const renderItem = ({ item }) => (
-//     <TouchableOpacity 
-//       style={styles.item}
-//       onPress={() => navigation.navigate('PostDetail', {
-//   postId: item.id,
-//   userId: userData.uid
-// })}
-
-//     >
-//       <Image source={{ uri: item.imageUrls[0] }} style={styles.image} />
-//       <View style={styles.details}>
-//         <Text style={styles.price}>{item.price} FCFA</Text>
-//         <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
-//         <Text style={styles.location}>{typeof item.location === 'string' 
-//                 ? item.location 
-//                 : item.location?.display_name || 'Localisation non disponible'}</Text>
-//       </View>
-//     </TouchableOpacity>
-//   );
-
-//   if (loading) {
-//     return (
-//       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color={COLORS.primary} />
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <FlatList
-//         data={favorites}
-//         renderItem={renderItem}
-//         keyExtractor={item => item.id}
-//         refreshControl={
-//           <RefreshControl
-//             refreshing={refreshing}
-//             onRefresh={onRefresh}
-//             colors={[COLORS.primary]}
-//           />
-//         }
-//         ListEmptyComponent={
-//           <View style={styles.empty}>
-//             <Text style={styles.emptyText}>Aucun favori pour le moment</Text>
-//             <Text style={styles.emptySubText}>
-//               Appuyez sur ♡ pour ajouter des annonces à vos favoris
-//             </Text>
-//           </View>
-//         }
-//       />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: COLORS.white,
-//   },
-//   item: {
-//     flexDirection: 'row',
-//     padding: 15,
-//     borderBottomWidth: 1,
-//     borderBottomColor: COLORS.lightGray,
-//   },
-//   image: {
-//     width: 100,
-//     height: 100,
-//     borderRadius: 5,
-//   },
-//   details: {
-//     flex: 1,
-//     marginLeft: 15,
-//     justifyContent: 'center',
-//   },
-//   price: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//     color: COLORS.primary,
-//   },
-//   title: {
-//     fontSize: 16,
-//     marginVertical: 5,
-//     color: COLORS.text,
-//   },
-//   location: {
-//     fontSize: 14,
-//     color: COLORS.gray,
-//   },
-//   loadingContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   empty: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: 20,
-//   },
-//   emptyText: {
-//     fontSize: 18,
-//     color: COLORS.text,
-//     marginBottom: 10,
-//   },
-//   emptySubText: {
-//     fontSize: 14,
-//     color: COLORS.gray,
-//     textAlign: 'center',
-//   },
-// });
-
-// export default FavoritesScreen;
 import React, { useState, useEffect, useContext } from 'react';
 import { 
   View, 
@@ -226,7 +36,7 @@ const FavoritesScreen = ({ navigation }) => {
         const sorted = postIds
           .map(id => posts.find(p => p.id === id))
           .filter(p => p)
-          .sort((a, b) => b.favoritedAt - a.favoritedAt); // Tri par date de favori
+          .sort((a, b) => b.createdAt - a.createdAt); // Tri par date de favori
         setFavorites(sorted);
       } else {
         setFavorites([]);
@@ -274,8 +84,8 @@ const FavoritesScreen = ({ navigation }) => {
 
         <View style={styles.metaContainer}>
           <Text style={styles.date}>
-            Ajouté le {item.favoritedAt?.toDate ? 
-              new Date(item.favoritedAt.toDate()).toLocaleDateString() : 
+            Ajouté le {item.createdAt?.toDate ? 
+              new Date(item.createdAt.toDate()).toLocaleDateString() : 
               'Date inconnue'}
           </Text>
           <TouchableOpacity style={styles.heartIcon}>

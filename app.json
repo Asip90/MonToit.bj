@@ -5,22 +5,31 @@
     "owner": "jey_9658",
     "version": "1.0.0",
     "runtimeVersion": "1.0.0",
+
     "updates": {
       "url": "https://u.expo.dev/df8e546b-90f2-4dd2-8c16-d42aa9643ca4",
       "fallbackToCacheTimeout": 0
     },
+
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Nous avons besoin de votre position pour afficher les annonces près de chez vous",
+        "NSPhotoLibraryUsageDescription": "Nous avons besoin d'accéder à votre galerie pour ajouter des photos"
+      }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -28,16 +37,24 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.jey1nd.montoit",
-      "versionCode": 1
+      "versionCode": 1,
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "READ_MEDIA_IMAGES"
+      ]
     },
+
     "web": {
       "favicon": "./assets/favicon.png"
     },
+
     "extra": {
       "eas": {
         "projectId": "df8e546b-90f2-4dd2-8c16-d42aa9643ca4"
       }
     },
+
     "plugins": [
       "expo-video"
     ]

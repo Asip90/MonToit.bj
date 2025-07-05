@@ -19,12 +19,16 @@
 
 export const COLORS = {
  
-  primary: '#27AE60',//'#2DCC70',       // Vert Zameen caractéristique
+  primary: '#4a6fa5',//'#03305F',//#4a6fa5',//#27AE60',//'#2DCC70',       // Vert Zameen caractéristique
   secondary: '#27AE60',     // Vert légèrement plus foncé
   white: '#FFFFFF',
   gray: '#7F8C8D',          // Texte gris
   lightGray: '#F5F5F5',     // Fond gris clair
+  lightGray2: '#F5F5F5',
   black: '#2C3E50',         // Texte noir
+  orange: '#ff9500',       // Orange pour les boutons
+  gold: '#ffffff' ,//'#FFD700',         // Or pour les badges ou les éléments importants
+  notification: '#EB5757',  
 };
 
 export const SIZES = {

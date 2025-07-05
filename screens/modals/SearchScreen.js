@@ -81,7 +81,7 @@ const SearchScreen = ({ navigation }) => {
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      {/* <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color={COLORS.gray} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
@@ -90,7 +90,7 @@ const SearchScreen = ({ navigation }) => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-      </View>
+      </View> */}
 
       {/* Transaction Type */}
       <View style={styles.section}>
@@ -125,48 +125,7 @@ const SearchScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Filters */}
-      <ScrollView style={styles.filtersContainer}>
-        {/* Location Filter */}
-        <TouchableOpacity 
-          style={styles.filterItem} 
-          onPress={() => setShowLocationModal(true)}
-        >
-          <Text style={styles.filterLabel}>Localisation</Text>
-          <View style={styles.filterValueContainer}>
-            <Text style={styles.filterValue}>{selectedlocation || 'Toutes les villes'}</Text>
-            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
-          </View>
-        </TouchableOpacity>
-
-        {/* Price Filter */}
-        <TouchableOpacity 
-          style={styles.filterItem} 
-          onPress={() => setShowPriceModal(true)}
-        >
-          <Text style={styles.filterLabel}>Prix</Text>
-          <View style={styles.filterValueContainer}>
-            <Text style={styles.filterValue}>
-              {minPrice || maxPrice ? `${minPrice || 'Min'} - ${maxPrice || 'Max'}` : 'Tous les prix'}
-            </Text>
-            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
-          </View>
-        </TouchableOpacity>
-
-        {/* Bedrooms Filter */}
-        <TouchableOpacity 
-          style={styles.filterItem} 
-          onPress={() => setShowBedroomModal(true)}
-        >
-          <Text style={styles.filterLabel}>Chambres</Text>
-          <View style={styles.filterValueContainer}>
-            <Text style={styles.filterValue}>{selectedBedrooms || 'Toutes'}</Text>
-            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
-          </View>
-        </TouchableOpacity>
-
-        {/* Property Type */}
+      {/* Property Type */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Type de propriété</Text>
           <ScrollView 
@@ -245,6 +204,47 @@ const SearchScreen = ({ navigation }) => {
           ))}
         </ScrollView>
         </View>
+      {/* Filters */}
+      <ScrollView style={styles.filtersContainer}>
+        {/* Location Filter */}
+        <TouchableOpacity 
+          style={styles.filterItem} 
+          onPress={() => setShowLocationModal(true)}
+        >
+          <Text style={styles.filterLabel}>Localisation</Text>
+          <View style={styles.filterValueContainer}>
+            <Text style={styles.filterValue}>{selectedlocation || 'Toutes les villes'}</Text>
+            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
+          </View>
+        </TouchableOpacity>
+
+        {/* Price Filter */}
+        <TouchableOpacity 
+          style={styles.filterItem} 
+          onPress={() => setShowPriceModal(true)}
+        >
+          <Text style={styles.filterLabel}>Prix</Text>
+          <View style={styles.filterValueContainer}>
+            <Text style={styles.filterValue}>
+              {minPrice || maxPrice ? `${minPrice || 'Min'} - ${maxPrice || 'Max'}` : 'Tous les prix'}
+            </Text>
+            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
+          </View>
+        </TouchableOpacity>
+
+        {/* Bedrooms Filter */}
+        <TouchableOpacity 
+          style={styles.filterItem} 
+          onPress={() => setShowBedroomModal(true)}
+        >
+          <Text style={styles.filterLabel}>Chambres</Text>
+          <View style={styles.filterValueContainer}>
+            <Text style={styles.filterValue}>{selectedBedrooms || 'Toutes'}</Text>
+            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
+          </View>
+        </TouchableOpacity>
+
+        
         </ScrollView>
 
       {/* Search Button */}

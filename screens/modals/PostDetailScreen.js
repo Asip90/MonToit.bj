@@ -1078,37 +1078,939 @@
 
 // export default PostDetailScreen;
 
-import React, { useState, useEffect, useContext } from 'react';
+// import React, { useState, useEffect, useContext } from 'react';
+// import { 
+//   View, 
+//   Text, 
+ 
+//   ScrollView, 
+//   TouchableOpacity, 
+//   StyleSheet, 
+//   Dimensions, 
+//   ActivityIndicator,
+//   Modal,
+//   SafeAreaView,
+//   Alert
+// } from 'react-native';
+// import { useRoute } from '@react-navigation/native';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// import { db } from '../../src/api/FirebaseConfig';
+// import { doc, getDoc } from 'firebase/firestore';
+// import { COLORS, SIZES, FONTS } from '../../constants/Theme'; // Modifié pour utiliser le thème
+// import GallerySwiper from 'react-native-gallery-swiper';
+// import * as Linking from 'expo-linking';
+// import { UserContext } from '../../context/AuthContext';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import { isPostFavorite, toggleFavorite } from '../../services/favorites';
+// import { Video } from 'expo-av';
+// import { Image } from 'expo-image';
+// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+// import SecureWatermarkedImage from '../../components/SecureWatermarkedImage';
+// import OwnerInfo from '../../components/OwnerInfo';
+
+
+// const { width } = Dimensions.get('window');
+
+// const PostDetailScreen = ({ navigation }) => {
+//   const route = useRoute();
+//   const { postId } = route.params;
+//   const [post, setPost] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [isFavorite, setIsFavorite] = useState(false);
+//   const [imageViewerVisible, setImageViewerVisible] = useState(false);
+//   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+//   const { userData } = useContext(UserContext);
+//   const [ownerPhoneNumber, setOwnerPhoneNumber] = useState(null);
+//   const [paused, setPaused] = useState(true);
+//   const [activeSlide, setActiveSlide] = useState(0);
+
+//   // Fonction pour calculer le temps écoulé depuis la création du post
+//   // const calculateTimeSince = (date) => {
+//   //   const now = new Date();
+//   //   const postDate = new Date(date);
+//   //   const diff = now - postDate;
+    
+//   //   const minutes = Math.floor(diff / (1000 * 60));
+//   //   if (minutes < 60) return `${minutes} min`;
+    
+//   //   const hours = Math.floor(minutes / 60);
+//   //   if (hours < 24) return `${hours} h`;
+    
+//   //   const days = Math.floor(hours / 24);
+//   //   if (days < 30) return `${days} j`;
+    
+//   //   const months = Math.floor(days / 30);
+//   //   return `${months} mois`;
+//   // };
+//   const calculateTimeSince = (firestoreTimestamp) => {
+//   // Vérifie si c'est un objet Firestore Timestamp
+//   if (firestoreTimestamp?.seconds && firestoreTimestamp?.nanoseconds) {
+//     // Convertit en millisecondes (seconds * 1000 + nanoseconds arrondis)
+//     const timestampMs = firestoreTimestamp.seconds * 1000 + 
+//                        Math.round(firestoreTimestamp.nanoseconds / 1000000);
+//     const postDate = new Date(timestampMs);
+//     const now = new Date();
+//     const diffInMs = now - postDate;
+
+//     // Calculs des durées
+//     const seconds = Math.floor(diffInMs / 1000);
+//     if (seconds < 60) return `${seconds} sec`;
+
+//     const minutes = Math.floor(seconds / 60);
+//     if (minutes < 60) return `${minutes} min`;
+
+//     const hours = Math.floor(minutes / 60);
+//     if (hours < 24) return `${hours} h`;
+
+//     const days = Math.floor(hours / 24);
+//     if (days < 30) return `${days} j`;
+
+//     const months = Math.floor(days / 30);
+//     if (months < 12) return `${months} mois`;
+
+//     const years = Math.floor(months / 12);
+//     return `${years} an${years > 1 ? 's' : ''}`;
+//   }
+
+//   return "Date invalide";
+// };
+
+//   useEffect(() => {
+//     const checkFavorite = async () => {
+//       if (userData?.uid) {
+//         const result = await isPostFavorite(userData.uid, postId);
+//         setIsFavorite(result);
+//       }
+//     };
+//     checkFavorite();
+//   }, [postId, userData?.uid]);
+
+//   const handleToggleFavorite = async () => {
+//     try {
+//       if (userData?.uid) {
+//         const result = await toggleFavorite(userData.uid, postId);
+//         setIsFavorite(result);
+//       }
+//     } catch (error) {
+//       console.error("Erreur lors de l'ajout/retrait du favori:", error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const fetchPostAndOwner = async () => {
+//       try {
+//         const postRef = doc(db, 'posts', postId);
+//         const postSnap = await getDoc(postRef);
+        
+//         if (postSnap.exists()) {
+//           const postData = { id: postSnap.id, ...postSnap.data() };
+//           setPost(postData);
+
+//           if (postData.userId) {
+//             const userRef = doc(db, 'users', postData.userId);
+//             const userSnap = await getDoc(userRef);
+            
+//             if (userSnap.exists()) {
+//               const userData = userSnap.data();
+//               setOwnerPhoneNumber(userData.phoneNumber);
+//             }
+//           }
+//         }
+//       } catch (error) {
+//         console.error("Error fetching post or owner:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchPostAndOwner();
+//   }, [postId]);
+
+//   const handleWhatsAppPress = () => {
+//     if (!ownerPhoneNumber) {
+//       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
+//       return;
+//     }
+
+//     const message = `Bonjour, je suis intéressé par votre annonce "${post.title}"`;
+//     const url = `https://wa.me/${ownerPhoneNumber}?text=${encodeURIComponent(message)}`;
+    
+//     Linking.openURL(url).catch(() => {
+//       Alert.alert('Erreur', "WhatsApp n'est pas installé");
+//     });
+//   };
+
+//   const handlePhonePress = () => {
+//     if (!ownerPhoneNumber) {
+//       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
+//       return;
+//     }
+
+//     Linking.openURL(`tel:${ownerPhoneNumber}`).catch(() => {
+//       Alert.alert('Erreur', "Impossible de passer l'appel");
+//     });
+//   };
+
+//   const goToMessenger = async () => {
+//     if (!post?.userId) {
+//       Alert.alert("Erreur", "Impossible de contacter le propriétaire de l'annonce.");
+//       return;
+//     }
+    
+//     if (post.userId === userData?.uid) {
+//       Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message à vous-même.");
+//       return;
+//     }
+
+//     try {
+//       const userDocRef = doc(db, 'users', post.userId);
+//       const userSnap = await getDoc(userDocRef);
+      
+//       if (!userSnap.exists()) {
+//         Alert.alert("Erreur", "Utilisateur non trouvé");
+//         return;
+//       }
+
+//       const userData = userSnap.data();
+//       const receiverName = userData.name || userData.surname || 'Vendeur';
+
+//       navigation.navigate('MessageStack', {
+//         screen: 'ChatScreen',
+//         params: {
+//           receiverId: post.userId,
+//           receiverName,
+//           postId: post.id,
+//           postTitle: post.title
+//         },
+//       });
+//     } catch (error) {
+//       console.error("Erreur lors de la préparation de la messagerie :", error);
+//       Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
+//     }
+//   };
+
+//   const openImage = (index) => {
+//     setCurrentImageIndex(index);
+//     setImageViewerVisible(true);
+//   };
+
+//   const closeImage = () => {
+//     setImageViewerVisible(false);
+//   };
+
+//   const toggleVideoPlayback = () => {
+//     setPaused(!paused);
+//   };
+
+//   const onScroll = (event) => {
+//     const slide = Math.round(event.nativeEvent.contentOffset.x / width);
+//     if (slide !== activeSlide) {
+//       setActiveSlide(slide);
+//       setPaused(true); // Pause video when sliding
+//     }
+//   };
+
+//   if (loading) {
+//     return (
+//       <View style={styles.loadingContainer}>
+//         <ActivityIndicator size="large" color={COLORS.primary} />
+//       </View>
+//     );
+//   }
+
+//   if (!post) {
+//     return (
+//       <View style={styles.errorContainer}>
+//         <Text style={styles.errorText}>Post non trouvé</Text>
+//       </View>
+//     );
+//   }
+
+//   // Combiner images et vidéos pour le slider
+//  const mediaItems = [
+//   ...(post.imageUrls?.map(url => ({ type: 'image', url })) || []),
+//   ...(post.videoUrls?.map(url => ({ type: 'video', url })) || [])
+// ];
+
+
+//   // Préparer les données pour l'image viewer (uniquement les images)
+//   const imagesForViewer = post.imageUrls?.map(img => ({ url: img })) || [];
+// // propietaire  info
+
+
+// // const OwnerInfo = ({ userId }) => {
+// //   const [ownerName, setOwnerName] = useState('');
+// //   const [loading, setLoading] = useState(true);
+
+// //   useEffect(() => {
+// //     const fetchOwner = async () => {
+// //       try {
+// //         const userDocRef = doc(db, 'users', userId);
+// //         const userSnap = await getDoc(userDocRef);
+
+// //         if (!userSnap.exists()) {
+// //           Alert.alert("Erreur", "Utilisateur non trouvé");
+// //           return;
+// //         }
+
+// //         const userData = userSnap.data();
+// //         setOwnerName(userData.name || 'Nom non disponible');
+// //       } catch (error) {
+// //         console.error('Erreur lors du chargement du propriétaire:', error);
+// //       } finally {
+// //         setLoading(false);
+// //       }
+// //     };
+
+// //     fetchOwner();
+// //   }, [userId]);
+
+// //   if (loading) {
+// //     return <ActivityIndicator size="small" color="gray" />;
+// //   }
+
+// //   return (
+// //     <View>
+// //       <Text>Propriétaire : {ownerName}</Text>
+// //     </View>
+// //   );
+// // };
+
+// // export default OwnerInfo;
+
+//   return (
+//     <SafeAreaView style={styles.safeArea}>
+//       <ScrollView style={styles.container}>
+//         {/* Gallery Slider avec indicateur */}
+//         <View style={styles.carouselContainer}>
+//           <ScrollView 
+//             horizontal 
+//             pagingEnabled 
+//             showsHorizontalScrollIndicator={false}
+//             style={styles.imageSlider}
+//             onScroll={onScroll}
+//             scrollEventThrottle={16}
+//           >
+//             {mediaItems.map((media, index) => (
+//               <TouchableOpacity 
+//                 key={index} 
+//                 activeOpacity={0.9}
+//                 onPress={() => media.type === 'image' ? openImage(index) : toggleVideoPlayback()}
+//                 style={styles.mediaContainer}
+//               >
+//                 {media.type === 'image' ? (
+//                   // <Image source={{ uri: media.url }} style={styles.mainImage} />
+//                 <SecureWatermarkedImage 
+//   source={{ uri: media.url }}
+//   watermarkSource={require('../../assets/images/filigrane.png')}
+//   style={{ width: 300, height: 200 }}
+// />
+                
+//                 ) : (
+//                   <View style={styles.videoContainer}>
+//                     {/* <Video
+//                       source={{ uri: media.url }}
+//                       style={styles.video}
+//                       shouldPlay={!paused && index === activeSlide}
+//                       resizeMode="cover"
+//                       isLooping
+//                       useNativeControls={false}
+//                     /> */}
+//                     <Video
+//                       source={{ uri: media.url }}
+//                       style={styles.video}
+//                       shouldPlay={!paused && index === activeSlide}
+//                       resizeMode="cover"
+//                       isLooping
+//                       useNativeControls={false}
+//                     />
+
+//                     {paused && (
+//                       <View style={styles.playButton}>
+//                         <Icon name="play-circle" size={50} color="rgba(255,255,255,0.8)" />
+//                       </View>
+//                     )}
+//                   </View>
+//                 )}
+//               </TouchableOpacity>
+//             ))}
+//           </ScrollView>
+          
+//           {/* Indicateur de slide */}
+//           {mediaItems.length > 1 && (
+//             <View style={styles.pagination}>
+//               {mediaItems.map((_, idx) => (
+//                 <View 
+//                   key={idx} 
+//                   style={[
+//                     styles.paginationDot, 
+//                     idx === activeSlide ? styles.paginationDotActive : null
+//                   ]} 
+//                 />
+//               ))}
+//             </View>
+//           )}
+          
+//           {/* Compteur de médias */}
+//           <View style={styles.mediaCounter}>
+//             <Text style={styles.mediaCounterText}>
+//               {`${activeSlide + 1}/${mediaItems.length}`}
+//             </Text>
+//           </View>
+//         </View>
+
+//         {/* En-tête avec prix et informations */}
+//         <View style={styles.header}>
+//           <View style={styles.priceContainer}>
+//             <Text style={styles.price}>{post.price?.toLocaleString()} FCFA</Text>
+//             {post.transactionType === 'rent' && (
+//               <Text style={styles.pricePeriod}>/mois</Text>
+//             )}
+//           </View>
+          
+//           <View style={styles.titleRow}>
+//             <Text style={styles.title}>{post.title}</Text>
+//             <TouchableOpacity onPress={handleToggleFavorite} style={styles.favoriteButton}>
+//               <Ionicons 
+//                 name={isFavorite ? "heart" : "heart-outline"} 
+//                 size={24} 
+//                 color={isFavorite ? COLORS.primary : COLORS.gray} 
+//               />
+//             </TouchableOpacity>
+//           </View>
+          
+//           <View style={styles.locationContainer}>
+//             <MaterialIcons name="location-on" size={16} color={COLORS.gray} />
+//             <Text style={styles.location}>
+//               {typeof post.location === 'string' 
+//                 ? post.location 
+//                 : post.location?.display_name || 'Localisation non disponible'}
+//             </Text>
+//           </View>
+          
+//           {post.createdAt && (
+          
+//             <Text style={styles.postDate}>
+//               <MaterialIcons name="access-time" size={12} color={COLORS.gray} />
+//               {` Publié il y a ${calculateTimeSince(post.createdAt)}`}
+//             </Text>
+//           )}
+//         </View>
+
+//         {/* Caractéristiques principales */}
+//         <View style={styles.featuresSection}>
+//           <Text style={styles.sectionTitle}>Caractéristiques</Text>
+//           <View style={styles.featuresGrid}>
+//             <View style={styles.featureItem}>
+//               <MaterialIcons name="hotel" size={24} color={COLORS.primary} />
+//               <Text style={styles.featureLabel}>{post.bedrooms || ''}Chambres</Text>
+//               {/* <Text style={styles.featureValue}>{post.bedrooms || ''}</Text> */}
+//             </View>
+
+//             { post.livingRoom && (
+//             <View style={styles.featureItem}>
+//               <MaterialIcons name='living' size={24} color={COLORS.primary} />
+//               <Text style={styles.featureLabel}>{post.livingRoom || ''} Salon</Text>
+//               {/* <Text style={styles.featureValue}>{post.bathrooms || ''}</Text> */}
+//             </View>
+//             )}
+
+//             { post.bathrooms && (
+//             <View style={styles.featureItem}>
+//               <MaterialIcons name="bathtub" size={24} color={COLORS.primary} />
+//               <Text style={styles.featureLabel}>{post.bathrooms || ''}Salles de bain</Text>
+//               {/* <Text style={styles.featureValue}>{post.bathrooms || ''}</Text> */}
+//             </View>
+//             )}
+            
+//             {post.area && (
+//             <View style={styles.featureItem}>
+//               <MaterialIcons name="straighten" size={24} color={COLORS.primary} />
+//               <Text style={styles.featureLabel}>Superficie</Text>
+//               <Text style={styles.featureValue}>{post.area || ''} m²</Text>
+//             </View>
+//             )}
+            
+            
+//             {post.features?.furnished && (
+//               <View style={styles.featureItem}>
+//                 <MaterialIcons name="weekend" size={24} color={COLORS.primary} />
+//                 <Text style={styles.featureLabel}>Meublé</Text>
+//                 {/* <Text style={styles.featureValue}>Oui</Text> */}
+//               </View>
+//             )}
+//           </View>
+//         </View>
+//         {post.features && (
+//           <View style={styles.amenitiesSection}>
+//             {/* <Text style={styles.sectionTitle}>Équipements</Text> */}
+//             <View style={styles.amenitiesContainer}>
+//               {post.features.water && (
+//                 <View style={styles.amenityItem}>
+//                   {/* <MaterialIcons name='' size={20} color={COLORS.primary} /> */}
+//                   <Ionicons name="water-sharp" size={20} color={COLORS.primary}/>
+//                   <Text style={styles.amenityText}>Eau </Text>
+//                 </View>
+//               )}
+//               {post.features.electricity && (
+//                 <View style={styles.amenityItem}>
+//                   {/* <MaterialIcons name='' size={20} color={COLORS.primary} /> */}
+//                   <Ionicons name="flash-sharp" size={20} color={COLORS.primary}/>
+//                   <Text style={styles.amenityText}>Electricité </Text>
+//                 </View>
+//               )}
+              
+//               {post.features.ac && (
+//                 <View style={styles.amenityItem}>
+//                   <MaterialIcons name="ac-unit" size={20} color={COLORS.primary} />
+//                   <Text style={styles.amenityText}>Climatisation</Text>
+//                 </View>
+//               )}
+              
+//               {post.features.parking && (
+//                 <View style={styles.amenityItem}>
+//                   <MaterialIcons name="local-parking" size={20} color={COLORS.primary} />
+//                   <Text style={styles.amenityText}>Parking</Text>
+//                 </View>
+//               )}
+              
+//               {post.features.security && (
+//                 <View style={styles.amenityItem}>
+//                   <MaterialIcons name="security" size={20} color={COLORS.primary} />
+//                   <Text style={styles.amenityText}>Sécurité</Text>
+//                 </View>
+//               )}
+              
+//               {post.features.wifi && (
+//                 <View style={styles.amenityItem}>
+//                   <MaterialIcons name="wifi" size={20} color={COLORS.primary} />
+//                   <Text style={styles.amenityText}>Wi-Fi</Text>
+//                 </View>
+//               )}
+//             </View>
+//           </View>
+//         )}
+
+//         {/* Description */}
+//         <View style={styles.descriptionSection}>
+//           <Text style={styles.sectionTitle}>Description</Text>
+//           <Text style={styles.description}>{post.description || 'Aucune description fournie'}</Text>
+//         </View>
+
+//         {/* Équipements */}
+        
+//         {/* INFO SUR LE PROPRIO */}
+        
+//         <OwnerInfo userId={post.userId} />
+
+//         {/* Boutons d'action */}
+//         <View style={styles.actionButtons}>
+//           <TouchableOpacity onPress={goToMessenger} style={styles.actionButton}>
+//             <Ionicons name="chatbubble-ellipses" size={20} color={COLORS.white} />
+//             <Text style={styles.actionButtonText}>Message</Text>
+//           </TouchableOpacity>
+          
+//           <TouchableOpacity onPress={handleWhatsAppPress} style={[styles.actionButton, styles.whatsappButton]}>
+//             <Ionicons name="logo-whatsapp" size={20} color={COLORS.white} />
+//             <Text style={styles.actionButtonText}>WhatsApp</Text>
+//           </TouchableOpacity>
+          
+//           <TouchableOpacity onPress={handlePhonePress} style={[styles.actionButton, styles.callButton]}>
+//             <Ionicons name="call" size={20} color={COLORS.white} />
+//             <Text style={styles.actionButtonText}>Appeler</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </ScrollView>
+
+//       {/* Image Viewer Modal */}
+//        {/* <Modal
+//         visible={imageViewerVisible}
+//         transparent={true}
+//         onRequestClose={closeImage}
+//       >
+//         <SafeAreaView style={styles.imageModalContainer}>
+//           <TouchableOpacity 
+//             style={styles.closeButton}
+//             onPress={closeImage}
+//           >
+//             <Icon name="close" size={30} color="white" />
+//           </TouchableOpacity>
+          
+//          <GallerySwiper
+//             images={imagesForViewer} // Array of { uri: 'https://...' }
+//             initialIndex={currentImageIndex}
+//             onSwipeToClose={closeImage}
+//             style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
+//           />
+//         </SafeAreaView>
+//       </Modal> */}
+//       <Modal
+//           visible={imageViewerVisible}
+//           transparent={true}
+//           onRequestClose={closeImage}
+//         >
+//           <SafeAreaView style={styles.imageModalContainer}>
+//             <TouchableOpacity 
+//               style={styles.closeButton}
+//               onPress={closeImage}
+//             >
+//               <Icon name="close" size={30} color="white" />
+//             </TouchableOpacity>
+            
+//             <View style={styles.imageViewerContent}>
+//               <Image
+//                 source={{ uri: imagesForViewer[currentImageIndex]?.url }}
+//                 style={styles.expandedImage}
+//                 transition={300}
+//                 contentFit="contain"
+//                 enableLiveTextInteraction={true}
+//                 accessibilityLabel="Image de l'annonce"
+//               />
+              
+//               {/* Navigation entre images */}
+//               {imagesForViewer.length > 1 && (
+//                 <View style={styles.imageNavContainer}>
+//                   <TouchableOpacity 
+//                     onPress={() => setCurrentImageIndex(prev => Math.max(0, prev - 1))}
+//                     disabled={currentImageIndex === 0}
+//                     style={styles.navButton}
+//                   >
+//                     <Ionicons 
+//                       name="chevron-back" 
+//                       size={30} 
+//                       color={currentImageIndex === 0 ? 'rgba(255,255,255,0.3)' : 'white'} 
+//                     />
+//                   </TouchableOpacity>
+                  
+//                   <Text style={styles.imageCounter}>
+//                     {`${currentImageIndex + 1}/${imagesForViewer.length}`}
+//                   </Text>
+                  
+//                   <TouchableOpacity 
+//                     onPress={() => setCurrentImageIndex(prev => Math.min(imagesForViewer.length - 1, prev + 1))}
+//                     disabled={currentImageIndex === imagesForViewer.length - 1}
+//                     style={styles.navButton}
+//                   >
+//                     <Ionicons 
+//                       name="chevron-forward" 
+//                       size={30} 
+//                       color={currentImageIndex === imagesForViewer.length - 1 ? 'rgba(255,255,255,0.3)' : 'white'} 
+//                     />
+//                   </TouchableOpacity>
+//                 </View>
+//               )}
+//             </View>
+//           </SafeAreaView>
+//         </Modal>
+
+// </SafeAreaView>
+   
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   imageViewerContent: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   expandedImage: {
+//     width: '100%',
+//     height: '80%',
+//   },
+//   imageNavContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'space-between',
+//     width: '100%',
+//     paddingHorizontal: 20,
+//     marginTop: 20,
+//   },
+//   navButton: {
+//     padding: 15,
+//   },
+//   imageCounter: {
+//     color: 'white',
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//   },
+//   safeArea: {
+//     flex: 1,
+//     backgroundColor: COLORS.white,
+//   },
+//   container: {
+//     flex: 1,
+//     backgroundColor: COLORS.white,
+//   },
+//   loadingContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: COLORS.white,
+//   },
+//   errorContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: COLORS.white,
+//   },
+//   errorText: {
+//     ...FONTS.body3,
+//     color: COLORS.error,
+//   },
+//   carouselContainer: {
+//     height: 300,
+//     position: 'relative',
+//   },
+//   imageSlider: {
+//     height: '100%',
+//   },
+//   mediaContainer: {
+//     width: width,
+//     height: '100%',
+//     position: 'relative',
+//   },
+//   mainImage: {
+//     width: '100%',
+//     height: '100%',
+//     resizeMode: 'cover',
+//   },
+//   videoContainer: {
+//     width: '100%',
+//     height: '100%',
+//     backgroundColor: COLORS.black,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   video: {
+//     width: '100%',
+//     height: '100%',
+//   },
+//   playButton: {
+//     position: 'absolute',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   pagination: {
+//     position: 'absolute',
+//     bottom: 15,
+//     flexDirection: 'row',
+//     alignSelf: 'center',
+//   },
+//   paginationDot: {
+//     width: 8,
+//     height: 8,
+//     borderRadius: 4,
+//     backgroundColor: COLORS.white,
+//     margin: 5,
+//     opacity: 0.5,
+//   },
+//   paginationDotActive: {
+//     opacity: 1,
+//     width: 12,
+//   },
+//   mediaCounter: {
+//     position: 'absolute',
+//     top: 15,
+//     right: 15,
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//     paddingHorizontal: 10,
+//     paddingVertical: 5,
+//     borderRadius: 15,
+//   },
+//   mediaCounterText: {
+//     ...FONTS.body4,
+//     color: COLORS.white,
+//   },
+//   header: {
+//     padding: SIZES.padding,
+//     borderBottomWidth: 1,
+//     borderBottomColor: COLORS.lightGray,
+//   },
+//   priceContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'flex-end',
+//     marginBottom: SIZES.base,
+//   },
+//   price: {
+//     ...FONTS.h2,
+//     color: COLORS.primary,
+//     fontWeight: 'bold',
+//   },
+//   pricePeriod: {
+//     ...FONTS.body4,
+//     color: COLORS.gray,
+//     marginLeft: SIZES.base,
+//     marginBottom: 2,
+//   },
+//   titleRow: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//     marginBottom: SIZES.base,
+//   },
+//   title: {
+//     ...FONTS.h3,
+//     color: COLORS.black,
+//     flex: 1,
+//   },
+//   favoriteButton: {
+//     padding: 5,
+//   },
+//   locationContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginBottom: SIZES.base,
+//   },
+//   location: {
+//     ...FONTS.body4,
+//     color: COLORS.gray,
+//     marginLeft: 5,
+//   },
+//   postDate: {
+//     ...FONTS.body4,
+//     color: COLORS.gray,
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//   },
+//   featuresSection: {
+//     padding: SIZES.padding,
+//     borderBottomWidth: 1,
+//     borderBottomColor: COLORS.lightGray,
+//   },
+//   sectionTitle: {
+//     ...FONTS.h4,
+//     color: COLORS.black,
+//     marginBottom: SIZES.padding,
+//     fontWeight: 'bold',
+//   },
+//   featuresGrid: {
+//     flexDirection: 'row',
+//     flexWrap: 'wrap',
+//     justifyContent: 'space-between',
+//   },
+//   featureItem: {
+//     width: '48%',
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginBottom: SIZES.padding,
+//   },
+//   featureLabel: {
+//     ...FONTS.body4,
+//     color: COLORS.gray,
+//     marginLeft: 10,
+//     flex: 1,
+//   },
+//   featureValue: {
+//     ...FONTS.body3,
+//     color: COLORS.black,
+//     fontWeight: 'bold',
+//   },
+//   descriptionSection: {
+//     padding: SIZES.padding,
+//     borderBottomWidth: 1,
+//     borderBottomColor: COLORS.lightGray,
+//   },
+//   description: {
+//     ...FONTS.body4,
+//     color: COLORS.black,
+//     lineHeight: 22,
+//   },
+//   amenitiesSection: {
+//     padding: SIZES.padding,
+//     borderBottomWidth: 1,
+//     borderBottomColor: COLORS.lightGray,
+//   },
+//   amenitiesContainer: {
+//     flexDirection: 'row',
+//     flexWrap: 'wrap',
+//   },
+//   amenityItem: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     width: '50%',
+//     marginBottom: SIZES.base,
+//   },
+//   amenityText: {
+//     ...FONTS.body4,
+//     color: COLORS.black,
+//     marginLeft: 8,
+//   },
+//   actionButtons: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     padding: SIZES.padding,
+//     backgroundColor: COLORS.white,
+//   },
+//   actionButton: {
+//     flex: 1,
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: COLORS.primary,
+//     paddingVertical: 12,
+//     borderRadius: SIZES.radius,
+//     marginHorizontal: 5,
+//   },
+//   whatsappButton: {
+//     backgroundColor: '#25D366',
+//   },
+//   callButton: {
+//     backgroundColor: '#2ECC71',
+//   },
+//   actionButtonText: {
+//     ...FONTS.body4,
+//     color: COLORS.white,
+//     marginLeft: 8,
+//     fontWeight: 'bold',
+//   },
+//   imageModalContainer: {
+//     flex: 1,
+//     backgroundColor: 'rgba(0,0,0,0.9)',
+//   },
+//   closeButton: {
+//     position: 'absolute',
+//     top: SIZES.padding,
+//     right: SIZES.padding,
+//     zIndex: 1,
+//     padding: 10,
+//   },
+// });
+
+// export default PostDetailScreen;
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { 
   View, 
   Text, 
-  Image, 
   ScrollView, 
   TouchableOpacity, 
   StyleSheet, 
-  Dimensions, 
+  Dimensions,
+  FlatList,
+  SafeAreaView,
+  Alert,
+  Animated,
   ActivityIndicator,
   Modal,
-  SafeAreaView,
-  Alert
+  Platform
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { db } from '../../src/api/FirebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
-import { COLORS, SIZES, FONTS } from '../../constants/Theme'; // Modifié pour utiliser le thème
-import GallerySwiper from 'react-native-gallery-swiper';
-import * as Linking from 'expo-linking';
-import { UserContext } from '../../context/AuthContext';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { isPostFavorite, toggleFavorite } from '../../services/favorites';
 import { Video } from 'expo-av';
-
+import { Image } from 'expo-image';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { doc, getDoc } from 'firebase/firestore';
+import * as Linking from 'expo-linking';
 
+// Importations locales
+import { db } from '../../src/api/FirebaseConfig';
+import { COLORS, SIZES } from '../../constants/Theme';
+import { UserContext } from '../../context/AuthContext';
+import { isPostFavorite, toggleFavorite } from '../../services/favorites';
+import SecureWatermarkedImage from '../../components/SecureWatermarkedImage';
+import OwnerInfo from '../../components/OwnerInfo';
 
-
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const PostDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -1120,51 +2022,19 @@ const PostDetailScreen = ({ navigation }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { userData } = useContext(UserContext);
   const [ownerPhoneNumber, setOwnerPhoneNumber] = useState(null);
-  const [paused, setPaused] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const flatListRef = useRef(null);
 
-  // Fonction pour calculer le temps écoulé depuis la création du post
-  const calculateTimeSince = (date) => {
-    const now = new Date();
-    const postDate = new Date(date);
-    const diff = now - postDate;
-    
-    const minutes = Math.floor(diff / (1000 * 60));
-    if (minutes < 60) return `${minutes} min`;
-    
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours} h`;
-    
-    const days = Math.floor(hours / 24);
-    if (days < 30) return `${days} j`;
-    
-    const months = Math.floor(days / 30);
-    return `${months} mois`;
-  };
-
+  // Chargement des données
   useEffect(() => {
-    const checkFavorite = async () => {
-      if (userData?.uid) {
-        const result = await isPostFavorite(userData.uid, postId);
-        setIsFavorite(result);
-      }
-    };
-    checkFavorite();
-  }, [postId, userData?.uid]);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
 
-  const handleToggleFavorite = async () => {
-    try {
-      if (userData?.uid) {
-        const result = await toggleFavorite(userData.uid, postId);
-        setIsFavorite(result);
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'ajout/retrait du favori:", error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchPostAndOwner = async () => {
+    const fetchData = async () => {
       try {
         const postRef = doc(db, 'posts', postId);
         const postSnap = await getDoc(postRef);
@@ -1176,71 +2046,129 @@ const PostDetailScreen = ({ navigation }) => {
           if (postData.userId) {
             const userRef = doc(db, 'users', postData.userId);
             const userSnap = await getDoc(userRef);
-            
             if (userSnap.exists()) {
-              const userData = userSnap.data();
-              setOwnerPhoneNumber(userData.phoneNumber);
+              setOwnerPhoneNumber(userSnap.data().phoneNumber);
             }
           }
+        } else {
+          Alert.alert("Erreur", "Annonce introuvable");
+          navigation.goBack();
         }
       } catch (error) {
-        console.error("Error fetching post or owner:", error);
+        console.error("Error fetching data:", error);
+        Alert.alert("Erreur", "Impossible de charger l'annonce");
+        navigation.goBack();
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPostAndOwner();
-  }, [postId]);
+    fetchData();
 
+    const checkFavorite = async () => {
+      if (userData?.uid) {
+        const result = await isPostFavorite(userData.uid, postId);
+        setIsFavorite(result);
+      }
+    };
+    checkFavorite();
+  }, [postId, userData?.uid]);
+
+  // Médias de l'annonce
+   // Vérification des URLs
+  const isValidUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const mediaItems = post 
+    ? [
+        ...(post.imageUrls?.filter(url => isValidUrl(url)).map(url => ({ type: 'image', url })) || []),
+        ...(post.videoUrls?.filter(url => isValidUrl(url)).map(url => ({ type: 'video', url })) || [])
+      ]
+    : [];
+
+  const imagesForViewer = mediaItems.filter(item => item.type === 'image');
+
+ 
+
+  // Calcul du temps depuis la publication
+  const calculateTimeSince = useCallback((firestoreTimestamp) => {
+    if (firestoreTimestamp?.seconds) {
+      const timestampMs = firestoreTimestamp.seconds * 1000;
+      const postDate = new Date(timestampMs);
+      const now = new Date();
+      const diffInMs = now - postDate;
+
+      const seconds = Math.floor(diffInMs / 1000);
+      if (seconds < 60) return `${seconds} sec`;
+
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes} min`;
+
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours} h`;
+
+      const days = Math.floor(hours / 24);
+      if (days < 30) return `${days} j`;
+
+      const months = Math.floor(days / 30);
+      if (months < 12) return `${months} mois`;
+
+      const years = Math.floor(months / 12);
+      return `${years} an${years > 1 ? 's' : ''}`;
+    }
+    return "Date invalide";
+  }, []);
+
+  // Gestion des favoris
+  const handleToggleFavorite = async () => {
+    try {
+      if (userData?.uid) {
+        const result = await toggleFavorite(userData.uid, postId);
+        setIsFavorite(result);
+      }
+    } catch (error) {
+      console.error("Erreur favori:", error);
+      Alert.alert("Erreur", "Impossible de modifier les favoris");
+    }
+  };
+
+  // Contact par WhatsApp
   const handleWhatsAppPress = () => {
     if (!ownerPhoneNumber) {
       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
       return;
     }
-
     const message = `Bonjour, je suis intéressé par votre annonce "${post.title}"`;
-    const url = `https://wa.me/${ownerPhoneNumber}?text=${encodeURIComponent(message)}`;
-    
-    Linking.openURL(url).catch(() => {
-      Alert.alert('Erreur', "WhatsApp n'est pas installé");
-    });
+    Linking.openURL(`https://wa.me/${ownerPhoneNumber}?text=${encodeURIComponent(message)}`)
+      .catch(() => Alert.alert('Erreur', "WhatsApp n'est pas installé"));
   };
 
+  // Contact par téléphone
   const handlePhonePress = () => {
     if (!ownerPhoneNumber) {
       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
       return;
     }
-
-    Linking.openURL(`tel:${ownerPhoneNumber}`).catch(() => {
-      Alert.alert('Erreur', "Impossible de passer l'appel");
-    });
+    Linking.openURL(`tel:${ownerPhoneNumber}`)
+      .catch(() => Alert.alert('Erreur', "Impossible de passer l'appel"));
   };
 
+  // Messagerie interne
   const goToMessenger = async () => {
-    if (!post?.userId) {
-      Alert.alert("Erreur", "Impossible de contacter le propriétaire de l'annonce.");
-      return;
-    }
-    
-    if (post.userId === userData?.uid) {
-      Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message à vous-même.");
-      return;
-    }
+    if (!post?.userId) return Alert.alert("Erreur", "Propriétaire introuvable");
+    if (post.userId === userData?.uid) return Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message");
 
     try {
       const userDocRef = doc(db, 'users', post.userId);
       const userSnap = await getDoc(userDocRef);
-      
-      if (!userSnap.exists()) {
-        Alert.alert("Erreur", "Utilisateur non trouvé");
-        return;
-      }
+      if (!userSnap.exists()) return Alert.alert("Erreur", "Utilisateur non trouvé");
 
-      const userData = userSnap.data();
-      const receiverName = userData.name || userData.surname || 'Vendeur';
-
+      const receiverName = userSnap.data().name || userSnap.data().surname || 'Vendeur';
       navigation.navigate('MessageStack', {
         screen: 'ChatScreen',
         params: {
@@ -1251,237 +2179,252 @@ const PostDetailScreen = ({ navigation }) => {
         },
       });
     } catch (error) {
-      console.error("Erreur lors de la préparation de la messagerie :", error);
-      Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
+      console.error("Erreur messagerie:", error);
+      Alert.alert("Erreur", "Une erreur est survenue");
     }
   };
 
-  const openImage = (index) => {
-    setCurrentImageIndex(index);
-    setImageViewerVisible(true);
-  };
-
-  const closeImage = () => {
-    setImageViewerVisible(false);
-  };
-
-  const toggleVideoPlayback = () => {
-    setPaused(!paused);
-  };
-
-  const onScroll = (event) => {
-    const slide = Math.round(event.nativeEvent.contentOffset.x / width);
+  // Gestion du carousel
+  const onScroll = useCallback(({ nativeEvent }) => {
+    const slide = Math.round(nativeEvent.contentOffset.x / width);
     if (slide !== activeSlide) {
       setActiveSlide(slide);
-      setPaused(true); // Pause video when sliding
     }
-  };
+  }, [activeSlide]);
 
+  // Ouverture d'une image
+  const openImage = useCallback((index) => {
+    setCurrentImageIndex(index);
+    setImageViewerVisible(true);
+  }, []);
+
+  // Fermeture de la modal
+  const closeImage = useCallback(() => {
+    setImageViewerVisible(false);
+  }, []);
+
+  // Composant d'item pour le carousel
+  const GalleryItem = useCallback(({ item, index }) => (
+    <TouchableOpacity 
+      activeOpacity={0.9} 
+      onPress={() => item.type === 'image' ? openImage(index) : null}
+      style={galleryStyles.mediaWrapper}
+    >
+      {item.type === 'image' ? (
+        <SecureWatermarkedImage 
+          source={{ uri: item.url }}
+          style={galleryStyles.media}
+          watermarkSource={require('../../assets/images/filigrane.png')}
+          contentFit="cover"
+          transition={300}
+        />
+      ) : (
+        <Video
+          source={{ uri: item.url }}
+          style={galleryStyles.media}
+          resizeMode="cover"
+          shouldPlay={false}
+          useNativeControls
+        />
+      )}
+    </TouchableOpacity>
+  ), [openImage]);
+
+  // Affichage pendant le chargement
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>Chargement de l'annonce...</Text>
       </View>
     );
   }
 
+  // Si pas de données
   if (!post) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Post non trouvé</Text>
+        <Text style={styles.errorText}>Impossible de charger l'annonce</Text>
+        <TouchableOpacity 
+          style={styles.retryButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.retryButtonText}>Retour</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
-  // Combiner images et vidéos pour le slider
- const mediaItems = [
-  ...(post.imageUrls?.map(url => ({ type: 'image', url })) || []),
-  ...(post.videoUrls?.map(url => ({ type: 'video', url })) || [])
-];
-
-
-  // Préparer les données pour l'image viewer (uniquement les images)
-  const imagesForViewer = post.imageUrls?.map(img => ({ url: img })) || [];
-
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        {/* Gallery Slider avec indicateur */}
-        <View style={styles.carouselContainer}>
-          <ScrollView 
-            horizontal 
-            pagingEnabled 
+      <Animated.ScrollView 
+        style={{ opacity: fadeAnim }}
+        contentContainerStyle={styles.scrollContainer}
+      >
+        {/* Galerie d'images/vidéos */}
+        <View style={galleryStyles.container}>
+          <FlatList
+            ref={flatListRef}
+            horizontal
+            pagingEnabled
+            data={mediaItems}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={GalleryItem}
             showsHorizontalScrollIndicator={false}
-            style={styles.imageSlider}
             onScroll={onScroll}
             scrollEventThrottle={16}
-          >
-            {mediaItems.map((media, index) => (
-              <TouchableOpacity 
-                key={index} 
-                activeOpacity={0.9}
-                onPress={() => media.type === 'image' ? openImage(index) : toggleVideoPlayback()}
-                style={styles.mediaContainer}
-              >
-                {media.type === 'image' ? (
-                  <Image source={{ uri: media.url }} style={styles.mainImage} />
-                ) : (
-                  <View style={styles.videoContainer}>
-                    {/* <Video
-                      source={{ uri: media.url }}
-                      style={styles.video}
-                      shouldPlay={!paused && index === activeSlide}
-                      resizeMode="cover"
-                      isLooping
-                      useNativeControls={false}
-                    /> */}
-                    <Video
-                      source={{ uri: media.url }}
-                      style={styles.video}
-                      shouldPlay={!paused && index === activeSlide}
-                      resizeMode="cover"
-                      isLooping
-                      useNativeControls={false}
-                    />
-
-                    {paused && (
-                      <View style={styles.playButton}>
-                        <Icon name="play-circle" size={50} color="rgba(255,255,255,0.8)" />
-                      </View>
-                    )}
-                  </View>
-                )}
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+            initialNumToRender={3}
+            maxToRenderPerBatch={3}
+            windowSize={5}
+          />
           
-          {/* Indicateur de slide */}
+          {/* Indicateurs de pagination */}
           {mediaItems.length > 1 && (
-            <View style={styles.pagination}>
-              {mediaItems.map((_, idx) => (
+            <View style={galleryStyles.pagination}>
+              {mediaItems.map((_, index) => (
                 <View 
-                  key={idx} 
+                  key={index}
                   style={[
-                    styles.paginationDot, 
-                    idx === activeSlide ? styles.paginationDotActive : null
-                  ]} 
+                    galleryStyles.paginationDot,
+                    index === activeSlide && galleryStyles.activeDot
+                  ]}
                 />
               ))}
             </View>
           )}
           
-          {/* Compteur de médias */}
-          <View style={styles.mediaCounter}>
-            <Text style={styles.mediaCounterText}>
-              {`${activeSlide + 1}/${mediaItems.length}`}
-            </Text>
-          </View>
+          {/* Bouton plein écran */}
+          {mediaItems.length > 0 && mediaItems[activeSlide]?.type === 'image' && (
+            <TouchableOpacity 
+              style={galleryStyles.fullscreenButton}
+              onPress={() => openImage(activeSlide)}
+            >
+              <Ionicons name="expand" size={24} color="white" />
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* En-tête avec prix et informations */}
-        <View style={styles.header}>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>{post.price?.toLocaleString()} FCFA</Text>
+        {/* En-tête avec prix et titre */}
+        <View style={styles.headerContainer}>
+          <View style={styles.priceRow}>
+            <Text style={styles.priceText}>{post.price?.toLocaleString()} FCFA</Text>
             {post.transactionType === 'rent' && (
               <Text style={styles.pricePeriod}>/mois</Text>
             )}
           </View>
           
           <View style={styles.titleRow}>
-            <Text style={styles.title}>{post.title}</Text>
-            <TouchableOpacity onPress={handleToggleFavorite} style={styles.favoriteButton}>
+            <Text style={styles.titleText} numberOfLines={2}>{post.title}</Text>
+            <TouchableOpacity 
+              onPress={handleToggleFavorite}
+              style={styles.favoriteButton}
+            >
               <Ionicons 
                 name={isFavorite ? "heart" : "heart-outline"} 
-                size={24} 
-                color={isFavorite ? COLORS.primary : COLORS.gray} 
+                size={28} 
+                color={isFavorite ? COLORS.primary : '#ccc'} 
               />
             </TouchableOpacity>
           </View>
           
+          {/* Localisation */}
           <View style={styles.locationContainer}>
-            <MaterialIcons name="location-on" size={16} color={COLORS.gray} />
-            <Text style={styles.location}>
+            <Ionicons name="location-sharp" size={16} color="#666" />
+            <Text style={styles.locationText} numberOfLines={2}>
               {typeof post.location === 'string' 
                 ? post.location 
                 : post.location?.display_name || 'Localisation non disponible'}
             </Text>
           </View>
           
+          {/* Date de publication */}
           {post.createdAt && (
-            <Text style={styles.postDate}>
-              <MaterialIcons name="access-time" size={12} color={COLORS.gray} />
-              {` Publié il y a ${calculateTimeSince(post.createdAt)}`}
-            </Text>
+            <View style={styles.dateContainer}>
+              <Ionicons name="time-outline" size={14} color="#666" />
+              <Text style={styles.timeText}>
+                {` Publié il y a ${calculateTimeSince(post.createdAt)}`}
+              </Text>
+            </View>
           )}
         </View>
 
         {/* Caractéristiques principales */}
-        <View style={styles.featuresSection}>
+        <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Caractéristiques</Text>
           <View style={styles.featuresGrid}>
-            <View style={styles.featureItem}>
-              <MaterialIcons name="hotel" size={24} color={COLORS.primary} />
-              <Text style={styles.featureLabel}>Chambres</Text>
-              <Text style={styles.featureValue}>{post.bedrooms || 'N/A'}</Text>
-            </View>
-            
-            <View style={styles.featureItem}>
-              <MaterialIcons name="bathtub" size={24} color={COLORS.primary} />
-              <Text style={styles.featureLabel}>Salles de bain</Text>
-              <Text style={styles.featureValue}>{post.bathrooms || 'N/A'}</Text>
-            </View>
-            
-            <View style={styles.featureItem}>
-              <MaterialIcons name="straighten" size={24} color={COLORS.primary} />
-              <Text style={styles.featureLabel}>Superficie</Text>
-              <Text style={styles.featureValue}>{post.area || 'N/A'} m²</Text>
-            </View>
-            
-            {post.features?.furnished && (
+            {post.bedrooms > 0 && (
               <View style={styles.featureItem}>
-                <MaterialIcons name="weekend" size={24} color={COLORS.primary} />
-                <Text style={styles.featureLabel}>Meublé</Text>
-                <Text style={styles.featureValue}>Oui</Text>
+                <MaterialIcons name="hotel" size={20} color={COLORS.primary} />
+                <Text style={styles.featureText}>{post.bedrooms} Chambre(s)</Text>
+              </View>
+            )}
+            
+            {post.bathrooms > 0 && (
+              <View style={styles.featureItem}>
+                <MaterialIcons name="bathtub" size={20} color={COLORS.primary} />
+                <Text style={styles.featureText}>{post.bathrooms} Salle(s) de bain</Text>
+              </View>
+            )}
+            
+            {post.livingRoom && (
+              <View style={styles.featureItem}>
+                <MaterialIcons name="weekend" size={20} color={COLORS.primary} />
+                <Text style={styles.featureText}>Salon</Text>
+              </View>
+            )}
+            
+            {post.area > 0 && (
+              <View style={styles.featureItem}>
+                <MaterialIcons name="straighten" size={20} color={COLORS.primary} />
+                <Text style={styles.featureText}>{post.area} m²</Text>
               </View>
             )}
           </View>
         </View>
 
-        {/* Description */}
-        <View style={styles.descriptionSection}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <Text style={styles.description}>{post.description || 'Aucune description fournie'}</Text>
-        </View>
-
         {/* Équipements */}
         {post.features && (
-          <View style={styles.amenitiesSection}>
+          <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Équipements</Text>
             <View style={styles.amenitiesContainer}>
+              {post.features.water && (
+                <View style={styles.amenityBadge}>
+                  <Ionicons name="water" size={16} color={COLORS.primary} />
+                  <Text style={styles.amenityText}>Eau</Text>
+                </View>
+              )}
+              
+              {post.features.electricity && (
+                <View style={styles.amenityBadge}>
+                  <Ionicons name="flash" size={16} color={COLORS.primary} />
+                  <Text style={styles.amenityText}>Électricité</Text>
+                </View>
+              )}
+              
               {post.features.ac && (
-                <View style={styles.amenityItem}>
-                  <MaterialIcons name="ac-unit" size={20} color={COLORS.primary} />
+                <View style={styles.amenityBadge}>
+                  <MaterialIcons name="ac-unit" size={16} color={COLORS.primary} />
                   <Text style={styles.amenityText}>Climatisation</Text>
                 </View>
               )}
               
               {post.features.parking && (
-                <View style={styles.amenityItem}>
-                  <MaterialIcons name="local-parking" size={20} color={COLORS.primary} />
+                <View style={styles.amenityBadge}>
+                  <MaterialIcons name="local-parking" size={16} color={COLORS.primary} />
                   <Text style={styles.amenityText}>Parking</Text>
                 </View>
               )}
               
               {post.features.security && (
-                <View style={styles.amenityItem}>
-                  <MaterialIcons name="security" size={20} color={COLORS.primary} />
+                <View style={styles.amenityBadge}>
+                  <MaterialIcons name="security" size={16} color={COLORS.primary} />
                   <Text style={styles.amenityText}>Sécurité</Text>
                 </View>
               )}
               
               {post.features.wifi && (
-                <View style={styles.amenityItem}>
-                  <MaterialIcons name="wifi" size={20} color={COLORS.primary} />
+                <View style={styles.amenityBadge}>
+                  <MaterialIcons name="wifi" size={16} color={COLORS.primary} />
                   <Text style={styles.amenityText}>Wi-Fi</Text>
                 </View>
               )}
@@ -1489,296 +2432,416 @@ const PostDetailScreen = ({ navigation }) => {
           </View>
         )}
 
-        {/* Boutons d'action */}
-        <View style={styles.actionButtons}>
-          <TouchableOpacity onPress={goToMessenger} style={styles.actionButton}>
-            <Ionicons name="chatbubble-ellipses" size={20} color={COLORS.white} />
-            <Text style={styles.actionButtonText}>Message</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity onPress={handleWhatsAppPress} style={[styles.actionButton, styles.whatsappButton]}>
-            <Ionicons name="logo-whatsapp" size={20} color={COLORS.white} />
-            <Text style={styles.actionButtonText}>WhatsApp</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity onPress={handlePhonePress} style={[styles.actionButton, styles.callButton]}>
-            <Ionicons name="call" size={20} color={COLORS.white} />
-            <Text style={styles.actionButtonText}>Appeler</Text>
-          </TouchableOpacity>
+        {/* Description */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.descriptionText}>
+            {post.description || 'Aucune description fournie'}
+          </Text>
         </View>
-      </ScrollView>
 
-      {/* Image Viewer Modal */}
-       <Modal
+        {/* Informations du propriétaire */}
+        <TouchableOpacity onPress={()=> navigation.navigate('OwnerPosts', ownerId =userId)}>
+         <OwnerInfo userId={post.userId} />
+        </TouchableOpacity>
+       
+      </Animated.ScrollView>
+
+      {/* Boutons d'action */}
+      <View style={styles.actionButtons}>
+        <TouchableOpacity 
+          style={styles.messageButton}
+          onPress={goToMessenger}
+        >
+          <Ionicons name="chatbubble-ellipses" size={20} color="white" />
+          <Text style={styles.actionButtonText}>Message</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.whatsappButton}
+          onPress={handleWhatsAppPress}
+        >
+          <Ionicons name="logo-whatsapp" size={20} color="white" />
+          <Text style={styles.actionButtonText}>WhatsApp</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.callButton}
+          onPress={handlePhonePress}
+        >
+          <Ionicons name="call" size={20} color="white" />
+          <Text style={styles.actionButtonText}>Appeler</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Modal de visualisation d'image */}
+      <Modal
         visible={imageViewerVisible}
         transparent={true}
         onRequestClose={closeImage}
+        statusBarTranslucent={true}
+        hardwareAccelerated={true}
       >
-        <SafeAreaView style={styles.imageModalContainer}>
+        <View style={styles.imageModalContainer}>
           <TouchableOpacity 
             style={styles.closeButton}
             onPress={closeImage}
+            activeOpacity={0.8}
           >
-            <Icon name="close" size={30} color="white" />
+            <Ionicons name="close" size={30} color="white" />
           </TouchableOpacity>
           
-         <GallerySwiper
-            images={imagesForViewer} // Array of { uri: 'https://...' }
-            initialIndex={currentImageIndex}
-            onSwipeToClose={closeImage}
-            style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
-          />
-        </SafeAreaView>
+          <View style={styles.imageViewerContent}>
+            <Image
+              source={{ uri: imagesForViewer[currentImageIndex]?.url }}
+              style={styles.expandedImage}
+              contentFit="contain"
+              transition={300}
+              priority="high"
+            />
+            
+            {imagesForViewer.length > 1 && (
+              <View style={styles.imageNavContainer}>
+                <TouchableOpacity 
+                  onPress={() => setCurrentImageIndex(prev => Math.max(0, prev - 1))}
+                  disabled={currentImageIndex === 0}
+                  style={styles.navButton}
+                  activeOpacity={0.6}
+                >
+                  <Ionicons 
+                    name="chevron-back" 
+                    size={30} 
+                    color={currentImageIndex === 0 ? 'rgba(255,255,255,0.3)' : 'white'} 
+                  />
+                </TouchableOpacity>
+                
+                <Text style={styles.imageCounter}>
+                  {`${currentImageIndex + 1}/${imagesForViewer.length}`}
+                </Text>
+                
+                <TouchableOpacity 
+                  onPress={() => setCurrentImageIndex(prev => Math.min(imagesForViewer.length - 1, prev + 1))}
+                  disabled={currentImageIndex === imagesForViewer.length - 1}
+                  style={styles.navButton}
+                  activeOpacity={0.6}
+                >
+                  <Ionicons 
+                    name="chevron-forward" 
+                    size={30} 
+                    color={currentImageIndex === imagesForViewer.length - 1 ? 'rgba(255,255,255,0.3)' : 'white'} 
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </View>
       </Modal>
-
-
-</SafeAreaView>
-   
+    </SafeAreaView>
   );
 };
 
+// Styles pour la galerie
+const galleryStyles = StyleSheet.create({
+  container: {
+    height: 300,
+    position: 'relative',
+    backgroundColor: '#f5f5f5'
+  },
+  mediaWrapper: {
+    width: width,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  media: {
+    width: '100%',
+    height: '100%',
+  },
+  pagination: {
+    position: 'absolute',
+    bottom: 20,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    marginHorizontal: 4
+  },
+  activeDot: {
+    backgroundColor: COLORS.primary,
+    width: 20
+  },
+  fullscreenButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 8,
+    borderRadius: 20
+  }
+});
+
+// Styles principaux
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: COLORS.white,
   },
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
+  scrollContainer: {
+    paddingBottom: 80
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.white
+  },
+  loadingText: {
+    marginTop: 10,
+    color: COLORS.gray,
+    fontSize: 16
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.white,
+    padding: 20
   },
   errorText: {
-    ...FONTS.body3,
+    fontSize: 16,
     color: COLORS.error,
+    textAlign: 'center',
+    marginBottom: 20
   },
-  carouselContainer: {
-    height: 300,
-    position: 'relative',
+  retryButton: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5
   },
-  imageSlider: {
-    height: '100%',
+  retryButtonText: {
+    color: 'white',
+    fontWeight: 'bold'
   },
-  mediaContainer: {
-    width: width,
-    height: '100%',
-    position: 'relative',
-  },
-  mainImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  videoContainer: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: COLORS.black,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  video: {
-    width: '100%',
-    height: '100%',
-  },
-  playButton: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  pagination: {
-    position: 'absolute',
-    bottom: 15,
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
-  paginationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.white,
-    margin: 5,
-    opacity: 0.5,
-  },
-  paginationDotActive: {
-    opacity: 1,
-    width: 12,
-  },
-  mediaCounter: {
-    position: 'absolute',
-    top: 15,
-    right: 15,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 15,
-  },
-  mediaCounterText: {
-    ...FONTS.body4,
-    color: COLORS.white,
-  },
-  header: {
-    padding: SIZES.padding,
+  headerContainer: {
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    borderBottomColor: '#f0f0f0'
   },
-  priceContainer: {
+  priceRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginBottom: SIZES.base,
+    marginBottom: 8
   },
-  price: {
-    ...FONTS.h2,
-    color: COLORS.primary,
+  priceText: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: COLORS.primary,
   },
   pricePeriod: {
-    ...FONTS.body4,
-    color: COLORS.gray,
-    marginLeft: SIZES.base,
-    marginBottom: 2,
+    fontSize: 16,
+    color: '#666',
+    marginLeft: 4,
+    marginBottom: 2
   },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: SIZES.base,
+    marginBottom: 8
   },
-  title: {
-    ...FONTS.h3,
-    color: COLORS.black,
+  titleText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
     flex: 1,
+    marginRight: 10
   },
   favoriteButton: {
-    padding: 5,
+    padding: 5
   },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: SIZES.base,
+    marginBottom: 4
   },
-  location: {
-    ...FONTS.body4,
-    color: COLORS.gray,
-    marginLeft: 5,
+  locationText: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 4,
+    flex: 1
   },
-  postDate: {
-    ...FONTS.body4,
-    color: COLORS.gray,
+  dateContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
-  featuresSection: {
-    padding: SIZES.padding,
+  timeText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4
+  },
+  sectionContainer: {
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    borderBottomColor: '#f0f0f0'
   },
   sectionTitle: {
-    ...FONTS.h4,
-    color: COLORS.black,
-    marginBottom: SIZES.padding,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 12
   },
   featuresGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap'
   },
   featureItem: {
-    width: '48%',
+    width: '50%',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: SIZES.padding,
+    marginBottom: 12
   },
-  featureLabel: {
-    ...FONTS.body4,
-    color: COLORS.gray,
-    marginLeft: 10,
-    flex: 1,
-  },
-  featureValue: {
-    ...FONTS.body3,
-    color: COLORS.black,
-    fontWeight: 'bold',
-  },
-  descriptionSection: {
-    padding: SIZES.padding,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
-  },
-  description: {
-    ...FONTS.body4,
-    color: COLORS.black,
-    lineHeight: 22,
-  },
-  amenitiesSection: {
-    padding: SIZES.padding,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+  featureText: {
+    fontSize: 14,
+    color: '#555',
+    marginLeft: 8
   },
   amenitiesContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
-  amenityItem: {
+  amenityBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '50%',
-    marginBottom: SIZES.base,
+    backgroundColor: '#f8f8f8',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    marginRight: 8,
+    marginBottom: 8
   },
   amenityText: {
-    ...FONTS.body4,
-    color: COLORS.black,
-    marginLeft: 8,
+    fontSize: 14,
+    color: '#555',
+    marginLeft: 6
+  },
+  descriptionText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#555'
   },
   actionButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: SIZES.padding,
-    backgroundColor: COLORS.white,
+    padding: 12,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
-  actionButton: {
+  messageButton: {
     flex: 1,
+    backgroundColor: COLORS.primary,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
-    paddingVertical: 12,
-    borderRadius: SIZES.radius,
-    marginHorizontal: 5,
+    padding: 12,
+    borderRadius: 8,
+    marginRight: 8
   },
   whatsappButton: {
+    flex: 1,
     backgroundColor: '#25D366',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+    marginRight: 8
   },
   callButton: {
+    flex: 1,
     backgroundColor: '#2ECC71',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 8
   },
   actionButtonText: {
-    ...FONTS.body4,
-    color: COLORS.white,
-    marginLeft: 8,
+    color: 'white',
     fontWeight: 'bold',
+    marginLeft: 8
   },
   imageModalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   closeButton: {
     position: 'absolute',
-    top: SIZES.padding,
-    right: SIZES.padding,
+    top: Platform.OS === 'ios' ? 50 : 20,
+    right: 20,
     zIndex: 1,
     padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20
   },
+  imageViewerContent: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  expandedImage: {
+    width: '100%',
+    height: '80%',
+  },
+  imageNavContainer: {
+    position: 'absolute',
+    bottom: 50,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20
+  },
+  navButton: {
+    padding: 15,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 30
+  },
+  imageCounter: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 10
+  }
 });
 
 export default PostDetailScreen;

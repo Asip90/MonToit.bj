@@ -287,6 +287,8 @@ const ChatScreen = () => {
       //   keyboardVerticalOffset={headerHeight}
       //   style={{ flex: 1 }}
       // >
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+
         <SafeAreaView style={styles.safeArea}>
         <View style={styles.conteneurPrincipal}>
           {selectedImageUris.length > 0 && (
@@ -337,8 +339,9 @@ const ChatScreen = () => {
             <TouchableOpacity onPress={pickImage} style={styles.attachButton} disabled={isSendingCompleteMessage || isUploading}>
               <Ionicons name="images-outline" size={28} color={COLORS.primary} />
             </TouchableOpacity>
-            
+            {/* hdh */}
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+
             <TextInput
               style={styles.textInput}
               placeholder="Votre message..."
@@ -348,8 +351,8 @@ const ChatScreen = () => {
               editable={!isSendingCompleteMessage && !isUploading}
               placeholderTextColor={COLORS.gray}
             />
+           
             </KeyboardAvoidingView>
-            
             
             <TouchableOpacity
               style={[styles.sendButton, (isSendingCompleteMessage || isUploading || (message.trim() === '' && selectedImageUris.length === 0)) && styles.sendButtonDisabled]}
@@ -379,8 +382,9 @@ const ChatScreen = () => {
       </Modal>
       
     </SafeAreaView>
-    // </KeyboardAvoidingView>
-    // </KeyboardController>
+    {/* // </KeyboardAvoidingView> */}
+    {/* // </KeyboardController> */}
+     </KeyboardAvoidingView>
   );
 };
 

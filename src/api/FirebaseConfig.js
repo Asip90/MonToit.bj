@@ -1,45 +1,136 @@
-// Import the functions you need from the SDKs you need
+// // Import the functions you need from the SDKs you need
+// import { initializeApp } from 'firebase/app';
+// import { getFirestore } from 'firebase/firestore';
+// import { getStorage } from 'firebase/storage';
+// import { getAuth } from "firebase/auth";
+
+// // TODO: Add SDKs for Firebase products that you want to use
+// // https://firebase.google.com/docs/web/setup#available-libraries
+
+// // Your web app's Firebase configuration
+// const firebaseConfig = {
+//   apiKey: "AIzaSyA3kX4ndjOTpGpKltmm6MNAJfVlImpt3es",
+//   authDomain: "chezmoiapi.firebaseapp.com",
+//   projectId: "chezmoiapi",
+//   storageBucket: "chezmoiapi.firebasestorage.app",
+//   messagingSenderId: "907776089211",
+//   appId: "1:907776089211:web:b6b0acd519d1fb644bd6de"
+// };
+
+// // Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+
+
+// //  persistance avec AsyncStorage
+
+// const auth = getAuth(app)
+// const db = getFirestore(app);
+// const storage = getStorage(app);
+// // const auth = getAuth(app); // Pas de persistence native, mais fonctionne dans Expo Go
+// // export default auth;
+
+// export  {auth , db, storage}; 
+
+// // Success! Your new application key has been created. It will only appear here once.
+
+// // keyID:
+// // 005676d32bdf3a90000000001
+// // keyName:
+// // ReactNativeApp
+// // applicationKey:
+// // K0055NOaOic2r9VnTedr2MM07kgBryA
+
+
+// ///cloudinary 
+// //name:dfpxwlhu0
+
+
+// Import des fonctions Firebase
+// import { getFirestore } from 'firebase/firestore';
+// import { getStorage } from 'firebase/storage';
+// import { initializeApp } from 'firebase/app';
+// import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// // Configuration Firebase
+// const firebaseConfig = {
+//   apiKey: "AIzaSyA3kX4ndjOTpGpKltmm6MNAJfVlImpt3es",
+//   authDomain: "chezmoiapi.firebaseapp.com",
+//   projectId: "chezmoiapi",
+//   storageBucket: "chezmoiapi.appspot.com",
+//   messagingSenderId: "907776089211",
+//   appId: "1:907776089211:web:b6b0acd519d1fb644bd6de"
+// };
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
+// const storage = getStorage(app);
+
+// const auth = getAuth(app);
+
+// // Configuration manuelle de la persistance
+// (async () => {
+//   try {
+//     await setPersistence(auth, {
+//       type: 'local',
+//       async getItem(key) {
+//         return await AsyncStorage.getItem(key);
+//       },
+//       async setItem(key, value) {
+//         return await AsyncStorage.setItem(key, value);
+//       },
+//       async removeItem(key) {
+//         return await AsyncStorage.removeItem(key);
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Persistence setup failed:', error);
+//   }
+// })();
+
+
+
+// export { auth, db, storage };
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-import { getAuth } from "firebase/auth";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyA3kX4ndjOTpGpKltmm6MNAJfVlImpt3es",
   authDomain: "chezmoiapi.firebaseapp.com",
   projectId: "chezmoiapi",
-  storageBucket: "chezmoiapi.firebasestorage.app",
+  storageBucket: "chezmoiapi.appspot.com",
   messagingSenderId: "907776089211",
   appId: "1:907776089211:web:b6b0acd519d1fb644bd6de"
 };
 
-// Initialize Firebase
+// Initialisation
 const app = initializeApp(firebaseConfig);
 
-
-//  persistance avec AsyncStorage
-
-const auth = getAuth(app)
+// Solution simplifiée et stable
+const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-// const auth = getAuth(app); // Pas de persistence native, mais fonctionne dans Expo Go
-// export default auth;
 
-export  {auth , db, storage}; 
+// Configuration manuelle de la persistance
+(async () => {
+  try {
+    await auth._setPersistence({
+      type: 'LOCAL',
+      async getItem(key) {
+        return await AsyncStorage.getItem(key);
+      },
+      async setItem(key, value) {
+        return await AsyncStorage.setItem(key, value);
+      },
+      async removeItem(key) {
+        return await AsyncStorage.removeItem(key);
+      }
+    });
+    console.log("Persistence configured successfully");
+  } catch (error) {
+    console.warn("Persistence setup warning:", error.message);
+  }
+})();
 
-// Success! Your new application key has been created. It will only appear here once.
-
-// keyID:
-// 005676d32bdf3a90000000001
-// keyName:
-// ReactNativeApp
-// applicationKey:
-// K0055NOaOic2r9VnTedr2MM07kgBryA
-
-
-///cloudinary 
-//name:dfpxwlhu0
+export { auth, db, storage };

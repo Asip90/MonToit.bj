@@ -211,6 +211,7 @@ import AuthStack from './navigation/AuthStack';
 import DrawerNavigator from './navigation/DrawerNavigator';
 import { View, ActivityIndicator, StyleSheet, StatusBar, Platform } from 'react-native';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
+import { COLORS } from './constants/Theme';
 
 const AppContent = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -237,7 +238,7 @@ const AppContent = () => {
         styles.loadingContainer,
         { paddingTop: insets.top }
       ]}>
-        <ActivityIndicator size="large" color="#2bb673" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
   }

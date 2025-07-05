@@ -252,6 +252,7 @@ import { COLORS } from '../../constants/Theme';
 
 const CategoryResultsScreen = ({ route, navigation }) => {
   const { categoryId, categoryName } = route.params;
+  // console.log(route.params)
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -326,7 +327,7 @@ const CategoryResultsScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color={COLORS.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{categoryName}</Text>
+        <Text style={styles.headerTitle}>Categorie {categoryId}</Text>
       </View>
 
       <FlatList
@@ -366,6 +367,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     borderBottomWidth: 1,
+    // backgroundColor: COLORS.primary,
     borderBottomColor: COLORS.lightGray,
   },
   backButton: {
@@ -374,7 +376,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: COLORS.text,
+    color: COLORS.primary,
   },
   contentContainer: {
     padding: 15,

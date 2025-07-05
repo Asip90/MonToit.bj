@@ -497,6 +497,7 @@ import {
   FlatList,
   StatusBar,
   Image,
+  ImageBackground,
   RefreshControl,
   ActivityIndicator,
   Dimensions
@@ -507,6 +508,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { collection, query, orderBy, limit, startAfter, getDocs } from 'firebase/firestore';
 import { db } from '../../src/api/FirebaseConfig';
 import { COLORS } from '../../constants/Theme';
+import BoostedListings from '../../components/BoostedList';
+import ZameenHeader from '../../components/ZameenHeader';
+import CategoriesScreen from '../../components/CategoriesScreen';
 
 const { width } = Dimensions.get('window');
 const HEADER_MAX_HEIGHT = 200;
@@ -514,13 +518,15 @@ const HEADER_MIN_HEIGHT = 60;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 // Catégories améliorées avec images
-const CATEGORIES = [
-  { id: 'chambre', name: 'Chambre', icon: 'single-bed', image: require('../../assets/images/chambres.jpg') },
-  { id: 'studio', name: 'Studio', icon: 'apartment', image: require('../../assets/images/studio.jpeg') },
-  { id: 'appartement', name: 'Appartement', icon: 'meeting-room', image: require('../../assets/images/appartement.jpg') },
-  { id: 'maison', name: 'Maison', icon: 'home-work', image: require('../../assets/images/maison.jpg') },
-  { id: 'terrain', name: 'Terrain', icon: 'map', image: require('../../assets/images/terrain.jpeg') },
-];
+// const CATEGORIES = [
+//   { id: 'chambre', name: 'Chambre', icon: 'single-bed', image: require('../../assets/images/chambres.jpg') },
+//   { id: 'studio', name: 'Studio', icon: 'apartment', image: require('../../assets/images/studio.jpeg') },
+//   { id: 'commercial', name: 'Commercial', icon: 'store', image: require('../../assets/images/commercial.jpeg') },
+//   { id: 'appartement', name: 'Appartement', icon: 'meeting-room', image: require('../../assets/images/appartement.jpg') },
+//   { id: 'maison', name: 'Maison', icon: 'home-work', image: require('../../assets/images/maison.jpg') },
+//   { id: 'terrain', name: 'Terrain', icon: 'map', image: require('../../assets/images/terrain.jpeg') },
+
+// ];
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -675,18 +681,30 @@ const HomeScreen = () => {
     });
   };
 
-  const renderCategoryItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.categoryCard}
-      onPress={() => handleCategoryPress(item.id)}
-    >
-      <Image source={item.image} style={styles.categoryImage} />
-      <View style={styles.categoryOverlay} />
-      <Text style={styles.categoryName}>{item.name}</Text>
-    </TouchableOpacity>
-  );
+  // const renderCategoryItem = ({ item }) => (
+  //   <TouchableOpacity 
+  //     style={styles.categoryCard}
+  //     onPress={() => handleCategoryPress(item.id)}
+  //   >
+  //     {/* <Image source={item.image} style={styles.categoryImage} /> */}
+  //     <View style={styles.categoryOverlay} />
+  //     <Text style={styles.categoryName}>{item.name}</Text>
+  //   </TouchableOpacity>
+  // );
+ 
+  const renderPostItem = ({ item }) => {
+    const isNew = () => {
+    
+    
+    if (!item.createdAt || !item.createdAt.seconds) return false;
 
-  const renderPostItem = ({ item }) => (
+    const postDate = new Date(item.createdAt.seconds * 1000); // conversion en millisecondes
+    const currentDate = new Date();
+    const diffTime = currentDate - postDate;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    return diffDays < 3; // Considérer comme nouveau si moins de 3 jours
+  };
+    return (
     <TouchableOpacity 
       style={styles.postItem}
       onPress={() => handlePostPress(item.id)}
@@ -696,17 +714,33 @@ const HomeScreen = () => {
         style={styles.postImage} 
       />
       <View style={styles.postDetails}>
-        <Text style={styles.postPrice}>{item.price.toLocaleString()} FCFA</Text>
+        <View>
+          <Text style={styles.postPrice}>{item.price.toLocaleString()} FCFA</Text>
         <Text style={styles.postTitle} numberOfLines={1}>{item.title}</Text>
         <View style={styles.postLocation}>
           <MaterialIcons name="location-on" size={14} color={COLORS.gray} />
           <Text style={styles.postLocationText}>
             {typeof item.location === 'string' ? item.location : item.location?.display_name}
           </Text>
+          
+        </View>
+        </View> 
+        
+        <View>
+           {isNew() ? (
+        <View style={styles.newBadge}>
+          <Text style={styles.newBadgeText}>Nouveau</Text>
+        </View>
+      ) : 
+      null 
+    } 
         </View>
       </View>
     </TouchableOpacity>
-  );
+  )}
+   
+    
+  // );
 
   const renderFilterItem = ({ item }) => (
     <TouchableOpacity
@@ -726,12 +760,20 @@ const HomeScreen = () => {
   );
 
   return (
-    <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
+    
+    <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top , flex : 1}]}>
       <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
-      
+     
       {/* Header animé */}
+      {/* <Animated.View style={[styles.header, { height: headerHeight }]}> */}
+       
       <Animated.View style={[styles.header, { height: headerHeight }]}>
         {/* Top bar - toujours visible */}
+         {/* <ImageBackground
+          source={require('../../assets/images/city-banner.jpeg')}
+          style={styles.headerBackground}
+          imageStyle={{ opacity: 0.9 }}
+        > */}
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.openDrawer()}>
             <Ionicons name="menu" size={26} color="white" />
@@ -785,9 +827,11 @@ const HomeScreen = () => {
                 contentContainerStyle={styles.filtersContainer}
               />
         </Animated.View>
-      </Animated.View>
+        {/* </ImageBackground> */}
+      </Animated.View> 
 
       {/* Contenu principal */}
+      <View style={{ flex: 1 }}> 
       {loading && !refreshing ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
@@ -795,6 +839,7 @@ const HomeScreen = () => {
       ) : (
         <Animated.FlatList
           data={posts}
+          style={{ flex: 1 }}  
           renderItem={renderPostItem}
           keyExtractor={item => item.id}
           contentContainerStyle={[styles.contentContainer, { paddingTop: HEADER_MAX_HEIGHT + 20 }]}
@@ -825,8 +870,12 @@ const HomeScreen = () => {
                 contentContainerStyle={styles.filtersContainer}
               /> */}
 
-              {/* Section Catégories */}
-              <View style={styles.section}>
+             
+              {/*Annonces en vedette */}
+              <BoostedListings navigation={navigation}/>
+
+               {/* Section Catégories */}
+              {/* <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Explorer par catégorie</Text>
                 <FlatList
                   horizontal
@@ -836,8 +885,7 @@ const HomeScreen = () => {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.categoriesContainer}
                 />
-              </View>
-
+              </View> */}<CategoriesScreen/>
               {/* Dernières annonces */}
               <Text style={styles.sectionTitle}>Dernières annonces</Text>
             </>
@@ -858,6 +906,7 @@ const HomeScreen = () => {
           }
         />
       )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -866,6 +915,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: COLORS.white,
+    // paddingLeft: 10,
+    // paddingRight: ,
+    //  paddingHorizontal: 15,
+    // paddingVertical: 10,
   },
   header: {
     position: 'absolute',
@@ -1010,6 +1063,20 @@ const styles = StyleSheet.create({
   },
   postDetails: {
     padding: 15,
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    alignItems: 'flex-end',
+    width: '100%',
+  },
+  newBadge: {
+    backgroundColor: COLORS.gray,
+    padding: 5,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  newBadgeText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   postPrice: {
     fontSize: 18,
@@ -1026,11 +1093,12 @@ const styles = StyleSheet.create({
   postLocation: {
     flexDirection: 'row',
     alignItems: 'center',
+    
   },
   postLocationText: {
     fontSize: 13,
     color: COLORS.gray,
-    marginLeft: 5,
+    // marginLeft: 5,
   },
   loadingContainer: {
     flex: 1,

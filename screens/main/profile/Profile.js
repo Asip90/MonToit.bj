@@ -290,7 +290,7 @@ const ProfileScreen = ({ navigation }) => {
           <MaterialIcons name="keyboard-arrow-right" size={24} color={COLORS.gray} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity onPress={()=>{ navigation.navigate('Subscription')}}  style={styles.menuItem}>
           <Ionicons name="wallet-outline" size={22} color={COLORS.black} />
           <Text style={styles.menuText}>Abonnements</Text>
           <MaterialIcons name="keyboard-arrow-right" size={24} color={COLORS.gray} />

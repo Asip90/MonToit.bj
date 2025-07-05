@@ -12,7 +12,7 @@ import HelpScreen from '../screens/drawer/HelpScreen'; // Écran d'aide
 import MyListingsScreen from '../screens/drawer/MyListingScreen'; // Écran de mes annonces
 import SettingsScreen from '../screens/drawer/SettingScreen'; // Écran de paramètres    
 import PostAdScreen from '../screens/modals/PostAdScreen'; // Écran de publication d'annonce
-import { COLORS } from '../constants/Colors'; // Importer les couleurs si nécessaire
+import { COLORS } from '../constants/Theme'; // Importer les couleurs si nécessaire
 import PostDetail from '../screens/modals/PostDetailScreen';
 import PostDetailScreen from '../screens/modals/PostDetailScreen';
 import CategoryResultsScreen from '../screens/modals/CategoryResultsScreen';
@@ -20,6 +20,12 @@ import SearchScreen from '../screens/modals/SearchScreen';
 import SearchResultsScreen from '../screens/modals/SearchResultsScreen';
 import MessageStackNavigator from './MessageStackNavigator';
 import EditListingScreen from '../screens/drawer/EditListingScreen';
+import BoostedListings from '../components/BoostedList';
+import RateOwnerScreen from '../screens/modals/RateOwnerScreen';
+import OwnerReviewsScreen from '../screens/modals/OwnerReviewScreen';
+import OwnerInfo from '../components/OwnerInfo';
+import OwnerPostsScreen from '../screens/modals/OwnerPostsScreen';
+import CategoriesScreen from '../components/CategoriesScreen';
 // Importer les écrans de navigation
 // pour les écrans de type "Stack" (comme les détails d'une propriété, etc.)            
 // Initialisation du navigateur de type "Stack"
@@ -84,6 +90,10 @@ export default function MainStack() {
         // options={{ title: 'Aide & Support' }}
       />
       <Stack.Screen
+        name="Boostedlist" 
+        component={BoostedListings}
+        />
+      <Stack.Screen
         name="CategoryResults"
         component={CategoryResultsScreen}
         options={{
@@ -120,6 +130,55 @@ export default function MainStack() {
         component={EditListingScreen} 
         options={{ headerShown: false }} 
       />
+      <Stack.Screen 
+        name="RateOwner"
+  component={RateOwnerScreen}
+  options={{
+    headerShown: false,
+    presentation: 'transparentModal', // ⬅️ Change ici !
+    contentStyle: { backgroundColor: 'transparent' }, // ⬅️ Fond transparent
+  }}
+      />
+      <Stack.Screen 
+        name="OwnerReview" 
+        component={OwnerReviewsScreen} 
+        options={{ 
+          presentation: 'modal',
+          headerShown: true ,
+          headerTitle :'avis',
+          headerTintColor: COLORS.orange,
+          
+          
+        }
+      } 
+      />
+      <Stack.Screen 
+        name="OwnerINfo" 
+        component={OwnerInfo} 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="OwnerPosts" 
+        component={OwnerPostsScreen} 
+        options={{ 
+          presentation: 'modal',
+         headerShown: false
+          
+          
+        }
+      }
+      /> 
+      <Stack.Screen 
+        name="Categogries" 
+        component={CategoriesScreen} 
+        options={{ 
+          presentation: 'modal',
+         headerShown: false
+          
+          
+        }
+      }
+      /> 
 
     </Stack.Navigator>
   );
