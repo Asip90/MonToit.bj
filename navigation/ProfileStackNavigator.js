@@ -47,6 +47,7 @@ import FavoritesScreen from '../screens/main/FavoritesScreen';
 import MyListingsScreen from '../screens/drawer/MyListingScreen';
 import PostAdScreen from '../screens/modals/PostAdScreen';
 import AuthStack from './AuthStack';
+import AppDrawerNavigator from './DrawerNavigator';
 
 const ProfileStack = createNativeStackNavigator(); // Ou createStackNavigator
 
@@ -90,6 +91,11 @@ const ProfileStackNavigator = () => (
     <ProfileStack.Screen
       name="Subscription"
       component={SubscriptionScreen}
+      options={{ headerShown: false }}
+    />
+    <ProfileStack.Screen
+      name="Drawer"
+      component={AppDrawerNavigator}
       options={{ headerShown: false }}
     />
   </ProfileStack.Navigator>

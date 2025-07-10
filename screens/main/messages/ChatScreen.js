@@ -218,6 +218,7 @@ const ChatScreen = () => {
 
   const onSendMessage = async () => {
     if ((message.trim() === '' && selectedImageUris.length === 0) || !chatId || !userData?.uid) return;
+      setMessage('');
     
     setIsSendingCompleteMessage(true);
     let uploadedImageUrlsForFirestore = [];
@@ -258,7 +259,7 @@ const ChatScreen = () => {
         ...(postTitle && { postTitle }),
       }, { merge: true });
 
-      setMessage('');
+      // setMessage('');
       setSelectedImageUris([]);
       resetUploadState();
     } catch (error) {

@@ -89,12 +89,59 @@
 
 
 // export { auth, db, storage };
+// import { initializeApp } from 'firebase/app';
+// import { getAuth } from 'firebase/auth';
+// import { getFirestore } from 'firebase/firestore';
+// import { getStorage } from 'firebase/storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyA3kX4ndjOTpGpKltmm6MNAJfVlImpt3es",
+//   authDomain: "chezmoiapi.firebaseapp.com",
+//   projectId: "chezmoiapi",
+//   storageBucket: "chezmoiapi.appspot.com",
+//   messagingSenderId: "907776089211",
+//   appId: "1:907776089211:web:b6b0acd519d1fb644bd6de"
+// };
+
+// // Initialisation
+// const app = initializeApp(firebaseConfig);
+
+// // Solution simplifiée et stable
+// const auth = getAuth(app);
+// const db = getFirestore(app);
+// const storage = getStorage(app);
+
+// // Configuration manuelle de la persistance
+// (async () => {
+//   try {
+//     await auth._setPersistence({
+//       type: 'LOCAL',
+//       async getItem(key) {
+//         return await AsyncStorage.getItem(key);
+//       },
+//       async setItem(key, value) {
+//         return await AsyncStorage.setItem(key, value);
+//       },
+//       async removeItem(key) {
+//         return await AsyncStorage.removeItem(key);
+//       }
+//     });
+//     console.log("Persistence configured successfully");
+//   } catch (error) {
+//     console.warn("Persistence setup warning:", error.message);
+//   }
+// })();
+
+// export { auth, db, storage };
+
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence } from '@firebase/auth'
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Configuration Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA3kX4ndjOTpGpKltmm6MNAJfVlImpt3es",
   authDomain: "chezmoiapi.firebaseapp.com",
@@ -104,33 +151,16 @@ const firebaseConfig = {
   appId: "1:907776089211:web:b6b0acd519d1fb644bd6de"
 };
 
-// Initialisation
+// Initialisation de l'application
 const app = initializeApp(firebaseConfig);
 
-// Solution simplifiée et stable
-const auth = getAuth(app);
+// ✅ Auth avec persistance officielle
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
+
+// Firestore et Storage
 const db = getFirestore(app);
 const storage = getStorage(app);
-
-// Configuration manuelle de la persistance
-(async () => {
-  try {
-    await auth._setPersistence({
-      type: 'LOCAL',
-      async getItem(key) {
-        return await AsyncStorage.getItem(key);
-      },
-      async setItem(key, value) {
-        return await AsyncStorage.setItem(key, value);
-      },
-      async removeItem(key) {
-        return await AsyncStorage.removeItem(key);
-      }
-    });
-    console.log("Persistence configured successfully");
-  } catch (error) {
-    console.warn("Persistence setup warning:", error.message);
-  }
-})();
 
 export { auth, db, storage };

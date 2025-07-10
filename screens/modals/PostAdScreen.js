@@ -74,7 +74,7 @@ const PostAdScreen = ({ navigation }) => {
 
   const transactionTypes = [
     { label: 'À louer', value: 'rent' },
-    { label: 'À acheter', value: 'buy' },
+    { label: 'À Vendre', value: 'buy' },
     
   ];
 
