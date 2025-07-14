@@ -32,6 +32,7 @@ export default function ZameenTabNavigator() {
       <Tab.Screen
         name="Acceuil"
         component={HomeScreen}
+        
         options={{
           tabBarIcon: ({ focused, color }) => (
             <View style={styles.iconContainer}>

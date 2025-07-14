@@ -365,6 +365,7 @@ import { useNavigation } from '@react-navigation/native';
   ------------------------------------------------------------------
 */
 const OwnerInfo = ({ userId }) => {
+  console.log('userId dans OwnerInfo:', userId);
   const navigation = useNavigation();
 
   // état des infos du propriétaire
@@ -387,8 +388,10 @@ const OwnerInfo = ({ userId }) => {
         /* ---- Doc utilisateur ---- */
         const userRef = doc(db, 'users', userId);
         const userSnap = await getDoc(userRef);
+        //  console.log('Données du propriétaire:', userSnap);
         if (!userSnap.exists()) throw new Error('Utilisateur non trouvé');
         setOwnerData(userSnap.data());
+        // console.log('Données du propriétaire:', userSnap);
 
         /* ---- Reviews ---- */
         const reviewsRef = collection(userRef, 'reviews');

@@ -114,19 +114,13 @@ const FavoritesScreen = ({ navigation }) => {
     );
   }
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
 
   return (
     <ScrollView style={styles.container}>
       {/* Header Zameen-like */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Mes Favoris</Text>
+        
         <Text style={styles.headerSubtitle}>{favorites.length} {favorites.length === 1 ? 'annonce' : 'annonces'} sauvegardée{favorites.length === 1 ? '' : 's'}</Text>
       </View>
 

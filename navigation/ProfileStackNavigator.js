@@ -93,11 +93,7 @@ const ProfileStackNavigator = () => (
       component={SubscriptionScreen}
       options={{ headerShown: false }}
     />
-    <ProfileStack.Screen
-      name="Drawer"
-      component={AppDrawerNavigator}
-      options={{ headerShown: false }}
-    />
+    
   </ProfileStack.Navigator>
 );
 

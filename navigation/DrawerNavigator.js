@@ -445,7 +445,7 @@ const CustomDrawerContent = (props) => {
           {...props} 
           itemStyle={styles.drawerItem}
         />
-        
+{/*         
         <TouchableOpacity 
           style={styles.drawerItem}
           onPress={() => props.navigation.navigate('Payments')}
@@ -472,7 +472,7 @@ const CustomDrawerContent = (props) => {
             />
           </View>
           <Text style={styles.drawerLabel}>Évaluer l'application</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       
       {/* Footer */}
@@ -484,7 +484,7 @@ const CustomDrawerContent = (props) => {
           <FontAwesome 
             name="sign-out" 
             size={isSmallScreen ? 18 : 20} 
-            color={COLORS.error} 
+            color={COLORS.error || '#e74c3c'} 
           />
           <Text style={styles.logoutText}>Déconnexion</Text>
         </TouchableOpacity>

@@ -35,6 +35,8 @@ const PostAdScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [virtualVisitePrice , setVirtualVisitePrice] =useState('')
+  const [physicalVisitePrice, setPhysicalVistitePrice]= useState('')
   const [propertyType, setPropertyType] = useState('appartement');
   const [transactionType, setTransactionType] = useState('buy');
   const [bedrooms, setBedrooms] = useState('');
@@ -267,6 +269,8 @@ const uploadToCloudinary = async (uri, isVideo = false) => {
         title,
         description,
         price: price ? parseFloat(price) : null,
+        virtualVisitePrice: virtualVisitePrice ? parseFloat(virtualVisitePrice) : null,
+        physicalVisitePrice: physicalVisitePrice ? parseFloat(physicalVisitePrice) : null,
         propertyType,
         transactionType,
         bedrooms: bedrooms ? parseInt(bedrooms) : null,
@@ -359,6 +363,28 @@ const uploadToCloudinary = async (uri, isVideo = false) => {
                 keyboardType="numeric"
                 value={price}
                 onChangeText={setPrice}
+              />
+            </View>
+            <View style={[styles.inputContainer, { width: '48%' }]}>
+              <Text style={[FONTS.body4, styles.label]}>Prix de Visite Virtuelle(facultatif)</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="0"
+                placeholderTextColor={COLORS.gray}
+                keyboardType="numeric"
+                value={virtualVisitePrice}
+                onChangeText={setVirtualVisitePrice}
+              />
+            </View>
+            <View style={[styles.inputContainer, { width: '48%' }]}>
+              <Text style={[FONTS.body4, styles.label]}>Prix de Visite Physique (facultatif)</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="0"
+                placeholderTextColor={COLORS.gray}
+                keyboardType="numeric"
+                value={physicalVisitePrice}
+                onChangeText={setPhysicalVistitePrice}
               />
             </View>
           </View>
@@ -647,12 +673,14 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  flexWrap: 'wrap',
+    flexDirection: 'row', 
+    // justifyContent: 'space-between',
     marginBottom: SIZES.base,
   },
   inputContainer: {
     marginBottom: SIZES.base,
+    marginRight:6
   },
   label: {
     color: COLORS.gray,

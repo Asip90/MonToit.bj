@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 12,
-    backgroundColor: 'red',
+    backgroundColor: COLORS.orange,
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 4,

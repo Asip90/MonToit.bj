@@ -1,1115 +1,41 @@
 
-
-// import React, { useState, useEffect, useContext } from 'react';
+// import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 // import { 
 //   View, 
 //   Text, 
-//   Image, 
 //   ScrollView, 
 //   TouchableOpacity, 
 //   StyleSheet, 
-//   Dimensions, 
-//   ActivityIndicator,
-//   Modal,
+//   Dimensions,
+//   FlatList,
 //   SafeAreaView,
 //   Alert,
-//   TextInput
-// } from 'react-native';
-// import { useRoute } from '@react-navigation/native';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import { db } from '../../src/api/FirebaseConfig';
-// import { doc, getDoc } from 'firebase/firestore';
-// import { COLORS } from '../../constants/Colors';
-// import ImageViewer from 'react-native-image-zoom-viewer';
-// import * as Linking from 'expo-linking';
-// // import { call } from 'react-native-phone-call';
-// import * as PhoneCall from 'react-native-phone-call';
-// import { UserContext } from '../../context/AuthContext';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import { isPostFavorite, toggleFavorite } from '../../services/favorites';
-// import { sendMessage, getConversation } from '../../services/messaging';
-
-// const { width } = Dimensions.get('window');
-
-// const PostDetailScreen = ({ navigation }) => {
-//   const route = useRoute();
-//   const { postId } = route.params;
-//   const [post, setPost] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [isFavorite, setIsFavorite] = useState(false);
-//   const [imageViewerVisible, setImageViewerVisible] = useState(false);
-//   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-//   const [messageModalVisible, setMessageModalVisible] = useState(false);
-//   const [messageContent, setMessageContent] = useState('');
-//   const [conversation, setConversation] = useState([]);
-//   const { userData } = useContext(UserContext);
-//   const [ownerPhoneNumber, setOwnerPhoneNumber] = useState(null); // Nouvel état pour stocker le numéro de téléphone
-
-//   useEffect(() => {
-//     const checkFavorite = async () => {
-//       const result = await isPostFavorite(userData.uid, postId);
-//       setIsFavorite(result);
-//     };
-//     checkFavorite();
-//   }, [postId, userData.uid]);
-
-//   const handleToggleFavorite = async () => {
-//     try {
-//       const result = await toggleFavorite(userData.uid, postId);
-//       setIsFavorite(result);
-//     } catch (error) {
-//       console.error("Erreur lors de l'ajout/retrait du favori:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const fetchPostAndOwner = async () => {
-//       try {
-//         // 1. Récupérer le post
-//         const postRef = doc(db, 'posts', postId);
-//         const postSnap = await getDoc(postRef);
-        
-//         if (postSnap.exists()) {
-//           const postData = { id: postSnap.id, ...postSnap.data() };
-//           setPost(postData);
-
-//           // 2. Récupérer les infos du propriétaire si le post a un userId
-//           if (postData.userId) {
-//             const userRef = doc(db, 'users', postData.userId);
-//             const userSnap = await getDoc(userRef);
-            
-//             if (userSnap.exists()) {
-//               const userData = userSnap.data();
-//               setOwnerPhoneNumber(userData.phoneNumber); // Stocker le numéro de téléphone
-//             }
-//           }
-//         }
-//       } catch (error) {
-//         console.error("Error fetching post or owner:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchPostAndOwner();
-//   }, [postId]);
-
-//   // Fonctions pour le contact
-//   const handleWhatsAppPress = () => {
-//     if (!ownerPhoneNumber) {
-//       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
-//       return;
-//     }
-
-//     const message = `Bonjour, je suis intéressé par votre annonce "${post.title}"`;
-//     const url = `https://wa.me/${ownerPhoneNumber}?text=${encodeURIComponent(message)}`;
-    
-//     Linking.openURL(url).catch(() => {
-//       Alert.alert('Erreur', "WhatsApp n'est pas installé");
-//     });
-//   };
-
-//   const handlePhonePress = () => {
-//   if (!ownerPhoneNumber) {
-//     Alert.alert('Erreur', 'Numéro de téléphone non disponible');
-//     return;
-//   }
-
-//   Linking.openURL(`tel:${ownerPhoneNumber}`).catch(() => {
-//     Alert.alert('Erreur', "Impossible de passer l'appel");
-//   });
-// };
-
-//   if (loading) {
-//     return (
-//       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color={COLORS.primary} />
-//       </View>
-//     );
-//   }
-
-//   if (!post) {
-//     return (
-//       <View style={styles.errorContainer}>
-//         <Text style={styles.errorText}>Post non trouvé</Text>
-//       </View>
-//     );
-//   }
-// //   const goToMessenger = () => {
-// //     console.log('Navigating to MessageStack with userId:', post.userId);
-// //   //   navigation.navigate('MessageStack', {
-// //   // screen: 'ChatScreen',
-// //   // params: { userId: post.userId, postId: post.id,
-// //   //     postTitle: post.title }
-// //    if (!post?.userId) {
-// //       Alert.alert('Erreur', 'Impossible de contacter le propriétaire');
-// //       return;
-// //     }
-// //     console.log('Navigating to MessageStack with receiverId:', post);
-// //    useEffect(() => {
-// //   const fetchUserName = async () => {
-// //     try {
-// //       const userDocRef = doc(db, 'users', post.userId);
-// //       const userSnap = await getDoc(userDocRef);
-// //       const username = userSnap.exists() ? userSnap.data().userName : 'Utilisateur';
-
-// //       navigation.navigate('MessageStack', {
-// //         screen: 'ChatScreen',
-// //         params: {
-// //           receiverId: post.userId,
-// //           receiverName: username,
-// //           postId: post.id,
-// //           postTitle: post.title
-// //         }
-// //       });
-// //     } catch (error) {
-// //       console.error("Erreur lors de la récupération de l'utilisateur :", error);
-// //     }
-// //   };
-
-// //   fetchUserName(); // ⬅️ appel de la fonction async
-
-// // }, []);
-
-
-// //     // const message = `Bonjour ${receiverName}, je suis intéressé par votre annonce "${post.title}"`;
-// //     // const message = `Bonjour, je suis intéressé par votre annonce "${post
-// //     // navigation.navigate('MessageStack', { 
-// //     //   screen: 'ChatScreen',
-// //     //   // userId: post.userId, // ID du propriétaire du post
-// //     //   params: {receiverId: post.userId,
-// //     //   receiverName : post.username ,// ID du propriétaire du post
-// //     //   postId: post.id,
-// //     //   postTitle: post.title}
-// //     // });
-// //   navigation.navigate('MessageStack', {
-// //   screen: 'ChatScreen',
-// //   params: {
-// //     receiverId: post.userId,
-// //     receiverName: username, // ✅ maintenant non nul
-// //     postId: post.id,
-// //     postTitle: post.title
-// //   }
-// // });
-
-
-
-// //   };
-  
-//   // --- FONCTION CORRIGÉE ---
-//   // Gère la navigation vers l'écran de chat
-// //   const goToMessenger = async () => {
-// //     // Vérification de sécurité
-// //     if (!post?.userId) {
-// //       Alert.alert("Erreur", "Impossible de contacter le propriétaire de l'annonce.");
-// //       return;
-// //     }
-// //     if (post.userId === userData?.uid) {
-// //       Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message à vous-même.");
-// //       return;
-// //     }
-// // console.log('Navigating to MessageStack with receiverId:', post.userId);
-// //     try {
-// //       // 1. Récupérer le nom de l'utilisateur à qui on veut parler
-// //       const userDocRef = doc(db, 'users', post.userId);
-// //       const userSnap = await getDoc(userDocRef);
-// //      console.log('userSnap', userSnap);
-// //       const receiverName = userSnap.exists() ? userSnap.data().userName : 'Vendeur';
-// // console.log('receiverName', receiverName);
-// //       // 2. Naviguer vers l'écran de chat avec les bons paramètres
-// //       navigation.navigate('MessageStack', {
-// //         screen: 'ChatScreen',
-// //         params: {
-// //           receiverId: post.userId,           // L'ID de la personne à qui parler
-// //           receiverName,  // Le nom à afficher dans le header
-// //         },
-// //       });
-
-// //     } catch (error) {
-// //       console.error("Erreur lors de la préparation de la messagerie :", error);
-// //       Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
-// //     }
-// //   };
-// const goToMessenger = async () => {
-//   // Vérification de sécurité
-//   if (!post?.userId) {
-//     Alert.alert("Erreur", "Impossible de contacter le propriétaire de l'annonce.");
-//     return;
-//   }
-  
-//   if (post.userId === userData?.uid) {
-//     Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message à vous-même.");
-//     return;
-//   }
-
-//   try {
-//     // 1. Récupérer le nom de l'utilisateur à qui on veut parler
-//     const userDocRef = doc(db, 'users', post.userId);
-//     const userSnap = await getDoc(userDocRef);
-    
-//     if (!userSnap.exists()) {
-//       Alert.alert("Erreur", "Utilisateur non trouvé");
-//       return;
-//     }
-
-//     const userData = userSnap.data();
-//     console.log('userData', userData);
-//     const receiverName = userData.name || userData.surame || 'Vendeur';
-
-//     // 2. Naviguer vers l'écran de chat avec les bons paramètres
-//     navigation.navigate('MessageStack', {
-//       screen: 'ChatScreen',
-//       params: {
-//         receiverId: post.userId,     // L'ID de la personne à qui parler
-//         receiverName,                // Le nom à afficher dans le header
-//         postId: post.id,             // ID de l'annonce (optionnel)
-//         postTitle: post.title        // Titre de l'annonce (optionnel)
-//       },
-//     });
-
-//   } catch (error) {
-//     console.error("Erreur lors de la préparation de la messagerie :", error);
-//     Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
-//   }
-// };
-// const imagesForViewer = post.imageUrls?.map(img => ({ url: img })) || [];
-//  const closeImage = () => {
-//     setImageViewerVisible(false);
-//   };
-//     const openImage = (index) => {
-//     setCurrentImageIndex(index);
-//     setImageViewerVisible(true);
-//   };
-
-//   return (
-//     <SafeAreaView style={styles.safeArea}>
-//       <ScrollView style={styles.container}>
-//         {/* Gallery Slider */}
-//         <ScrollView 
-//           horizontal 
-//           pagingEnabled 
-//           showsHorizontalScrollIndicator={false}
-//           style={styles.imageSlider}
-//         >
-//           {post.imageUrls?.map((img, index) => (
-//             <TouchableOpacity 
-//               key={index} 
-//               activeOpacity={0.9}
-//               onPress={() => openImage(index)}
-//             >
-//               <Image source={{ uri: img }} style={styles.mainImage} />
-//             </TouchableOpacity>
-//           ))}
-//         </ScrollView>
-
-//         {/* Price and Basic Info */}
-//         <View style={styles.header}>
-//           <Text style={styles.price}>{post.price} FCFA</Text>
-//           <Text style={styles.title}>{post.title}</Text>
-//           <View style={styles.locationContainer}>
-//             <Icon name="map-marker" size={16} color="#666" />
-//             <Text style={styles.location}>
-//               {typeof post.location === 'string' 
-//                 ? post.location 
-//                 : post.location?.display_name || 'Localisation non disponible'}
-//             </Text>
-//           </View>
-//         </View>
-
-//         {/* Features */}
-//         {post.features && post.features.length > 0 && (
-//           <View style={styles.featuresContainer}>
-//             {post.features.map((feature, index) => (
-//               <View key={index} style={styles.featureItem}>
-//                 <Icon name={feature.icon} size={24} color={COLORS.primary} />
-//                 <Text style={styles.featureText}>{feature.value}</Text>
-//               </View>
-//             ))}
-//           </View>
-//         )}
-
-//         {/* Description */}
-//         <View style={styles.section}>
-//           <Text style={styles.sectionTitle}>Description</Text>
-//           <Text style={styles.description}>{post.description}</Text>
-//         </View>
-
-//         {/* Action Buttons */}
-//         <View style={styles.actionButtons}>
-//           <TouchableOpacity onPress={handleToggleFavorite} style={styles.iconButton}>
-//             <Ionicons 
-//               name={isFavorite ? "heart" : "heart-outline"} 
-//               size={28} 
-//               color={isFavorite ? COLORS.primary : COLORS.gray} 
-//             />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={goToMessenger} style={styles.iconButton}>
-//             <Ionicons name="chatbubble" size={28} color={COLORS.primary} />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={handleWhatsAppPress} style={styles.iconButton}>
-//             <Ionicons name="logo-whatsapp" size={28} color="#25D366" />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={handlePhonePress} style={styles.iconButton}>
-//             <Ionicons name="call" size={28} color={COLORS.primary} />
-//           </TouchableOpacity>
-//         </View>
-//       </ScrollView>
-
-//       {/* Message Modal */}
-//       {/* <Modal
-//         visible={messageModalVisible}
-//         animationType="slide"
-//         onRequestClose={() => setMessageModalVisible(false)}
-//       >
-//         <SafeAreaView style={styles.modalContainer}>
-//           <View style={styles.modalHeader}>
-//             <TouchableOpacity onPress={() => setMessageModalVisible(false)}>
-//               <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
-//             </TouchableOpacity>
-//             <Text style={styles.modalTitle}>Envoyer un message</Text>
-//           </View>
-
-//           <ScrollView style={styles.messagesContainer}>
-//             {conversation.map((msg) => (
-//               <View 
-//                 key={msg.id} 
-//                 style={[
-//                   styles.messageBubble,
-//                   msg.senderId === userData.uid 
-//                     ? styles.sentMessage 
-//                     : styles.receivedMessage
-//                 ]}
-//               >
-//                 <Text style={styles.messageText}>{msg.content}</Text>
-//                 <Text style={styles.messageTime}>
-//                   {new Date(msg.timestamp?.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-//                 </Text>
-//               </View>
-//             ))}
-//           </ScrollView>
-
-//           <View style={styles.messageInputContainer}>
-//             <TextInput
-//               style={styles.messageInput}
-//               placeholder="Tapez votre message..."
-//               value={messageContent}
-//               onChangeText={setMessageContent}
-//               multiline
-//             />
-//             <TouchableOpacity 
-//               style={styles.sendButton}
-//               onPress={handleSendMessage}
-//               disabled={!messageContent.trim()}
-//             >
-//               <Ionicons 
-//                 name="send" 
-//                 size={24} 
-//                 color={messageContent.trim() ? COLORS.primary : COLORS.gray} 
-//               />
-//             </TouchableOpacity>
-//           </View>
-//         </SafeAreaView>
-//       </Modal> */}
-
-//       {/* Image Viewer Modal */}
-//       <Modal
-//         visible={imageViewerVisible}
-//         transparent={true}
-//         onRequestClose={closeImage}
-//       >
-//         <SafeAreaView style={styles.imageModalContainer}>
-//           <TouchableOpacity 
-//             style={styles.closeButton}
-//             onPress={closeImage}
-//           >
-//             <Icon name="close" size={30} color="white" />
-//           </TouchableOpacity>
-          
-//           <ImageViewer
-//             imageUrls={imagesForViewer}
-//             index={currentImageIndex}
-//             enableSwipeDown
-//             onSwipeDown={closeImage}
-//             backgroundColor="rgba(0,0,0,0.9)"
-//             renderIndicator={() => null}
-//           />
-//         </SafeAreaView>
-//       </Modal>
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   safeArea: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//   },
-//   container: {
-//     flex: 1,
-//   },
-//   loadingContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   errorContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   errorText: {
-//     color: 'red',
-//     fontSize: 16,
-//   },
-//   imageSlider: {
-//     height: 250,
-//   },
-//   mainImage: {
-//     width: width,
-//     height: 250,
-//     resizeMode: 'cover',
-//   },
-//   header: {
-//     padding: 16,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   price: {
-//     fontSize: 22,
-//     fontWeight: 'bold',
-//     color: COLORS.primary,
-//     marginBottom: 5,
-//   },
-//   title: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     marginBottom: 5,
-//   },
-//   locationContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//   },
-//   location: {
-//     color: '#666',
-//     marginLeft: 5,
-//   },
-//   featuresContainer: {
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     padding: 16,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   featureItem: {
-//     width: '50%',
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginBottom: 15,
-//   },
-//   featureText: {
-//     marginLeft: 10,
-//     fontSize: 14,
-//   },
-//   section: {
-//     padding: 16,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   sectionTitle: {
-//     fontSize: 16,
-//     fontWeight: '600',
-//     marginBottom: 10,
-//   },
-//   description: {
-//     fontSize: 14,
-//     lineHeight: 20,
-//     color: '#444',
-//   },
-//   actionButtons: {
-//     flexDirection: 'row',
-//     padding: 16,
-//     justifyContent: 'space-around',
-//   },
-//   iconButton: {
-//     padding: 10,
-//     borderRadius: 50,
-//     backgroundColor: '#f5f5f5',
-//     width: 50,
-//     height: 50,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   // Styles pour la messagerie
-//   modalContainer: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//   },
-//   modalHeader: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     padding: 15,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   modalTitle: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//     marginLeft: 15,
-//   },
-//   messagesContainer: {
-//     flex: 1,
-//     padding: 15,
-//   },
-//   messageBubble: {
-//     maxWidth: '80%',
-//     padding: 12,
-//     borderRadius: 15,
-//     marginBottom: 10,
-//   },
-//   sentMessage: {
-//     alignSelf: 'flex-end',
-//     backgroundColor: COLORS.primary,
-//   },
-//   receivedMessage: {
-//     alignSelf: 'flex-start',
-//     backgroundColor: '#f1f1f1',
-//   },
-//   messageText: {
-//     fontSize: 16,
-//     color: '#fff',
-//   },
-//   receivedMessageText: {
-//     color: '#000',
-//   },
-//   messageTime: {
-//     fontSize: 12,
-//     color: 'rgba(255,255,255,0.7)',
-//     marginTop: 5,
-//     textAlign: 'right',
-//   },
-//   receivedMessageTime: {
-//     color: 'rgba(0,0,0,0.5)',
-//   },
-//   messageInputContainer: {
-//     flexDirection: 'row',
-//     padding: 15,
-//     borderTopWidth: 1,
-//     borderTopColor: '#eee',
-//     alignItems: 'center',
-//   },
-//   messageInput: {
-//     flex: 1,
-//     borderWidth: 1,
-//     borderColor: '#ddd',
-//     borderRadius: 25,
-//     paddingHorizontal: 15,
-//     paddingVertical: 10,
-//     maxHeight: 100,
-//   },
-//   sendButton: {
-//     marginLeft: 10,
-//     padding: 10,
-//   },
-//   imageModalContainer: {
-//     flex: 1,
-//     backgroundColor: 'rgba(0,0,0,0.9)',
-//   },
-//   closeButton: {
-//     position: 'absolute',
-//     top: 10,
-//     right: 10,
-//     zIndex: 1,
-//     padding: 10,
-//   },
-// });
-
-// export default PostDetailScreen;
-
-// import React, { useState, useEffect, useContext } from 'react';
-// import { 
-//   View, 
-//   Text, 
-//   Image, 
-//   ScrollView, 
-//   TouchableOpacity, 
-//   StyleSheet, 
-//   Dimensions, 
+//   Animated,
 //   ActivityIndicator,
 //   Modal,
-//   SafeAreaView,
-//   Alert
+//   Platform
 // } from 'react-native';
 // import { useRoute } from '@react-navigation/native';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import { db } from '../../src/api/FirebaseConfig';
-// import { doc, getDoc } from 'firebase/firestore';
-// import { COLORS } from '../../constants/Colors';
-// import ImageViewer from 'react-native-image-zoom-viewer';
-// import * as Linking from 'expo-linking';
-// // import Video from 'react-native-video';
-// import { UserContext } from '../../context/AuthContext';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import { isPostFavorite, toggleFavorite } from '../../services/favorites';
-// import { Video } from 'expo-av';
-// const { width } = Dimensions.get('window');
-
-// const PostDetailScreen = ({ navigation }) => {
-//   const route = useRoute();
-//   const { postId } = route.params;
-//   const [post, setPost] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [isFavorite, setIsFavorite] = useState(false);
-//   const [imageViewerVisible, setImageViewerVisible] = useState(false);
-//   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-//   const { userData } = useContext(UserContext);
-//   const [ownerPhoneNumber, setOwnerPhoneNumber] = useState(null);
-//   const [paused, setPaused] = useState(true); // Pour contrôler la lecture des vidéos
-
-//   useEffect(() => {
-//     const checkFavorite = async () => {
-//       const result = await isPostFavorite(userData.uid, postId);
-//       setIsFavorite(result);
-//     };
-//     checkFavorite();
-//   }, [postId, userData.uid]);
-
-//   const handleToggleFavorite = async () => {
-//     try {
-//       const result = await toggleFavorite(userData.uid, postId);
-//       setIsFavorite(result);
-//     } catch (error) {
-//       console.error("Erreur lors de l'ajout/retrait du favori:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const fetchPostAndOwner = async () => {
-//       try {
-//         const postRef = doc(db, 'posts', postId);
-//         const postSnap = await getDoc(postRef);
-        
-//         if (postSnap.exists()) {
-//           const postData = { id: postSnap.id, ...postSnap.data() };
-//           setPost(postData);
-
-//           if (postData.userId) {
-//             const userRef = doc(db, 'users', postData.userId);
-//             const userSnap = await getDoc(userRef);
-            
-//             if (userSnap.exists()) {
-//               const userData = userSnap.data();
-//               setOwnerPhoneNumber(userData.phoneNumber);
-//             }
-//           }
-//         }
-//       } catch (error) {
-//         console.error("Error fetching post or owner:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchPostAndOwner();
-//   }, [postId]);
-
-//   const handleWhatsAppPress = () => {
-//     if (!ownerPhoneNumber) {
-//       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
-//       return;
-//     }
-
-//     const message = `Bonjour, je suis intéressé par votre annonce "${post.title}"`;
-//     const url = `https://wa.me/${ownerPhoneNumber}?text=${encodeURIComponent(message)}`;
-    
-//     Linking.openURL(url).catch(() => {
-//       Alert.alert('Erreur', "WhatsApp n'est pas installé");
-//     });
-//   };
-
-//   const handlePhonePress = () => {
-//     if (!ownerPhoneNumber) {
-//       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
-//       return;
-//     }
-
-//     Linking.openURL(`tel:${ownerPhoneNumber}`).catch(() => {
-//       Alert.alert('Erreur', "Impossible de passer l'appel");
-//     });
-//   };
-
-//   const goToMessenger = async () => {
-//     if (!post?.userId) {
-//       Alert.alert("Erreur", "Impossible de contacter le propriétaire de l'annonce.");
-//       return;
-//     }
-    
-//     if (post.userId === userData?.uid) {
-//       Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message à vous-même.");
-//       return;
-//     }
-
-//     try {
-//       const userDocRef = doc(db, 'users', post.userId);
-//       const userSnap = await getDoc(userDocRef);
-      
-//       if (!userSnap.exists()) {
-//         Alert.alert("Erreur", "Utilisateur non trouvé");
-//         return;
-//       }
-
-//       const userData = userSnap.data();
-//       const receiverName = userData.name || userData.surname || 'Vendeur';
-
-//       navigation.navigate('MessageStack', {
-//         screen: 'ChatScreen',
-//         params: {
-//           receiverId: post.userId,
-//           receiverName,
-//           postId: post.id,
-//           postTitle: post.title
-//         },
-//       });
-//     } catch (error) {
-//       console.error("Erreur lors de la préparation de la messagerie :", error);
-//       Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
-//     }
-//   };
-
-//   const openImage = (index) => {
-//     setCurrentImageIndex(index);
-//     setImageViewerVisible(true);
-//   };
-
-//   const closeImage = () => {
-//     setImageViewerVisible(false);
-//   };
-
-//   const [shouldPlay, setShouldPlay] = useState(false);  // Remplace `paused`
-
-// const toggleVideoPlayback = () => {
-//   setShouldPlay(!shouldPlay);
-// };
-
-//   if (loading) {
-//     return (
-//       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color={COLORS.primary} />
-//       </View>
-//     );
-//   }
-
-//   if (!post) {
-//     return (
-//       <View style={styles.errorContainer}>
-//         <Text style={styles.errorText}>Post non trouvé</Text>
-//       </View>
-//     );
-//   }
-
-//   // Combiner images et vidéos pour le slider
-//   const mediaItems = [
-//   ...(post.imageUrls?.map(url => ({ type: 'image', url })) || []),
-//   ...(post.videoUrls?.map(url => ({ type: 'video', url })) || [])
-// ];
-
-//   // Préparer les données pour l'image viewer (uniquement les images)
-//   const imagesForViewer = post.imageUrls?.map(img => ({ url: img })) || [];
-
-//   return (
-//     <SafeAreaView style={styles.safeArea}>
-//       <ScrollView style={styles.container}>
-//         {/* Gallery Slider */}
-//         <ScrollView 
-//           horizontal 
-//           pagingEnabled 
-//           showsHorizontalScrollIndicator={false}
-//           style={styles.imageSlider}
-//         >
-//           {mediaItems.map((media, index) => (
-//             <TouchableOpacity 
-//               key={index} 
-//               activeOpacity={0.9}
-//               onPress={() => media.type === 'image' ? openImage(index) : toggleVideoPlayback()}
-//               style={styles.mediaContainer}
-//             >
-//               {media.type === 'image' ? (
-//                 <Image source={{ uri: media.url }} style={styles.mainImage} />
-//               ) : (
-//                 <View style={styles.videoContainer}>
-//                   <Video
-//                       source={{ uri: media.url }}
-//                       style={styles.video}
-//                       shouldPlay={!paused}  // Remplace `paused` (inversé)
-//                       resizeMode="cover"
-//                       isLooping
-//                       useNativeControls  // Affiche les contrôles natifs (play/pause, etc.)
-//                     />
-//                                       {paused && (
-//                     <View style={styles.playButton}>
-//                       <Icon name="play-circle" size={50} color="rgba(255,255,255,0.8)" />
-//                     </View>
-//                   )}
-//                 </View>
-//               )}
-//             </TouchableOpacity>
-//           ))}
-//         </ScrollView>
-
-//         {/* Price and Basic Info */}
-//         <View style={styles.header}>
-//           <Text style={styles.price}>{post.price} FCFA</Text>
-//           <Text style={styles.title}>{post.title}</Text>
-//           <View style={styles.locationContainer}>
-//             <Icon name="map-marker" size={16} color="#666" />
-//             <Text style={styles.location}>
-//               {typeof post.location === 'string' 
-//                 ? post.location 
-//                 : post.location?.display_name || 'Localisation non disponible'}
-//             </Text>
-//           </View>
-//         </View>
-
-//         {/* Features */}
-//         {post.features && post.features.length > 0 && (
-//           <View style={styles.featuresContainer}>
-//             {post.features.map((feature, index) => (
-//               <View key={index} style={styles.featureItem}>
-//                 <Icon name={feature.icon} size={24} color={COLORS.primary} />
-//                 <Text style={styles.featureText}>{feature.value}</Text>
-//               </View>
-//             ))}
-//           </View>
-//         )}
-
-//         {/* Description */}
-//         <View style={styles.section}>
-//           <Text style={styles.sectionTitle}>Description</Text>
-//           <Text style={styles.description}>{post.description}</Text>
-//         </View>
-
-//         {/* Action Buttons */}
-//         <View style={styles.actionButtons}>
-//           <TouchableOpacity onPress={handleToggleFavorite} style={styles.iconButton}>
-//             <Ionicons 
-//               name={isFavorite ? "heart" : "heart-outline"} 
-//               size={28} 
-//               color={isFavorite ? COLORS.primary : COLORS.gray} 
-//             />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={goToMessenger} style={styles.iconButton}>
-//             <Ionicons name="chatbubble" size={28} color={COLORS.primary} />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={handleWhatsAppPress} style={styles.iconButton}>
-//             <Ionicons name="logo-whatsapp" size={28} color="#25D366" />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={handlePhonePress} style={styles.iconButton}>
-//             <Ionicons name="call" size={28} color={COLORS.primary} />
-//           </TouchableOpacity>
-//         </View>
-//       </ScrollView>
-
-//       {/* Image Viewer Modal */}
-//       <Modal
-//         visible={imageViewerVisible}
-//         transparent={true}
-//         onRequestClose={closeImage}
-//       >
-//         <SafeAreaView style={styles.imageModalContainer}>
-//           <TouchableOpacity 
-//             style={styles.closeButton}
-//             onPress={closeImage}
-//           >
-//             <Icon name="close" size={30} color="white" />
-//           </TouchableOpacity>
-          
-//           <ImageViewer
-//             imageUrls={imagesForViewer}
-//             index={currentImageIndex}
-//             enableSwipeDown
-//             onSwipeDown={closeImage}
-//             backgroundColor="rgba(0,0,0,0.9)"
-//             renderIndicator={() => null}
-//           />
-//         </SafeAreaView>
-//       </Modal>
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   safeArea: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//   },
-//   container: {
-//     flex: 1,
-//   },
-//   loadingContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   errorContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   errorText: {
-//     color: 'red',
-//     fontSize: 16,
-//   },
-//   imageSlider: {
-//     height: 250,
-//   },
-//   mediaContainer: {
-//     width: width,
-//     height: 250,
-//     position: 'relative',
-//   },
-//   mainImage: {
-//     width: '100%',
-//     height: '100%',
-//     resizeMode: 'cover',
-//   },
-//   videoContainer: {
-//     width: '100%',
-//     height: '100%',
-//     backgroundColor: 'black',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   video: {
-//     width: '100%',
-//     height: '100%',
-//   },
-//   playButton: {
-//     position: 'absolute',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   header: {
-//     padding: 16,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   price: {
-//     fontSize: 22,
-//     fontWeight: 'bold',
-//     color: COLORS.primary,
-//     marginBottom: 5,
-//   },
-//   title: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     marginBottom: 5,
-//   },
-//   locationContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//   },
-//   location: {
-//     color: '#666',
-//     marginLeft: 5,
-//   },
-//   featuresContainer: {
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     padding: 16,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   featureItem: {
-//     width: '50%',
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginBottom: 15,
-//   },
-//   featureText: {
-//     marginLeft: 10,
-//     fontSize: 14,
-//   },
-//   section: {
-//     padding: 16,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   sectionTitle: {
-//     fontSize: 16,
-//     fontWeight: '600',
-//     marginBottom: 10,
-//   },
-//   description: {
-//     fontSize: 14,
-//     lineHeight: 20,
-//     color: '#444',
-//   },
-//   actionButtons: {
-//     flexDirection: 'row',
-//     padding: 16,
-//     justifyContent: 'space-around',
-//   },
-//   iconButton: {
-//     padding: 10,
-//     borderRadius: 50,
-//     backgroundColor: '#f5f5f5',
-//     width: 50,
-//     height: 50,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   imageModalContainer: {
-//     flex: 1,
-//     backgroundColor: 'rgba(0,0,0,0.9)',
-//   },
-//   closeButton: {
-//     position: 'absolute',
-//     top: 10,
-//     right: 10,
-//     zIndex: 1,
-//     padding: 10,
-//   },
-// });
-
-// export default PostDetailScreen;
-
-// import React, { useState, useEffect, useContext } from 'react';
-// import { 
-//   View, 
-//   Text, 
- 
-//   ScrollView, 
-//   TouchableOpacity, 
-//   StyleSheet, 
-//   Dimensions, 
-//   ActivityIndicator,
-//   Modal,
-//   SafeAreaView,
-//   Alert
-// } from 'react-native';
-// import { useRoute } from '@react-navigation/native';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import { db } from '../../src/api/FirebaseConfig';
-// import { doc, getDoc } from 'firebase/firestore';
-// import { COLORS, SIZES, FONTS } from '../../constants/Theme'; // Modifié pour utiliser le thème
-// import GallerySwiper from 'react-native-gallery-swiper';
-// import * as Linking from 'expo-linking';
-// import { UserContext } from '../../context/AuthContext';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import { isPostFavorite, toggleFavorite } from '../../services/favorites';
 // import { Video } from 'expo-av';
 // import { Image } from 'expo-image';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
 // import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+// import { doc, getDoc } from 'firebase/firestore';
+// import * as Linking from 'expo-linking';
+// import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePickerModal from "react-native-modal-datetime-picker";
+
+
+// // Importations locales
+// import { db } from '../../src/api/FirebaseConfig';
+// import { COLORS, SIZES } from '../../constants/Theme';
+// import { UserContext } from '../../context/AuthContext';
+// import { isPostFavorite, toggleFavorite } from '../../services/favorites';
 // import SecureWatermarkedImage from '../../components/SecureWatermarkedImage';
 // import OwnerInfo from '../../components/OwnerInfo';
 
+// const { width, height } = Dimensions.get('window');
 
-// const { width } = Dimensions.get('window');
 
 // const PostDetailScreen = ({ navigation }) => {
 //   const route = useRoute();
@@ -1121,61 +47,58 @@
 //   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 //   const { userData } = useContext(UserContext);
 //   const [ownerPhoneNumber, setOwnerPhoneNumber] = useState(null);
-//   const [paused, setPaused] = useState(true);
 //   const [activeSlide, setActiveSlide] = useState(0);
+//   const fadeAnim = useRef(new Animated.Value(0)).current;
+//   const flatListRef = useRef(null);
 
-//   // Fonction pour calculer le temps écoulé depuis la création du post
-//   // const calculateTimeSince = (date) => {
-//   //   const now = new Date();
-//   //   const postDate = new Date(date);
-//   //   const diff = now - postDate;
-    
-//   //   const minutes = Math.floor(diff / (1000 * 60));
-//   //   if (minutes < 60) return `${minutes} min`;
-    
-//   //   const hours = Math.floor(minutes / 60);
-//   //   if (hours < 24) return `${hours} h`;
-    
-//   //   const days = Math.floor(hours / 24);
-//   //   if (days < 30) return `${days} j`;
-    
-//   //   const months = Math.floor(days / 30);
-//   //   return `${months} mois`;
-//   // };
-//   const calculateTimeSince = (firestoreTimestamp) => {
-//   // Vérifie si c'est un objet Firestore Timestamp
-//   if (firestoreTimestamp?.seconds && firestoreTimestamp?.nanoseconds) {
-//     // Convertit en millisecondes (seconds * 1000 + nanoseconds arrondis)
-//     const timestampMs = firestoreTimestamp.seconds * 1000 + 
-//                        Math.round(firestoreTimestamp.nanoseconds / 1000000);
-//     const postDate = new Date(timestampMs);
-//     const now = new Date();
-//     const diffInMs = now - postDate;
+//   /// constante des bouton
+//   const [modalVisible, setModalVisible] = useState(false);
+//   const [visitType, setVisitType] = useState(null);
+//   const [date, setDate] = useState(new Date());
+//   const [showDatePicker, setShowDatePicker] = useState(false);
+//   const [contactMethod, setContactMethod] = useState('')
+// const [contactPromptVisible, setContactPromptVisible] = useState(false);
 
-//     // Calculs des durées
-//     const seconds = Math.floor(diffInMs / 1000);
-//     if (seconds < 60) return `${seconds} sec`;
 
-//     const minutes = Math.floor(seconds / 60);
-//     if (minutes < 60) return `${minutes} min`;
-
-//     const hours = Math.floor(minutes / 60);
-//     if (hours < 24) return `${hours} h`;
-
-//     const days = Math.floor(hours / 24);
-//     if (days < 30) return `${days} j`;
-
-//     const months = Math.floor(days / 30);
-//     if (months < 12) return `${months} mois`;
-
-//     const years = Math.floor(months / 12);
-//     return `${years} an${years > 1 ? 's' : ''}`;
-//   }
-
-//   return "Date invalide";
-// };
-
+//   // Chargement des données
 //   useEffect(() => {
+//     Animated.timing(fadeAnim, {
+//       toValue: 1,
+//       duration: 500,
+//       useNativeDriver: true,
+//     }).start();
+
+//     const fetchData = async () => {
+//       try {
+//         const postRef = doc(db, 'posts', postId);
+//         const postSnap = await getDoc(postRef);
+        
+//         if (postSnap.exists()) {
+//           const postData = { id: postSnap.id, ...postSnap.data() };
+//           setPost(postData);
+
+//           if (postData.userId) {
+//             const userRef = doc(db, 'users', postData.userId);
+//             const userSnap = await getDoc(userRef);
+//             if (userSnap.exists()) {
+//               setOwnerPhoneNumber(userSnap.data().phoneNumber);
+//             }
+//           }
+//         } else {
+//           Alert.alert("Erreur", "Annonce introuvable");
+//           navigation.goBack();
+//         }
+//       } catch (error) {
+//         console.error("Error fetching data:", error);
+//         Alert.alert("Erreur", "Impossible de charger l'annonce");
+//         navigation.goBack();
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+
 //     const checkFavorite = async () => {
 //       if (userData?.uid) {
 //         const result = await isPostFavorite(userData.uid, postId);
@@ -1185,6 +108,57 @@
 //     checkFavorite();
 //   }, [postId, userData?.uid]);
 
+//   // Médias de l'annonce
+//    // Vérification des URLs
+//   const isValidUrl = (url) => {
+//     try {
+//       new URL(url);
+//       return true;
+//     } catch {
+//       return false;
+//     }
+//   };
+//   const mediaItems = post 
+//     ? [
+//         ...(post.imageUrls?.filter(url => isValidUrl(url)).map(url => ({ type: 'image', url })) || []),
+//         ...(post.videoUrls?.filter(url => isValidUrl(url)).map(url => ({ type: 'video', url })) || [])
+//       ]
+//     : [];
+
+//   const imagesForViewer = mediaItems.filter(item => item.type === 'image');
+
+ 
+
+//   // Calcul du temps depuis la publication
+//   const calculateTimeSince = useCallback((firestoreTimestamp) => {
+//     if (firestoreTimestamp?.seconds) {
+//       const timestampMs = firestoreTimestamp.seconds * 1000;
+//       const postDate = new Date(timestampMs);
+//       const now = new Date();
+//       const diffInMs = now - postDate;
+
+//       const seconds = Math.floor(diffInMs / 1000);
+//       if (seconds < 60) return `${seconds} sec`;
+
+//       const minutes = Math.floor(seconds / 60);
+//       if (minutes < 60) return `${minutes} min`;
+
+//       const hours = Math.floor(minutes / 60);
+//       if (hours < 24) return `${hours} h`;
+
+//       const days = Math.floor(hours / 24);
+//       if (days < 30) return `${days} j`;
+
+//       const months = Math.floor(days / 30);
+//       if (months < 12) return `${months} mois`;
+
+//       const years = Math.floor(months / 12);
+//       return `${years} an${years > 1 ? 's' : ''}`;
+//     }
+//     return "Date invalide";
+//   }, []);
+
+//   // Gestion des favoris
 //   const handleToggleFavorite = async () => {
 //     try {
 //       if (userData?.uid) {
@@ -1192,88 +166,43 @@
 //         setIsFavorite(result);
 //       }
 //     } catch (error) {
-//       console.error("Erreur lors de l'ajout/retrait du favori:", error);
+//       console.error("Erreur favori:", error);
+//       Alert.alert("Erreur", "Impossible de modifier les favoris");
 //     }
 //   };
 
-//   useEffect(() => {
-//     const fetchPostAndOwner = async () => {
-//       try {
-//         const postRef = doc(db, 'posts', postId);
-//         const postSnap = await getDoc(postRef);
-        
-//         if (postSnap.exists()) {
-//           const postData = { id: postSnap.id, ...postSnap.data() };
-//           setPost(postData);
-
-//           if (postData.userId) {
-//             const userRef = doc(db, 'users', postData.userId);
-//             const userSnap = await getDoc(userRef);
-            
-//             if (userSnap.exists()) {
-//               const userData = userSnap.data();
-//               setOwnerPhoneNumber(userData.phoneNumber);
-//             }
-//           }
-//         }
-//       } catch (error) {
-//         console.error("Error fetching post or owner:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchPostAndOwner();
-//   }, [postId]);
-
+//   // Contact par WhatsApp
 //   const handleWhatsAppPress = () => {
 //     if (!ownerPhoneNumber) {
 //       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
 //       return;
 //     }
-
 //     const message = `Bonjour, je suis intéressé par votre annonce "${post.title}"`;
-//     const url = `https://wa.me/${ownerPhoneNumber}?text=${encodeURIComponent(message)}`;
-    
-//     Linking.openURL(url).catch(() => {
-//       Alert.alert('Erreur', "WhatsApp n'est pas installé");
-//     });
+//     Linking.openURL(`https://wa.me/${ownerPhoneNumber}?text=${encodeURIComponent(message)}`)
+//       .catch(() => Alert.alert('Erreur', "WhatsApp n'est pas installé"));
 //   };
 
+//   // Contact par téléphone
 //   const handlePhonePress = () => {
 //     if (!ownerPhoneNumber) {
 //       Alert.alert('Erreur', 'Numéro de téléphone non disponible');
 //       return;
 //     }
-
-//     Linking.openURL(`tel:${ownerPhoneNumber}`).catch(() => {
-//       Alert.alert('Erreur', "Impossible de passer l'appel");
-//     });
+//     Linking.openURL(`tel:${ownerPhoneNumber}`)
+//       .catch(() => Alert.alert('Erreur', "Impossible de passer l'appel"));
 //   };
 
+//   // Messagerie interne
 //   const goToMessenger = async () => {
-//     if (!post?.userId) {
-//       Alert.alert("Erreur", "Impossible de contacter le propriétaire de l'annonce.");
-//       return;
-//     }
-    
-//     if (post.userId === userData?.uid) {
-//       Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message à vous-même.");
-//       return;
-//     }
+//     if (!post?.userId) return Alert.alert("Erreur", "Propriétaire introuvable");
+//     if (post.userId === userData?.uid) return Alert.alert("Action impossible", "Vous ne pouvez pas vous envoyer un message");
 
 //     try {
 //       const userDocRef = doc(db, 'users', post.userId);
 //       const userSnap = await getDoc(userDocRef);
-      
-//       if (!userSnap.exists()) {
-//         Alert.alert("Erreur", "Utilisateur non trouvé");
-//         return;
-//       }
+//       if (!userSnap.exists()) return Alert.alert("Erreur", "Utilisateur non trouvé");
 
-//       const userData = userSnap.data();
-//       const receiverName = userData.name || userData.surname || 'Vendeur';
-
+//       const receiverName = userSnap.data().name || userSnap.data().surname || 'Vendeur';
 //       navigation.navigate('MessageStack', {
 //         screen: 'ChatScreen',
 //         params: {
@@ -1284,306 +213,450 @@
 //         },
 //       });
 //     } catch (error) {
-//       console.error("Erreur lors de la préparation de la messagerie :", error);
-//       Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
+//       console.error("Erreur messagerie:", error);
+//       Alert.alert("Erreur", "Une erreur est survenue");
 //     }
 //   };
 
-//   const openImage = (index) => {
-//     setCurrentImageIndex(index);
-//     setImageViewerVisible(true);
-//   };
-
-//   const closeImage = () => {
-//     setImageViewerVisible(false);
-//   };
-
-//   const toggleVideoPlayback = () => {
-//     setPaused(!paused);
-//   };
-
-//   const onScroll = (event) => {
-//     const slide = Math.round(event.nativeEvent.contentOffset.x / width);
+//   // Gestion du carousel
+//   const onScroll = useCallback(({ nativeEvent }) => {
+//     const slide = Math.round(nativeEvent.contentOffset.x / width);
 //     if (slide !== activeSlide) {
 //       setActiveSlide(slide);
-//       setPaused(true); // Pause video when sliding
 //     }
-//   };
+//   }, [activeSlide]);
 
+//   // Ouverture d'une image
+//   const openImage = useCallback((index) => {
+//     setCurrentImageIndex(index);
+//     setImageViewerVisible(true);
+//   }, []);
+
+//   // Fermeture de la modal
+//   const closeImage = useCallback(() => {
+//     setImageViewerVisible(false);
+//   }, []);
+
+//   // Composant d'item pour le carousel
+//   const GalleryItem = useCallback(({ item, index }) => (
+//     <TouchableOpacity 
+//       activeOpacity={0.9} 
+//       onPress={() => item.type === 'image' ? openImage(index) : null}
+//       style={galleryStyles.mediaWrapper}
+//     >
+//       {item.type === 'image' ? (
+//         <SecureWatermarkedImage 
+//           source={{ uri: item.url }}
+//           style={galleryStyles.media}
+//           watermarkSource={require('../../assets/images/filigrane.png')}
+//           contentFit="cover"
+//           transition={300}
+//         />
+//       ) : (
+//         <Video
+//           source={{ uri: item.url }}
+//           style={galleryStyles.media}
+//           resizeMode="cover"
+//           shouldPlay={false}
+//           useNativeControls
+//         />
+//       )}
+//     </TouchableOpacity>
+//   ), [openImage]);
+
+//   // Affichage pendant le chargement
 //   if (loading) {
 //     return (
 //       <View style={styles.loadingContainer}>
 //         <ActivityIndicator size="large" color={COLORS.primary} />
+//         <Text style={styles.loadingText}>Chargement de l'annonce...</Text>
 //       </View>
 //     );
 //   }
 
+//   // Si pas de données
 //   if (!post) {
 //     return (
 //       <View style={styles.errorContainer}>
-//         <Text style={styles.errorText}>Post non trouvé</Text>
+//         <Text style={styles.errorText}>Impossible de charger l'annonce</Text>
+//         <TouchableOpacity 
+//           style={styles.retryButton}
+//           onPress={() => navigation.goBack()}
+//         >
+//           <Text style={styles.retryButtonText}>Retour</Text>
+//         </TouchableOpacity>
 //       </View>
 //     );
 //   }
+// ;
 
-//   // Combiner images et vidéos pour le slider
-//  const mediaItems = [
-//   ...(post.imageUrls?.map(url => ({ type: 'image', url })) || []),
-//   ...(post.videoUrls?.map(url => ({ type: 'video', url })) || [])
-// ];
+//   // Nouveaux boutons principaux
+//   const ActionButtons = () => (
+//     <View style={newStyles.actionBar}>
+//       <TouchableOpacity 
+//         style={[newStyles.actionButton, newStyles.reserveButton]}
+//         onPress={() => Alert.alert('Réservation', 'Chambre réservée avec succès!')}
+//       >
+//         <Ionicons name="bookmark" size={20} color="white" />
+//         <Text style={newStyles.buttonText}>Réserver</Text>
+//       </TouchableOpacity>
 
+//       <TouchableOpacity 
+//         style={[newStyles.actionButton, newStyles.visitButton]}
+//         onPress={() => setModalVisible(true)}
+//       >
+//         <Ionicons name="calendar" size={20} color="white" />
+//         <Text style={newStyles.buttonText}>Visiter</Text>
+//       </TouchableOpacity>
 
-//   // Préparer les données pour l'image viewer (uniquement les images)
-//   const imagesForViewer = post.imageUrls?.map(img => ({ url: img })) || [];
-// // propietaire  info
+//       <TouchableOpacity 
+//         style={[newStyles.actionButton, newStyles.contactButton]}
+//         onPress={goToMessenger} // Utilise ta fonction existante
+//       >
+//         <Ionicons name="chatbubbles" size={20} color="white" />
+//         <Text style={newStyles.buttonText}>Contacter</Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
 
+//   // Modale de visite
+//   const VisitModal = () => (
+//     <Modal
+//       animationType="slide"
+//       transparent={true}
+//       visible={modalVisible}
+//       onRequestClose={() => setModalVisible(false)}
+//     >
+//       <View style={newStyles.modalContainer}>
+//         <View style={newStyles.modalContent}>
+//           <Text style={newStyles.modalTitle}>Type de visite</Text>
+          
+//           {/* Option Visite Virtuelle */}
+//           <TouchableOpacity 
+//             style={newStyles.optionButton}
+//             onPress={() => {
+//               setVisitType('virtual');
+//               setShowDatePicker(true);
+//             }}
+//           >
+//             <Ionicons name="videocam" size={24} color={COLORS.primary} />
+//             <View style={newStyles.optionTextContainer}>
+//               <Text style={newStyles.optionTitle}>Visite Virtuelle</Text>
+//               <Text style={newStyles.optionSubtitle}>Appel vidéo avec le propriétaire</Text>
+//             </View>
+//           </TouchableOpacity>
 
-// // const OwnerInfo = ({ userId }) => {
-// //   const [ownerName, setOwnerName] = useState('');
-// //   const [loading, setLoading] = useState(true);
+//           {/* Option Visite Présentielle */}
+//           <TouchableOpacity 
+//             style={newStyles.optionButton}
+//             onPress={() => {
+//               setVisitType('physical');
+//               setShowDatePicker(true);
+//             }}
+//           >
+//             <Ionicons name="walk" size={24} color={COLORS.primary} />
+//             <View style={newStyles.optionTextContainer}>
+//               <Text style={newStyles.optionTitle}>Visite sur Place</Text>
+//               <Text style={newStyles.optionSubtitle}>RDV physique au logement</Text>
+//             </View>
+//           </TouchableOpacity>
 
-// //   useEffect(() => {
-// //     const fetchOwner = async () => {
-// //       try {
-// //         const userDocRef = doc(db, 'users', userId);
-// //         const userSnap = await getDoc(userDocRef);
+//           <TouchableOpacity 
+//             style={newStyles.closeButton}
+//             onPress={() => setModalVisible(false)}
+//           >
+//             <Text style={newStyles.closeButtonText}>Annuler</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+//     </Modal>
+//   );
 
-// //         if (!userSnap.exists()) {
-// //           Alert.alert("Erreur", "Utilisateur non trouvé");
-// //           return;
-// //         }
+//   // Date Picker
+//   const renderDatePicker = () => (
+//     // <DateTimePicker
+//     //   value={date}
+//     //   mode="datetime"
+//     //   display={Platform.OS === 'ios' ? 'spinner' : 'default'}
 
-// //         const userData = userSnap.data();
-// //         setOwnerName(userData.name || 'Nom non disponible');
-// //       } catch (error) {
-// //         console.error('Erreur lors du chargement du propriétaire:', error);
-// //       } finally {
-// //         setLoading(false);
-// //       }
-// //     };
+//     //   onChange={(event, selectedDate) => {
+//     //     setShowDatePicker(false);
+//     //     if (selectedDate) {
+//     //       setDate(selectedDate);
+//     //       showContactMethodInput();
+//     //     }
+//     //   }
+//     // }
+//     // />
+//     <DateTimePickerModal
+//   isVisible={showDatePicker}
+//   mode="datetime"
+//   onConfirm={(selectedDate) => {
+//     setShowDatePicker(false);
+//     setDate(selectedDate);
+//     if (visitType === 'virtual') {
+//   setContactPromptVisible(true); // on affichera la modale
+// } else {
+//   confirmVisit(); // directe pour visite sur place
+// }
+//   }}
+//   onCancel={() => setShowDatePicker(false)}
+// />
+//   );
+// const ContactPromptModal = () => (
+//   <Modal
+//     visible={contactPromptVisible}
+//     transparent={true}
+//     animationType="slide"
+//     onRequestClose={() => setContactPromptVisible(false)}
+//   >
+//     <View style={newStyles.modalContainer}>
+//       <View style={newStyles.modalContent}>
+//         <Text style={newStyles.modalTitle}>Contact pour la visite virtuelle</Text>
 
-// //     fetchOwner();
-// //   }, [userId]);
+//         <Text style={{ marginBottom: 8, fontSize: 14, color: '#666' }}>
+//           Entrez votre WhatsApp ou email :
+//         </Text>
 
-// //   if (loading) {
-// //     return <ActivityIndicator size="small" color="gray" />;
-// //   }
+//         <TextInput
+//           placeholder="ex: +229 97 00 00 00 ou email@exemple.com"
+//           value={contactMethod}
+//           onChangeText={setContactMethod}
+//           style={{
+//             borderWidth: 1,
+//             borderColor: '#ccc',
+//             borderRadius: 8,
+//             padding: 10,
+//             marginBottom: 16,
+//           }}
+//         />
 
-// //   return (
-// //     <View>
-// //       <Text>Propriétaire : {ownerName}</Text>
-// //     </View>
-// //   );
-// // };
+//         <TouchableOpacity
+//           style={[newStyles.actionButton, { backgroundColor: COLORS.primary }]}
+//           onPress={() => {
+//             setContactPromptVisible(false);
+//             confirmVisit();
+//           }}
+//         >
+//           <Text style={{ color: 'white', fontWeight: 'bold' }}>Confirmer</Text>
+//         </TouchableOpacity>
 
-// // export default OwnerInfo;
+//         <TouchableOpacity
+//           style={newStyles.closeButton}
+//           onPress={() => setContactPromptVisible(false)}
+//         >
+//           <Text style={newStyles.closeButtonText}>Annuler</Text>
+//         </TouchableOpacity>
+//       </View>
+//     </View>
+//   </Modal>
+// );
+
+//   // Formulaire de contact
+//   const showContactMethodInput = () => (
+//     Alert.prompt(
+//       visitType === 'virtual' ? 'Contact pour la visite virtuelle' : 'Confirmation',
+//       visitType === 'virtual' 
+//         ? 'Entrez votre WhatsApp ou email pour la confirmation:'
+//         : 'Un rappel sera envoyé à votre numéro associé.',
+//       [
+//         {
+//           text: 'Annuler',
+//           style: 'cancel',
+//         },
+//         {
+//           text: 'Confirmer',
+//           onPress: (text) => {
+//             setContactMethod(text || '');
+//             confirmVisit();
+//           },
+//         },
+//       ],
+//       'plain-text'
+//     )
+//   );
+
+//   // Confirmation finale
+//   const confirmVisit = () => {
+//     Alert.alert(
+//       'Visite confirmée!',
+//       `Votre visite ${visitType === 'virtual' ? 'virtuelle' : 'sur place'} est prévue pour le ${date.toLocaleString()}`,
+//       [{ text: 'OK', onPress: () => setModalVisible(false) }]
+//     );
+//     // Ici: Envoyer la notification au propriétaire via Firebase
+//   };
 
 //   return (
 //     <SafeAreaView style={styles.safeArea}>
-//       <ScrollView style={styles.container}>
-//         {/* Gallery Slider avec indicateur */}
-//         <View style={styles.carouselContainer}>
-//           <ScrollView 
-//             horizontal 
-//             pagingEnabled 
+//       <Animated.ScrollView 
+//         style={{ opacity: fadeAnim }}
+//         contentContainerStyle={styles.scrollContainer}
+//         showsVerticalScrollIndicator={false}
+//       >
+//         {/* Galerie d'images/vidéos */}
+//         <View style={galleryStyles.container}>
+//           <FlatList
+//             ref={flatListRef}
+//             horizontal
+//             pagingEnabled
+//             data={mediaItems}
+//             keyExtractor={(item, index) => index.toString()}
+//             renderItem={GalleryItem}
 //             showsHorizontalScrollIndicator={false}
-//             style={styles.imageSlider}
 //             onScroll={onScroll}
 //             scrollEventThrottle={16}
-//           >
-//             {mediaItems.map((media, index) => (
-//               <TouchableOpacity 
-//                 key={index} 
-//                 activeOpacity={0.9}
-//                 onPress={() => media.type === 'image' ? openImage(index) : toggleVideoPlayback()}
-//                 style={styles.mediaContainer}
-//               >
-//                 {media.type === 'image' ? (
-//                   // <Image source={{ uri: media.url }} style={styles.mainImage} />
-//                 <SecureWatermarkedImage 
-//   source={{ uri: media.url }}
-//   watermarkSource={require('../../assets/images/filigrane.png')}
-//   style={{ width: 300, height: 200 }}
-// />
-                
-//                 ) : (
-//                   <View style={styles.videoContainer}>
-//                     {/* <Video
-//                       source={{ uri: media.url }}
-//                       style={styles.video}
-//                       shouldPlay={!paused && index === activeSlide}
-//                       resizeMode="cover"
-//                       isLooping
-//                       useNativeControls={false}
-//                     /> */}
-//                     <Video
-//                       source={{ uri: media.url }}
-//                       style={styles.video}
-//                       shouldPlay={!paused && index === activeSlide}
-//                       resizeMode="cover"
-//                       isLooping
-//                       useNativeControls={false}
-//                     />
-
-//                     {paused && (
-//                       <View style={styles.playButton}>
-//                         <Icon name="play-circle" size={50} color="rgba(255,255,255,0.8)" />
-//                       </View>
-//                     )}
-//                   </View>
-//                 )}
-//               </TouchableOpacity>
-//             ))}
-//           </ScrollView>
+//             initialNumToRender={3}
+//             maxToRenderPerBatch={3}
+//             windowSize={5}
+//           />
           
-//           {/* Indicateur de slide */}
+//           {/* Indicateurs de pagination */}
 //           {mediaItems.length > 1 && (
-//             <View style={styles.pagination}>
-//               {mediaItems.map((_, idx) => (
+//             <View style={galleryStyles.pagination}>
+//               {mediaItems.map((_, index) => (
 //                 <View 
-//                   key={idx} 
+//                   key={index}
 //                   style={[
-//                     styles.paginationDot, 
-//                     idx === activeSlide ? styles.paginationDotActive : null
-//                   ]} 
+//                     galleryStyles.paginationDot,
+//                     index === activeSlide && galleryStyles.activeDot
+//                   ]}
 //                 />
 //               ))}
 //             </View>
 //           )}
           
-//           {/* Compteur de médias */}
-//           <View style={styles.mediaCounter}>
-//             <Text style={styles.mediaCounterText}>
-//               {`${activeSlide + 1}/${mediaItems.length}`}
-//             </Text>
-//           </View>
+//           {/* Bouton plein écran */}
+//           {mediaItems.length > 0 && mediaItems[activeSlide]?.type === 'image' && (
+//             <TouchableOpacity 
+//               style={galleryStyles.fullscreenButton}
+//               onPress={() => openImage(activeSlide)}
+//             >
+//               <Ionicons name="expand" size={24} color="white" />
+//             </TouchableOpacity>
+//           )}
 //         </View>
 
-//         {/* En-tête avec prix et informations */}
-//         <View style={styles.header}>
-//           <View style={styles.priceContainer}>
-//             <Text style={styles.price}>{post.price?.toLocaleString()} FCFA</Text>
+//         {/* En-tête avec prix et titre */}
+//         <View style={styles.headerContainer}>
+//           <View style={styles.priceRow}>
+//             <Text style={styles.priceText}>{post.price?.toLocaleString()} FCFA</Text>
 //             {post.transactionType === 'rent' && (
 //               <Text style={styles.pricePeriod}>/mois</Text>
 //             )}
 //           </View>
           
 //           <View style={styles.titleRow}>
-//             <Text style={styles.title}>{post.title}</Text>
-//             <TouchableOpacity onPress={handleToggleFavorite} style={styles.favoriteButton}>
+//             <Text style={styles.titleText} numberOfLines={2}>{post.title}</Text>
+//             <TouchableOpacity 
+//               onPress={handleToggleFavorite}
+//               style={styles.favoriteButton}
+//             >
 //               <Ionicons 
 //                 name={isFavorite ? "heart" : "heart-outline"} 
-//                 size={24} 
-//                 color={isFavorite ? COLORS.primary : COLORS.gray} 
+//                 size={28} 
+//                 color={isFavorite ? COLORS.primary : '#ccc'} 
 //               />
 //             </TouchableOpacity>
 //           </View>
           
+//           {/* Localisation */}
 //           <View style={styles.locationContainer}>
-//             <MaterialIcons name="location-on" size={16} color={COLORS.gray} />
-//             <Text style={styles.location}>
+//             <Ionicons name="location-sharp" size={16} color="#666" />
+//             <Text style={styles.locationText} numberOfLines={2}>
 //               {typeof post.location === 'string' 
 //                 ? post.location 
 //                 : post.location?.display_name || 'Localisation non disponible'}
 //             </Text>
 //           </View>
           
+//           {/* Date de publication */}
 //           {post.createdAt && (
-          
-//             <Text style={styles.postDate}>
-//               <MaterialIcons name="access-time" size={12} color={COLORS.gray} />
-//               {` Publié il y a ${calculateTimeSince(post.createdAt)}`}
-//             </Text>
+//             <View style={styles.dateContainer}>
+//               <Ionicons name="time-outline" size={14} color="#666" />
+//               <Text style={styles.timeText}>
+//                 {` Publié il y a ${calculateTimeSince(post.createdAt)}`}
+//               </Text>
+//             </View>
 //           )}
 //         </View>
 
 //         {/* Caractéristiques principales */}
-//         <View style={styles.featuresSection}>
+//         <View style={styles.sectionContainer}>
 //           <Text style={styles.sectionTitle}>Caractéristiques</Text>
 //           <View style={styles.featuresGrid}>
-//             <View style={styles.featureItem}>
-//               <MaterialIcons name="hotel" size={24} color={COLORS.primary} />
-//               <Text style={styles.featureLabel}>{post.bedrooms || ''}Chambres</Text>
-//               {/* <Text style={styles.featureValue}>{post.bedrooms || ''}</Text> */}
-//             </View>
-
-//             { post.livingRoom && (
-//             <View style={styles.featureItem}>
-//               <MaterialIcons name='living' size={24} color={COLORS.primary} />
-//               <Text style={styles.featureLabel}>{post.livingRoom || ''} Salon</Text>
-//               {/* <Text style={styles.featureValue}>{post.bathrooms || ''}</Text> */}
-//             </View>
-//             )}
-
-//             { post.bathrooms && (
-//             <View style={styles.featureItem}>
-//               <MaterialIcons name="bathtub" size={24} color={COLORS.primary} />
-//               <Text style={styles.featureLabel}>{post.bathrooms || ''}Salles de bain</Text>
-//               {/* <Text style={styles.featureValue}>{post.bathrooms || ''}</Text> */}
-//             </View>
-//             )}
-            
-//             {post.area && (
-//             <View style={styles.featureItem}>
-//               <MaterialIcons name="straighten" size={24} color={COLORS.primary} />
-//               <Text style={styles.featureLabel}>Superficie</Text>
-//               <Text style={styles.featureValue}>{post.area || ''} m²</Text>
-//             </View>
-//             )}
-            
-            
-//             {post.features?.furnished && (
+//             {post.bedrooms > 0 && (
 //               <View style={styles.featureItem}>
-//                 <MaterialIcons name="weekend" size={24} color={COLORS.primary} />
-//                 <Text style={styles.featureLabel}>Meublé</Text>
-//                 {/* <Text style={styles.featureValue}>Oui</Text> */}
+//                 <MaterialIcons name="hotel" size={20} color={COLORS.primary} />
+//                 <Text style={styles.featureText}>{post.bedrooms} Chambre(s)</Text>
+//               </View>
+//             )}
+            
+//             {post.bathrooms > 0 && (
+//               <View style={styles.featureItem}>
+//                 <MaterialIcons name="bathtub" size={20} color={COLORS.primary} />
+//                 <Text style={styles.featureText}>{post.bathrooms} Salle(s) de bain</Text>
+//               </View>
+//             )}
+            
+//             {post.livingRoom && (
+//               <View style={styles.featureItem}>
+//                 <MaterialIcons name="weekend" size={20} color={COLORS.primary} />
+//                 <Text style={styles.featureText}>Salon</Text>
+//               </View>
+//             )}
+            
+//             {post.area > 0 && (
+//               <View style={styles.featureItem}>
+//                 <MaterialIcons name="straighten" size={20} color={COLORS.primary} />
+//                 <Text style={styles.featureText}>{post.area} m²</Text>
 //               </View>
 //             )}
 //           </View>
 //         </View>
+
+//         {/* Équipements */}
 //         {post.features && (
-//           <View style={styles.amenitiesSection}>
-//             {/* <Text style={styles.sectionTitle}>Équipements</Text> */}
+//           <View style={styles.sectionContainer}>
+//             <Text style={styles.sectionTitle}>Équipements</Text>
 //             <View style={styles.amenitiesContainer}>
 //               {post.features.water && (
-//                 <View style={styles.amenityItem}>
-//                   {/* <MaterialIcons name='' size={20} color={COLORS.primary} /> */}
-//                   <Ionicons name="water-sharp" size={20} color={COLORS.primary}/>
-//                   <Text style={styles.amenityText}>Eau </Text>
+//                 <View style={styles.amenityBadge}>
+//                   <Ionicons name="water" size={16} color={COLORS.primary} />
+//                   <Text style={styles.amenityText}>Eau</Text>
 //                 </View>
 //               )}
+              
 //               {post.features.electricity && (
-//                 <View style={styles.amenityItem}>
-//                   {/* <MaterialIcons name='' size={20} color={COLORS.primary} /> */}
-//                   <Ionicons name="flash-sharp" size={20} color={COLORS.primary}/>
-//                   <Text style={styles.amenityText}>Electricité </Text>
+//                 <View style={styles.amenityBadge}>
+//                   <Ionicons name="flash" size={16} color={COLORS.primary} />
+//                   <Text style={styles.amenityText}>Électricité</Text>
 //                 </View>
 //               )}
               
 //               {post.features.ac && (
-//                 <View style={styles.amenityItem}>
-//                   <MaterialIcons name="ac-unit" size={20} color={COLORS.primary} />
+//                 <View style={styles.amenityBadge}>
+//                   <MaterialIcons name="ac-unit" size={16} color={COLORS.primary} />
 //                   <Text style={styles.amenityText}>Climatisation</Text>
 //                 </View>
 //               )}
               
 //               {post.features.parking && (
-//                 <View style={styles.amenityItem}>
-//                   <MaterialIcons name="local-parking" size={20} color={COLORS.primary} />
+//                 <View style={styles.amenityBadge}>
+//                   <MaterialIcons name="local-parking" size={16} color={COLORS.primary} />
 //                   <Text style={styles.amenityText}>Parking</Text>
 //                 </View>
 //               )}
               
 //               {post.features.security && (
-//                 <View style={styles.amenityItem}>
-//                   <MaterialIcons name="security" size={20} color={COLORS.primary} />
+//                 <View style={styles.amenityBadge}>
+//                   <MaterialIcons name="security" size={16} color={COLORS.primary} />
 //                   <Text style={styles.amenityText}>Sécurité</Text>
 //                 </View>
 //               )}
               
 //               {post.features.wifi && (
-//                 <View style={styles.amenityItem}>
-//                   <MaterialIcons name="wifi" size={20} color={COLORS.primary} />
+//                 <View style={styles.amenityBadge}>
+//                   <MaterialIcons name="wifi" size={16} color={COLORS.primary} />
 //                   <Text style={styles.amenityText}>Wi-Fi</Text>
 //                 </View>
 //               )}
@@ -1592,392 +665,505 @@
 //         )}
 
 //         {/* Description */}
-//         <View style={styles.descriptionSection}>
+//         <View style={styles.sectionContainer}>
 //           <Text style={styles.sectionTitle}>Description</Text>
-//           <Text style={styles.description}>{post.description || 'Aucune description fournie'}</Text>
+//           <Text style={styles.descriptionText}>
+//             {post.description || 'Aucune description fournie'}
+//           </Text>
 //         </View>
 
-//         {/* Équipements */}
-        
-//         {/* INFO SUR LE PROPRIO */}
-        
-//         <OwnerInfo userId={post.userId} />
-
-//         {/* Boutons d'action */}
-//         <View style={styles.actionButtons}>
-//           <TouchableOpacity onPress={goToMessenger} style={styles.actionButton}>
-//             <Ionicons name="chatbubble-ellipses" size={20} color={COLORS.white} />
-//             <Text style={styles.actionButtonText}>Message</Text>
-//           </TouchableOpacity>
-          
-//           <TouchableOpacity onPress={handleWhatsAppPress} style={[styles.actionButton, styles.whatsappButton]}>
-//             <Ionicons name="logo-whatsapp" size={20} color={COLORS.white} />
-//             <Text style={styles.actionButtonText}>WhatsApp</Text>
-//           </TouchableOpacity>
-          
-//           <TouchableOpacity onPress={handlePhonePress} style={[styles.actionButton, styles.callButton]}>
-//             <Ionicons name="call" size={20} color={COLORS.white} />
-//             <Text style={styles.actionButtonText}>Appeler</Text>
-//           </TouchableOpacity>
-//         </View>
-//       </ScrollView>
-
-//       {/* Image Viewer Modal */}
-//        {/* <Modal
+//         {/* Informations du propriétaire */}
+//         <TouchableOpacity onPress={()=> navigation.navigate('OwnerPosts', ownerId =userId)}>
+//          <OwnerInfo userId={post.userId} />
+//         </TouchableOpacity>
+       
+//       </Animated.ScrollView>
+//       {/* Modal de visualisation d'image */}
+//       <Modal
 //         visible={imageViewerVisible}
 //         transparent={true}
 //         onRequestClose={closeImage}
+//         statusBarTranslucent={true}
+//         hardwareAccelerated={true}
 //       >
-//         <SafeAreaView style={styles.imageModalContainer}>
+//         <View style={styles.imageModalContainer}>
 //           <TouchableOpacity 
 //             style={styles.closeButton}
 //             onPress={closeImage}
+//             activeOpacity={0.8}
 //           >
-//             <Icon name="close" size={30} color="white" />
+//             <Ionicons name="close" size={30} color="white" />
 //           </TouchableOpacity>
           
-//          <GallerySwiper
-//             images={imagesForViewer} // Array of { uri: 'https://...' }
-//             initialIndex={currentImageIndex}
-//             onSwipeToClose={closeImage}
-//             style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
-//           />
-//         </SafeAreaView>
-//       </Modal> */}
-//       <Modal
-//           visible={imageViewerVisible}
-//           transparent={true}
-//           onRequestClose={closeImage}
-//         >
-//           <SafeAreaView style={styles.imageModalContainer}>
-//             <TouchableOpacity 
-//               style={styles.closeButton}
-//               onPress={closeImage}
-//             >
-//               <Icon name="close" size={30} color="white" />
-//             </TouchableOpacity>
+//           <View style={styles.imageViewerContent}>
+//             <Image
+//               source={{ uri: imagesForViewer[currentImageIndex]?.url }}
+//               style={styles.expandedImage}
+//               contentFit="contain"
+//               transition={300}
+//               priority="high"
+//             />
             
-//             <View style={styles.imageViewerContent}>
-//               <Image
-//                 source={{ uri: imagesForViewer[currentImageIndex]?.url }}
-//                 style={styles.expandedImage}
-//                 transition={300}
-//                 contentFit="contain"
-//                 enableLiveTextInteraction={true}
-//                 accessibilityLabel="Image de l'annonce"
-//               />
-              
-//               {/* Navigation entre images */}
-//               {imagesForViewer.length > 1 && (
-//                 <View style={styles.imageNavContainer}>
-//                   <TouchableOpacity 
-//                     onPress={() => setCurrentImageIndex(prev => Math.max(0, prev - 1))}
-//                     disabled={currentImageIndex === 0}
-//                     style={styles.navButton}
-//                   >
-//                     <Ionicons 
-//                       name="chevron-back" 
-//                       size={30} 
-//                       color={currentImageIndex === 0 ? 'rgba(255,255,255,0.3)' : 'white'} 
-//                     />
-//                   </TouchableOpacity>
-                  
-//                   <Text style={styles.imageCounter}>
-//                     {`${currentImageIndex + 1}/${imagesForViewer.length}`}
-//                   </Text>
-                  
-//                   <TouchableOpacity 
-//                     onPress={() => setCurrentImageIndex(prev => Math.min(imagesForViewer.length - 1, prev + 1))}
-//                     disabled={currentImageIndex === imagesForViewer.length - 1}
-//                     style={styles.navButton}
-//                   >
-//                     <Ionicons 
-//                       name="chevron-forward" 
-//                       size={30} 
-//                       color={currentImageIndex === imagesForViewer.length - 1 ? 'rgba(255,255,255,0.3)' : 'white'} 
-//                     />
-//                   </TouchableOpacity>
-//                 </View>
-//               )}
-//             </View>
-//           </SafeAreaView>
-//         </Modal>
+//             {imagesForViewer.length > 1 && (
+//               <View style={styles.imageNavContainer}>
+//                 <TouchableOpacity 
+//                   onPress={() => setCurrentImageIndex(prev => Math.max(0, prev - 1))}
+//                   disabled={currentImageIndex === 0}
+//                   style={styles.navButton}
+//                   activeOpacity={0.6}
+//                 >
+//                   <Ionicons 
+//                     name="chevron-back" 
+//                     size={30} 
+//                     color={currentImageIndex === 0 ? 'rgba(255,255,255,0.3)' : 'white'} 
+//                   />
+//                 </TouchableOpacity>
+                
+//                 <Text style={styles.imageCounter}>
+//                   {`${currentImageIndex + 1}/${imagesForViewer.length}`}
+//                 </Text>
+                
+//                 <TouchableOpacity 
+//                   onPress={() => setCurrentImageIndex(prev => Math.min(imagesForViewer.length - 1, prev + 1))}
+//                   disabled={currentImageIndex === imagesForViewer.length - 1}
+//                   style={styles.navButton}
+//                   activeOpacity={0.6}
+//                 >
+//                   <Ionicons 
+//                     name="chevron-forward" 
+//                     size={30} 
+//                     color={currentImageIndex === imagesForViewer.length - 1 ? 'rgba(255,255,255,0.3)' : 'white'} 
+//                   />
+//                 </TouchableOpacity>
+//               </View>
+//             )}
+//           </View>
+//         </View>
+//       </Modal>
+//       {/* Boutons d'action */}
+//          <ActionButtons />
 
-// </SafeAreaView>
-   
+//       {/* Ajoute les nouveaux composants */}
+//       <VisitModal />
+//       {contactPromptVisible && <ContactPromptModal />}
+
+//       {showDatePicker && renderDatePicker()}
+//       {/* <View style={styles.actionButtons}>
+//         <TouchableOpacity 
+//           style={styles.messageButton}
+//           onPress={goToMessenger}
+//         >
+//           <Ionicons name="chatbubble-ellipses" size={20} color="white" />
+//           <Text style={styles.actionButtonText}>Message</Text>
+//         </TouchableOpacity>
+        
+//         <TouchableOpacity 
+//           style={styles.whatsappButton}
+//           onPress={handleWhatsAppPress}
+//         >
+//           <Ionicons name="logo-whatsapp" size={20} color="white" />
+//           <Text style={styles.actionButtonText}>WhatsApp</Text>
+//         </TouchableOpacity>
+        
+//         <TouchableOpacity 
+//           style={styles.callButton}
+//           onPress={handlePhonePress}
+//         >
+//           <Ionicons name="call" size={20} color="white" />
+//           <Text style={styles.actionButtonText}>Appeler</Text>
+//         </TouchableOpacity>
+//       </View> */}
+
+      
+//     </SafeAreaView>
 //   );
 // };
 
-// const styles = StyleSheet.create({
-//   imageViewerContent: {
-//     flex: 1,
+// // Styles pour la galerie
+// const galleryStyles = StyleSheet.create({
+//   container: {
+//     height: 300,
+//     position: 'relative',
+//     backgroundColor: '#f5f5f5'
+//   },
+//   mediaWrapper: {
+//     width: width,
+//     height: '100%',
 //     justifyContent: 'center',
-//     alignItems: 'center',
+//     alignItems: 'center'
 //   },
-//   expandedImage: {
+//   media: {
 //     width: '100%',
-//     height: '80%',
+//     height: '100%',
 //   },
-//   imageNavContainer: {
+//   pagination: {
+//     position: 'absolute',
+//     bottom: 20,
 //     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     width: '100%',
-//     paddingHorizontal: 20,
-//     marginTop: 20,
+//     alignSelf: 'center',
+//     backgroundColor: 'rgba(0,0,0,0.3)',
+//     borderRadius: 10,
+//     paddingHorizontal: 8,
+//     paddingVertical: 4
 //   },
-//   navButton: {
-//     padding: 15,
+//   paginationDot: {
+//     width: 8,
+//     height: 8,
+//     borderRadius: 4,
+//     backgroundColor: 'rgba(255,255,255,0.5)',
+//     marginHorizontal: 4
 //   },
-//   imageCounter: {
-//     color: 'white',
-//     fontSize: 16,
-//     fontWeight: 'bold',
+//   activeDot: {
+//     backgroundColor: COLORS.primary,
+//     width: 20
 //   },
+//   fullscreenButton: {
+//     position: 'absolute',
+//     bottom: 20,
+//     right: 20,
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//     padding: 8,
+//     borderRadius: 20
+//   }
+// });
+
+// // Styles principaux
+// const styles = StyleSheet.create({
 //   safeArea: {
 //     flex: 1,
 //     backgroundColor: COLORS.white,
 //   },
-//   container: {
-//     flex: 1,
-//     backgroundColor: COLORS.white,
+//   scrollContainer: {
+//     paddingBottom: 80
 //   },
 //   loadingContainer: {
 //     flex: 1,
 //     justifyContent: 'center',
 //     alignItems: 'center',
-//     backgroundColor: COLORS.white,
+//     backgroundColor: COLORS.white
+//   },
+//   loadingText: {
+//     marginTop: 10,
+//     color: COLORS.gray,
+//     fontSize: 16
 //   },
 //   errorContainer: {
 //     flex: 1,
 //     justifyContent: 'center',
 //     alignItems: 'center',
 //     backgroundColor: COLORS.white,
+//     padding: 20
 //   },
 //   errorText: {
-//     ...FONTS.body3,
+//     fontSize: 16,
 //     color: COLORS.error,
+//     textAlign: 'center',
+//     marginBottom: 20
 //   },
-//   carouselContainer: {
-//     height: 300,
-//     position: 'relative',
+//   retryButton: {
+//     backgroundColor: COLORS.primary,
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//     borderRadius: 5
 //   },
-//   imageSlider: {
-//     height: '100%',
+//   retryButtonText: {
+//     color: 'white',
+//     fontWeight: 'bold'
 //   },
-//   mediaContainer: {
-//     width: width,
-//     height: '100%',
-//     position: 'relative',
-//   },
-//   mainImage: {
-//     width: '100%',
-//     height: '100%',
-//     resizeMode: 'cover',
-//   },
-//   videoContainer: {
-//     width: '100%',
-//     height: '100%',
-//     backgroundColor: COLORS.black,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   video: {
-//     width: '100%',
-//     height: '100%',
-//   },
-//   playButton: {
-//     position: 'absolute',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   pagination: {
-//     position: 'absolute',
-//     bottom: 15,
-//     flexDirection: 'row',
-//     alignSelf: 'center',
-//   },
-//   paginationDot: {
-//     width: 8,
-//     height: 8,
-//     borderRadius: 4,
-//     backgroundColor: COLORS.white,
-//     margin: 5,
-//     opacity: 0.5,
-//   },
-//   paginationDotActive: {
-//     opacity: 1,
-//     width: 12,
-//   },
-//   mediaCounter: {
-//     position: 'absolute',
-//     top: 15,
-//     right: 15,
-//     backgroundColor: 'rgba(0,0,0,0.5)',
-//     paddingHorizontal: 10,
-//     paddingVertical: 5,
-//     borderRadius: 15,
-//   },
-//   mediaCounterText: {
-//     ...FONTS.body4,
-//     color: COLORS.white,
-//   },
-//   header: {
-//     padding: SIZES.padding,
+//   headerContainer: {
+//     padding: 16,
 //     borderBottomWidth: 1,
-//     borderBottomColor: COLORS.lightGray,
+//     borderBottomColor: '#f0f0f0'
 //   },
-//   priceContainer: {
+//   priceRow: {
 //     flexDirection: 'row',
 //     alignItems: 'flex-end',
-//     marginBottom: SIZES.base,
+//     marginBottom: 8
 //   },
-//   price: {
-//     ...FONTS.h2,
-//     color: COLORS.primary,
+//   priceText: {
+//     fontSize: 24,
 //     fontWeight: 'bold',
+//     color: COLORS.primary,
 //   },
 //   pricePeriod: {
-//     ...FONTS.body4,
-//     color: COLORS.gray,
-//     marginLeft: SIZES.base,
-//     marginBottom: 2,
+//     fontSize: 16,
+//     color: '#666',
+//     marginLeft: 4,
+//     marginBottom: 2
 //   },
 //   titleRow: {
 //     flexDirection: 'row',
 //     justifyContent: 'space-between',
-//     alignItems: 'center',
-//     marginBottom: SIZES.base,
+//     marginBottom: 8
 //   },
-//   title: {
-//     ...FONTS.h3,
-//     color: COLORS.black,
+//   titleText: {
+//     fontSize: 20,
+//     fontWeight: '600',
+//     color: '#333',
 //     flex: 1,
+//     marginRight: 10
 //   },
 //   favoriteButton: {
-//     padding: 5,
+//     padding: 5
 //   },
 //   locationContainer: {
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     marginBottom: SIZES.base,
+//     marginBottom: 4
 //   },
-//   location: {
-//     ...FONTS.body4,
-//     color: COLORS.gray,
-//     marginLeft: 5,
+//   locationText: {
+//     fontSize: 14,
+//     color: '#666',
+//     marginLeft: 4,
+//     flex: 1
 //   },
-//   postDate: {
-//     ...FONTS.body4,
-//     color: COLORS.gray,
+//   dateContainer: {
 //     flexDirection: 'row',
-//     alignItems: 'center',
+//     alignItems: 'center'
 //   },
-//   featuresSection: {
-//     padding: SIZES.padding,
+//   timeText: {
+//     fontSize: 12,
+//     color: '#666',
+//     marginLeft: 4
+//   },
+//   sectionContainer: {
+//     padding: 16,
 //     borderBottomWidth: 1,
-//     borderBottomColor: COLORS.lightGray,
+//     borderBottomColor: '#f0f0f0'
 //   },
 //   sectionTitle: {
-//     ...FONTS.h4,
-//     color: COLORS.black,
-//     marginBottom: SIZES.padding,
-//     fontWeight: 'bold',
+//     fontSize: 18,
+//     fontWeight: '600',
+//     color: '#333',
+//     marginBottom: 12
 //   },
 //   featuresGrid: {
 //     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     justifyContent: 'space-between',
+//     flexWrap: 'wrap'
 //   },
 //   featureItem: {
-//     width: '48%',
+//     width: '50%',
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     marginBottom: SIZES.padding,
+//     marginBottom: 12
 //   },
-//   featureLabel: {
-//     ...FONTS.body4,
-//     color: COLORS.gray,
-//     marginLeft: 10,
-//     flex: 1,
-//   },
-//   featureValue: {
-//     ...FONTS.body3,
-//     color: COLORS.black,
-//     fontWeight: 'bold',
-//   },
-//   descriptionSection: {
-//     padding: SIZES.padding,
-//     borderBottomWidth: 1,
-//     borderBottomColor: COLORS.lightGray,
-//   },
-//   description: {
-//     ...FONTS.body4,
-//     color: COLORS.black,
-//     lineHeight: 22,
-//   },
-//   amenitiesSection: {
-//     padding: SIZES.padding,
-//     borderBottomWidth: 1,
-//     borderBottomColor: COLORS.lightGray,
+//   featureText: {
+//     fontSize: 14,
+//     color: '#555',
+//     marginLeft: 8
 //   },
 //   amenitiesContainer: {
 //     flexDirection: 'row',
-//     flexWrap: 'wrap',
+//     flexWrap: 'wrap'
 //   },
-//   amenityItem: {
+//   amenityBadge: {
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     width: '50%',
-//     marginBottom: SIZES.base,
+//     backgroundColor: '#f8f8f8',
+//     paddingVertical: 6,
+//     paddingHorizontal: 12,
+//     borderRadius: 16,
+//     marginRight: 8,
+//     marginBottom: 8
 //   },
 //   amenityText: {
-//     ...FONTS.body4,
-//     color: COLORS.black,
-//     marginLeft: 8,
+//     fontSize: 14,
+//     color: '#555',
+//     marginLeft: 6
+//   },
+//   descriptionText: {
+//     fontSize: 15,
+//     lineHeight: 22,
+//     color: '#555'
 //   },
 //   actionButtons: {
 //     flexDirection: 'row',
+//     padding: 12,
+//     backgroundColor: 'white',
+//     borderTopWidth: 1,
+//     borderTopColor: '#f0f0f0',
+//     position: 'absolute',
+//     bottom: 0,
+//     left: 0,
+//     right: 0,
+//     ...Platform.select({
+//       ios: {
+//         shadowColor: '#000',
+//         shadowOffset: { width: 0, height: -2 },
+//         shadowOpacity: 0.1,
+//         shadowRadius: 4,
+//       },
+//       android: {
+//         elevation: 5,
+//       },
+//     }),
+//   },
+//   messageButton: {
+//     flex: 1,
+//     backgroundColor: COLORS.primary,
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     padding: 12,
+//     borderRadius: 8,
+//     marginRight: 8
+//   },
+//   whatsappButton: {
+//     flex: 1,
+//     backgroundColor: '#25D366',
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     padding: 12,
+//     borderRadius: 8,
+//     marginRight: 8
+//   },
+//   callButton: {
+//     flex: 1,
+//     backgroundColor: '#2ECC71',
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     padding: 12,
+//     borderRadius: 8
+//   },
+//   actionButtonText: {
+//     color: 'white',
+//     fontWeight: 'bold',
+//     marginLeft: 8
+//   },
+//   imageModalContainer: {
+//     flex: 1,
+//     backgroundColor: 'rgba(0,0,0,0.9)',
+//     justifyContent: 'center',
+//     alignItems: 'center'
+//   },
+//   closeButton: {
+//     position: 'absolute',
+//     top: Platform.OS === 'ios' ? 50 : 20,
+//     right: 20,
+//     zIndex: 1,
+//     padding: 10,
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//     borderRadius: 20
+//   },
+//   imageViewerContent: {
+//     width: '100%',
+//     height: '100%',
+//     justifyContent: 'center',
+//     alignItems: 'center'
+//   },
+//   expandedImage: {
+//     width: '100%',
+//     height: '80%',
+//   },
+//   imageNavContainer: {
+//     position: 'absolute',
+//     bottom: 50,
+//     left: 0,
+//     right: 0,
+//     flexDirection: 'row',
 //     justifyContent: 'space-between',
-//     padding: SIZES.padding,
-//     backgroundColor: COLORS.white,
+//     alignItems: 'center',
+//     paddingHorizontal: 20
+//   },
+//   navButton: {
+//     padding: 15,
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//     borderRadius: 30
+//   },
+//   imageCounter: {
+//     color: 'white',
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//     paddingHorizontal: 12,
+//     paddingVertical: 4,
+//     borderRadius: 10
+//   }
+// });
+
+// const newStyles = StyleSheet.create({
+//   actionBar: {
+//     flexDirection: 'row',
+//     padding: 12,
+//     backgroundColor: 'white',
+//     borderTopWidth: 1,
+//     borderTopColor: '#f0f0f0',
 //   },
 //   actionButton: {
 //     flex: 1,
 //     flexDirection: 'row',
 //     justifyContent: 'center',
 //     alignItems: 'center',
-//     backgroundColor: COLORS.primary,
-//     paddingVertical: 12,
-//     borderRadius: SIZES.radius,
-//     marginHorizontal: 5,
+//     padding: 12,
+//     borderRadius: 8,
+//     marginHorizontal: 4,
 //   },
-//   whatsappButton: {
-//     backgroundColor: '#25D366',
+//   reserveButton: {
+//     backgroundColor: '#FF6B6B',
 //   },
-//   callButton: {
-//     backgroundColor: '#2ECC71',
+//   visitButton: {
+//     backgroundColor: '#4ECDC4',
 //   },
-//   actionButtonText: {
-//     ...FONTS.body4,
-//     color: COLORS.white,
-//     marginLeft: 8,
+//   contactButton: {
+//     backgroundColor: '#5F7A61',
+//   },
+//   buttonText: {
+//     color: 'white',
 //     fontWeight: 'bold',
+//     marginLeft: 8,
 //   },
-//   imageModalContainer: {
+//   modalContainer: {
 //     flex: 1,
-//     backgroundColor: 'rgba(0,0,0,0.9)',
+//     justifyContent: 'flex-end',
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//   },
+//   modalContent: {
+//     backgroundColor: 'white',
+//     borderTopLeftRadius: 20,
+//     borderTopRightRadius: 20,
+//     padding: 20,
+//   },
+//   modalTitle: {
+//     fontSize: 18,
+//     fontWeight: 'bold',
+//     marginBottom: 20,
+//     textAlign: 'center',
+//   },
+//   optionButton: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     paddingVertical: 15,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#f0f0f0',
+//   },
+//   optionTextContainer: {
+//     marginLeft: 15,
+//   },
+//   optionTitle: {
+//     fontSize: 16,
+//     fontWeight: '600',
+//   },
+//   optionSubtitle: {
+//     fontSize: 12,
+//     color: '#666',
 //   },
 //   closeButton: {
-//     position: 'absolute',
-//     top: SIZES.padding,
-//     right: SIZES.padding,
-//     zIndex: 1,
+//     marginTop: 20,
 //     padding: 10,
+//     alignItems: 'center',
+//   },
+//   closeButtonText: {
+//     color: COLORS.primary,
+//     fontWeight: 'bold',
 //   },
 // });
 
 // export default PostDetailScreen;
+
+
+////
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { 
   View, 
@@ -1992,16 +1178,18 @@ import {
   Animated,
   ActivityIndicator,
   Modal,
-  Platform
+  Platform,
+  TextInput
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { Video } from 'expo-av';
+import { Video } from 'expo-video';
 import { Image } from 'expo-image';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { doc, getDoc } from 'firebase/firestore';
 import * as Linking from 'expo-linking';
-
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { addDoc, collection } from 'firebase/firestore';
 // Importations locales
 import { db } from '../../src/api/FirebaseConfig';
 import { COLORS, SIZES } from '../../constants/Theme';
@@ -2009,6 +1197,8 @@ import { UserContext } from '../../context/AuthContext';
 import { isPostFavorite, toggleFavorite } from '../../services/favorites';
 import SecureWatermarkedImage from '../../components/SecureWatermarkedImage';
 import OwnerInfo from '../../components/OwnerInfo';
+import PostDetailSkeleton from '../../components/skeletons/PostDetailSkeleton';
+import PoiList from '../../components/PoiList';
 
 const { width, height } = Dimensions.get('window');
 
@@ -2025,6 +1215,14 @@ const PostDetailScreen = ({ navigation }) => {
   const [activeSlide, setActiveSlide] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
+
+  // États pour la réservation
+  const [modalVisible, setModalVisible] = useState(false);
+  const [visitType, setVisitType] = useState(null);
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [contactMethod, setContactMethod] = useState('');
+  const [contactPromptVisible, setContactPromptVisible] = useState(false);
 
   // Chargement des données
   useEffect(() => {
@@ -2074,8 +1272,7 @@ const PostDetailScreen = ({ navigation }) => {
     checkFavorite();
   }, [postId, userData?.uid]);
 
-  // Médias de l'annonce
-   // Vérification des URLs
+  // Vérification des URLs
   const isValidUrl = (url) => {
     try {
       new URL(url);
@@ -2084,6 +1281,7 @@ const PostDetailScreen = ({ navigation }) => {
       return false;
     }
   };
+
   const mediaItems = post 
     ? [
         ...(post.imageUrls?.filter(url => isValidUrl(url)).map(url => ({ type: 'image', url })) || []),
@@ -2092,8 +1290,6 @@ const PostDetailScreen = ({ navigation }) => {
     : [];
 
   const imagesForViewer = mediaItems.filter(item => item.type === 'image');
-
- 
 
   // Calcul du temps depuis la publication
   const calculateTimeSince = useCallback((firestoreTimestamp) => {
@@ -2230,17 +1426,288 @@ const PostDetailScreen = ({ navigation }) => {
     </TouchableOpacity>
   ), [openImage]);
 
-  // Affichage pendant le chargement
+  // Gestion de la date
+  const handleDateConfirm = (selectedDate) => {
+    setShowDatePicker(false);
+    setDate(selectedDate);
+    if (visitType === 'virtual') {
+      setContactPromptVisible(true);
+    } else {
+      confirmVisit();
+    }
+  };
+
+  // Confirmation finale
+  // const confirmVisit = () => {
+  //   Alert.alert(
+  //     'Visite confirmée!',
+  //     `Votre visite ${visitType === 'virtual' ? 'virtuelle' : 'sur place'} est prévue pour le ${date.toLocaleString()}`,
+  //     [{ text: 'OK', onPress: () => {
+  //       setModalVisible(false);
+  //       setContactPromptVisible(false);
+  //     }}]
+  //   );
+  //   // Ici: Envoyer la notification au propriétaire via Firebase
+  // };
+const sendNotificationToOwner = async () => {
+  // Utilisez Firebase Cloud Messaging ou votre service de notifications
+  const ownerRef = doc(db, 'users', post.userId);
+  const ownerSnap = await getDoc(ownerRef);
+  
+  if (ownerSnap.exists()) {
+    const ownerData = ownerSnap.data();
+    // Ajoutez la notification dans la sous-collection du propriétaire
+    await addDoc(collection(db, 'users', post.userId, 'notifications'), {
+      type: 'new_reservation',
+      message: `Nouvelle réservation pour ${post.title}`,
+      date: new Date().toISOString(),
+      read: false,
+      reservationDate: date.toISOString(),
+      userId: userData.uid
+    });
+    
+    // Envoi push notification si nécessaire
+    if (ownerData.fcmToken) {
+      await sendPushNotification(ownerData.fcmToken, 'Nouvelle réservation', `Quelqu'un veut visiter votre propriété ${post.title}`);
+    }
+  }
+};
+
+const sendNotificationToTenant = async () => {
+  // Notification pour l'utilisateur actuel
+  await addDoc(collection(db, 'users', userData.uid, 'notifications'), {
+    type: 'reservation_confirmed',
+    message: `Réservation confirmée pour ${post.title}`,
+    date: new Date().toISOString(),
+    read: false,
+    reservationDate: date.toISOString()
+  });
+};
+const confirmVisit = async () => {
+  try {
+    // 1. Redirection vers la page de finalisation
+    navigation.navigate('ReservationConfirmation', {
+      reservationDetails: {
+        postId: post.id,
+        date: date.toISOString(),
+        visitType,
+        contactMethod,
+        propertyTitle: post.title,
+        price: post.price
+      }
+    });
+
+    // 2. Envoyer la notification au propriétaire
+    await sendNotificationToOwner();
+
+    // 3. Envoyer la notification au locataire
+    await sendNotificationToTenant();
+
+  } catch (error) {
+    console.error("Erreur lors de la confirmation:", error);
+    Alert.alert("Erreur", "Un problème est survenu lors de la réservation");
+  }
+};
+//POIs Point of Interest
+
+
+// Dans votre composant
+const [pois, setPois] = useState([]);
+
+// useEffect(() => {
+//   const fetchPOIs = async () => {
+    // // 1. Récupérer les coordonnées depuis votre objet Post
+    // // (vous devriez stocker lat/lng dans Firebase lors de la création)
+    // const { latitude, longitude } = post.location; 
+    
+    // // 2. Appeler l'API
+    // const nearbyPOIs = await fetchNearbyPOIs(latitude, longitude);
+    
+    // // 3. Formater les données
+    // const formattedPOIs = nearbyPOIs.map(poi => ({
+    //   id: poi.id,
+    //   name: poi.tags.name || 'Non nommé',
+    //   type: Object.entries(poi.tags)
+    //     .find(([key]) => key === 'amenity' || key === 'shop')[1],
+    //   distance: (poi.distance || 0).toFixed(0) + 'm'
+    // }));
+   useEffect(() => {
+    const loadPOIs = async () => {
+      // Récupération des coordonnées quel que soit le format
+      const coords = await getCoordinates(post.location);
+      
+      if (!coords) {
+        console.log("Coordonnées non disponibles");
+        return;
+      }
+
+      // Récupération des POIs
+      const poisData = await fetchNearbyPOIs(coords.lat, coords.lon);
+      setPois(formatPOIData(poisData));
+    };
+
+    loadPOIs();
+  }, [post]);
+
+  // Fonction de formatage des données POI
+  const formatPOIData = (data) => {
+    return data.map(poi => ({
+      id: poi.id,
+      name: poi.tags?.name || 'Lieu sans nom',
+      type: getPOIType(poi.tags),
+      distance: calculateDistance(post.location, poi) + ' m'
+    }));
+  };
+  
+
+
+  // Composants internes
+  const ActionButtons = () => (
+    <View style={newStyles.actionBar}>
+      <TouchableOpacity 
+        style={[newStyles.actionButton, newStyles.reserveButton]}
+        onPress={() => Alert.alert('Réservation', 'Chambre réservée avec succès!')}
+      >
+        <Ionicons name="bookmark" size={20} color="white" />
+        <Text style={newStyles.buttonText}>Réserver</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={[newStyles.actionButton, newStyles.visitButton]}
+        onPress={() => setModalVisible(true)}
+      >
+        <Ionicons name="calendar" size={20} color="white" />
+        <Text style={newStyles.buttonText}>Visiter</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={[newStyles.actionButton, newStyles.contactButton]}
+        onPress={goToMessenger}
+      >
+        <Ionicons name="chatbubbles" size={20} color="white" />
+        <Text style={newStyles.buttonText}>Contacter</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const VisitModal = () => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => setModalVisible(false)}
+    >
+      <View style={newStyles.modalContainer}>
+        <View style={newStyles.modalContent}>
+          <Text style={newStyles.modalTitle}>Type de visite</Text>
+          
+          <TouchableOpacity 
+            style={newStyles.optionButton}
+            onPress={() => {
+              setVisitType('virtual');
+              setShowDatePicker(true);
+              setModalVisible(false);
+            }}
+          >
+            <Ionicons name="videocam" size={24} color={COLORS.primary} />
+            <View style={newStyles.optionTextContainer}>
+              <Text style={newStyles.optionTitle}>Visite Virtuelle</Text>
+              <Text style={newStyles.optionSubtitle}>Appel vidéo avec le propriétaire</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={newStyles.optionButton}
+            onPress={() => {
+              setVisitType('physical');
+              setShowDatePicker(true);
+              setModalVisible(false);
+            }}
+          >
+            <Ionicons name="walk" size={24} color={COLORS.primary} />
+            <View style={newStyles.optionTextContainer}>
+              <Text style={newStyles.optionTitle}>Visite sur Place</Text>
+              <Text style={newStyles.optionSubtitle}>RDV physique au logement</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={newStyles.closeButton}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={newStyles.closeButtonText}>Annuler</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+
+  const ContactPromptModal = () => (
+    <Modal
+      visible={contactPromptVisible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={() => setContactPromptVisible(false)}
+    >
+      <View style={newStyles.modalContainer}>
+        <View style={newStyles.modalContent}>
+          <Text style={newStyles.modalTitle}>Contact pour la visite virtuelle</Text>
+
+          <Text style={{ marginBottom: 8, fontSize: 14, color: '#666' }}>
+            Entrez votre WhatsApp ou email :
+          </Text>
+
+          <TextInput
+            placeholder="ex: +229 97 00 00 00 ou email@exemple.com"
+            value={contactMethod}
+            onChangeText={setContactMethod}
+            style={{
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: 16,
+            }}
+            keyboardType={Platform.OS === 'web' ? 'default' : 'email-address'}
+          />
+
+          <TouchableOpacity
+            style={[newStyles.actionButton, { backgroundColor: COLORS.primary }]}
+            onPress={() => {
+              if (!contactMethod) {
+                Alert.alert('Erreur', 'Veuillez entrer un moyen de contact');
+                return;
+              }
+              confirmVisit();
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>Confirmer</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={newStyles.closeButton}
+            onPress={() => setContactPromptVisible(false)}
+          >
+            <Text style={newStyles.closeButtonText}>Annuler</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingText}>Chargement de l'annonce...</Text>
-      </View>
+      // <View style={styles.loadingContainer}>
+      //   <ActivityIndicator size="large" color={COLORS.primary} />
+      //   <Text style={styles.loadingText}>Chargement de l'annonce...</Text>
+      // </View> <Skeleton show colorMode="light" duration={1200} />
+      <PostDetailSkeleton />
+
     );
+  
+  
   }
 
-  // Si pas de données
   if (!post) {
     return (
       <View style={styles.errorContainer}>
@@ -2260,6 +1727,7 @@ const PostDetailScreen = ({ navigation }) => {
       <Animated.ScrollView 
         style={{ opacity: fadeAnim }}
         contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
       >
         {/* Galerie d'images/vidéos */}
         <View style={galleryStyles.container}>
@@ -2278,7 +1746,6 @@ const PostDetailScreen = ({ navigation }) => {
             windowSize={5}
           />
           
-          {/* Indicateurs de pagination */}
           {mediaItems.length > 1 && (
             <View style={galleryStyles.pagination}>
               {mediaItems.map((_, index) => (
@@ -2293,7 +1760,6 @@ const PostDetailScreen = ({ navigation }) => {
             </View>
           )}
           
-          {/* Bouton plein écran */}
           {mediaItems.length > 0 && mediaItems[activeSlide]?.type === 'image' && (
             <TouchableOpacity 
               style={galleryStyles.fullscreenButton}
@@ -2304,7 +1770,7 @@ const PostDetailScreen = ({ navigation }) => {
           )}
         </View>
 
-        {/* En-tête avec prix et titre */}
+        {/* Contenu de l'annonce */}
         <View style={styles.headerContainer}>
           <View style={styles.priceRow}>
             <Text style={styles.priceText}>{post.price?.toLocaleString()} FCFA</Text>
@@ -2327,7 +1793,6 @@ const PostDetailScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           
-          {/* Localisation */}
           <View style={styles.locationContainer}>
             <Ionicons name="location-sharp" size={16} color="#666" />
             <Text style={styles.locationText} numberOfLines={2}>
@@ -2337,7 +1802,6 @@ const PostDetailScreen = ({ navigation }) => {
             </Text>
           </View>
           
-          {/* Date de publication */}
           {post.createdAt && (
             <View style={styles.dateContainer}>
               <Ionicons name="time-outline" size={14} color="#666" />
@@ -2348,6 +1812,7 @@ const PostDetailScreen = ({ navigation }) => {
           )}
         </View>
 
+       
         {/* Caractéristiques principales */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Caractéristiques</Text>
@@ -2441,38 +1906,29 @@ const PostDetailScreen = ({ navigation }) => {
         </View>
 
         {/* Informations du propriétaire */}
-        <TouchableOpacity onPress={()=> navigation.navigate('OwnerPosts', ownerId =userId)}>
+     
          <OwnerInfo userId={post.userId} />
-        </TouchableOpacity>
-       
+        <PoiList post={post}/>
       </Animated.ScrollView>
-
+         
       {/* Boutons d'action */}
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={styles.messageButton}
-          onPress={goToMessenger}
-        >
-          <Ionicons name="chatbubble-ellipses" size={20} color="white" />
-          <Text style={styles.actionButtonText}>Message</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.whatsappButton}
-          onPress={handleWhatsAppPress}
-        >
-          <Ionicons name="logo-whatsapp" size={20} color="white" />
-          <Text style={styles.actionButtonText}>WhatsApp</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.callButton}
-          onPress={handlePhonePress}
-        >
-          <Ionicons name="call" size={20} color="white" />
-          <Text style={styles.actionButtonText}>Appeler</Text>
-        </TouchableOpacity>
-      </View>
+      <ActionButtons />
+
+      {/* Modales */}
+      <VisitModal />
+      <ContactPromptModal />
+      
+      <DateTimePickerModal
+        isVisible={showDatePicker}
+        mode="datetime"
+        onConfirm={handleDateConfirm}
+        onCancel={() => setShowDatePicker(false)}
+        minimumDate={new Date()}
+        locale="fr_FR"
+        headerTextIOS="Choisir une date"
+        confirmTextIOS="Confirmer"
+        cancelTextIOS="Annuler"
+      />
 
       {/* Modal de visualisation d'image */}
       <Modal
@@ -2540,7 +1996,9 @@ const PostDetailScreen = ({ navigation }) => {
   );
 };
 
-// Styles pour la galerie
+// Styles (conservez vos styles existants)
+// ...
+
 const galleryStyles = StyleSheet.create({
   container: {
     height: 300,
@@ -2842,6 +2300,83 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 10
   }
+});
+
+const newStyles = StyleSheet.create({
+  actionBar: {
+    flexDirection: 'row',
+    padding: 12,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+    marginHorizontal: 4,
+  },
+  reserveButton: {
+    backgroundColor: '#FF6B6B',
+  },
+  visitButton: {
+    backgroundColor: '#4ECDC4',
+  },
+  contactButton: {
+    backgroundColor: '#5F7A61',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  optionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  optionTextContainer: {
+    marginLeft: 15,
+  },
+  optionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  optionSubtitle: {
+    fontSize: 12,
+    color: '#666',
+  },
+  closeButton: {
+    marginTop: 20,
+    padding: 10,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
+  },
 });
 
 export default PostDetailScreen;

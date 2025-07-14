@@ -456,6 +456,8 @@ const FeedbackScreen = () => {
         contentContainerStyle={styles.scrollContainer}
         onScroll={showAllReviews ? null : handleScroll}
         scrollEventThrottle={400}
+        showsVerticalScrollIndicator={false}
+
       >
         <Text style={styles.header}>Avis des utilisateurs</Text>
         

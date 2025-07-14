@@ -691,7 +691,7 @@ const HomeScreen = () => {
   //     <Text style={styles.categoryName}>{item.name}</Text>
   //   </TouchableOpacity>
   // );
- 
+//  console.log("Posts:", posts);
   const renderPostItem = ({ item }) => {
     const isNew = () => {
     
@@ -761,7 +761,7 @@ const HomeScreen = () => {
 
   return (
     
-    <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top , flex : 1}]}>
+    <SafeAreaView  style={[styles.safeArea, { paddingTop: insets.top , flex : 1}]}>
       <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
      
       {/* Header animé */}
@@ -784,12 +784,12 @@ const HomeScreen = () => {
           </Animated.View>
           
           <View style={styles.actions}>
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => navigation.navigate('LocationPicker')}
             >
               <MaterialIcons name="location-pin" size={22} color="white" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => navigation.navigate('Notifications')}
@@ -808,13 +808,13 @@ const HomeScreen = () => {
           }
         ]}>
           <TouchableOpacity onPress={openSearchScreen} style={styles.searchContainer}>
-            <Ionicons name="search" size={20} color={COLORS.gray} style={styles.searchIcon} />
+            <Ionicons name="search" size={20} color={COLORS.primary} style={styles.searchIcon} />
             <Text style={{color: COLORS.gray}}>Rechercher un logement...</Text>
             <TouchableOpacity 
-              style={styles.filterButton}
-              onPress={() => navigation.navigate('AdvancedSearch')}
+              style={styles.filterButton} onPress={openSearchScreen}
+              // onPress={() => navigation.navigate('AdvancedSearch')}
             >
-              <MaterialIcons name="tune" size={20} color="white" />
+              <MaterialIcons name="tune" size={20} color={COLORS.primary} />
             </TouchableOpacity>
           </TouchableOpacity>
            <></>
@@ -842,6 +842,8 @@ const HomeScreen = () => {
           style={{ flex: 1 }}  
           renderItem={renderPostItem}
           keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
+
           contentContainerStyle={[styles.contentContainer, { paddingTop: HEADER_MAX_HEIGHT + 20 }]}
           scrollEventThrottle={16}
           onScroll={Animated.event(
