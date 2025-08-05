@@ -110,6 +110,294 @@
 
 // export default App;
 
+// import 'react-native-gesture-handler';
+// import React, { useState, useEffect } from 'react';
+// import { 
+//   View, 
+//   ActivityIndicator, 
+//   StyleSheet, 
+//   StatusBar, 
+//   Text,
+//   TouchableOpacity
+// } from 'react-native';
+// import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { onAuthStateChanged } from 'firebase/auth';
+// import NetInfo from '@react-native-community/netinfo';
+// import { auth } from './src/api/FirebaseConfig';
+// import { UserProvider } from './context/AuthContext';
+// import AuthStack from './navigation/AuthStack';
+// import DrawerNavigator from './navigation/DrawerNavigator';
+// import { useFonts } from '@expo-google-fonts/inter';
+// import { COLORS } from './constants/Theme';
+// import * as Updates from 'expo-updates';
+// import { Ionicons } from '@expo/vector-icons';
+// import { useAutoUpdate } from './hook/useAutoUpdate'; // Hook pour la mise à jour automatique
+// // import { NavigationContainer } from '@react-navigation/native';
+// // import { Linking } from 'react-native';
+// import LinkingConfig from './LinkingConfig';
+// const AppContent = () => {
+//   const [state, setState] = useState({
+//     isAuthenticated: false,
+//     isLoading: true,
+//     networkError: false
+//   });
+
+//   const insets = useSafeAreaInsets();
+  
+//   const [fontsLoaded] = useFonts({
+//     InterRegular: require('./assets/fonts/Inter_18pt-Regular.ttf'),
+//     InterMedium: require('./assets/fonts/Inter_18pt-Medium.ttf'),
+//     InterSemiBold: require('./assets/fonts/Inter_18pt-SemiBold.ttf'),
+//     InterBold: require('./assets/fonts/Inter_18pt-Bold.ttf'),
+//   });
+
+// //   useEffect(() => {
+// //     // Vérification réseau
+// //     const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+// //       setState(prev => ({
+// //         ...prev,
+// //         networkError: !state.isConnected
+// //       }));
+// //     });
+// //      if (!__DEV__) {
+// //   try {
+// //      const update = async () => { await Updates.checkForUpdateAsync();
+// //     if (update.isAvailable) {
+// //       await Updates.fetchUpdateAsync();
+// //       await Updates.reloadAsync();
+// //     }
+// //   }} catch (e) {
+// //     console.error("Erreur de mise à jour:", e);
+// //   }
+// // }
+
+
+// //     // Vérification auth + mises à jour
+// //     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+// //       // if (!__DEV__) {
+// //       //   try {
+// //       //     const update = await Updates.checkForUpdateAsync();
+// //       //     if (update.isAvailable) {
+// //       //       await Updates.fetchUpdateAsync();
+// //       //       await Updates.reloadAsync();
+// //       //     }
+// //       //   } catch (e) {
+// //       //     console.error("Erreur de mise à jour:", e);
+// //       //   }
+// //       // }
+      
+// //       setState({
+// //         isAuthenticated: !!user,
+// //         isLoading: false,
+// //         networkError: false
+// //       });
+// //     });
+
+// //     // Nettoyage
+// //     return () => {
+// //       unsubscribeNetInfo();
+// //       unsubscribeAuth();
+// //     };
+// //   }, []);
+
+//   // Vérification automatique du réseau toutes les 5s si offline
+//   useEffect(() => {
+//   // 1. Vérification réseau
+//   const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+//     setState(prev => ({
+//       ...prev,
+//       networkError: !state.isConnected
+//     }));
+//   });
+
+//   // 2. Mise à jour OTA au démarrage
+//   if (!__DEV__) {
+//     (async () => {
+//       try {
+//         const update = await Updates.checkForUpdateAsync();
+//         if (update.isAvailable) {
+//           await Updates.fetchUpdateAsync();
+//           await Updates.reloadAsync();
+//         }
+//       } catch (e) {
+//         console.error("Erreur de mise à jour OTA :", e);
+//       }
+//     })();
+//   }
+
+//   // 3. Auth Firebase
+//   const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+//     setState({
+//       isAuthenticated: !!user,
+//       isLoading: false,
+//       networkError: false
+//     });
+//   });
+
+//   // 4. Nettoyage
+//   return () => {
+//     unsubscribeNetInfo();
+//     unsubscribeAuth();
+//   };
+// }, []);
+
+  
+//   useEffect(() => {
+//     if (!state.networkError) return;
+    
+//     const interval = setInterval(() => {
+//       NetInfo.fetch().then(networkState => {
+//         if (networkState.isConnected) {
+//           setState(prev => ({...prev, networkError: false }));
+//         }
+//       });
+//     }, 5000);
+
+//     return () => clearInterval(interval);
+//   }, [state.networkError]);
+
+//  const { status, progress } = useAutoUpdate();
+
+// if (state.isLoading || !fontsLoaded || status !== 'done') {
+//   let message = 'Chargement de MonToit.bj...';
+//   if (status === 'checking') message = 'Vérification des mises à jour...';
+//   else if (status === 'downloading') message = `Téléchargement de la mise à jour (${progress}%)...`;
+//   else if (status === 'reloading') message = 'Redémarrage de l’application...';
+//   else if (status === 'error') message = 'Erreur lors de la mise à jour.';
+
+//   return (
+//     <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
+//       <ActivityIndicator size="large" color={COLORS.primary} />
+//       <Text style={styles.loadingText}>{message}</Text>
+//     </View>
+//   );
+// }
+
+
+//   if (state.networkError) {
+//     return (
+//       <View style={[styles.offlineContainer, { paddingTop: insets.top }]}>
+//         <Ionicons name="wifi-off" size={50} color={COLORS.darkGray} />
+//         <Text style={styles.offlineText}>
+//           Oups! Pas de connexion internet.{'\n'}
+//           Vérifiez vos données mobiles ou WiFi.
+//         </Text>
+        
+//         <TouchableOpacity 
+//           style={styles.offlineButton}
+//           onPress={() => NetInfo.fetch().then(networkState => {
+//             setState(prev => ({...prev, networkError: !networkState.isConnected }));
+//           })}
+//         >
+//           <Text style={styles.offlineButtonText}>RÉESSAYER</Text>
+//         </TouchableOpacity>
+
+//         <Text style={styles.contactText}>
+//           Besoin d'aide ? Appelez le {'\n'}
+//           <Text style={styles.contactNumber}>+229 XX XX XX XX</Text>
+//         </Text>
+//       </View>
+//     );
+//   }
+
+
+
+//   return (
+//     <>
+//       <StatusBar 
+//         barStyle="light-content" 
+//         backgroundColor={COLORS.primary} 
+//       />
+//       <View style={[
+//         styles.appContainer,
+//         { 
+//           paddingTop: insets.top,
+//           paddingBottom: insets.bottom 
+//         }
+//       ]}>
+//         {state.isAuthenticated ? (
+//           <DrawerNavigator />
+//         ) : (
+//           <AuthStack />
+//         )}
+//       </View>
+//     </>
+//   );
+// };
+
+
+// const App = () => {
+//   return (
+//     <SafeAreaProvider>
+//       <NavigationContainer linking={LinkingConfig} fallback={<View style={styles.loadingContainer}><ActivityIndicator size="large" color={COLORS.primary} /></View>}>
+//         <UserProvider>
+//           <AppContent />
+//         </UserProvider>
+//       </NavigationContainer>
+//     </SafeAreaProvider>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   loadingContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: COLORS.white,
+//   },
+//   loadingText: {
+//     marginTop: 15,
+//     fontFamily: 'InterMedium',
+//     fontSize: 16,
+//     color: COLORS.primary,
+//   },
+//   appContainer: {
+//     flex: 1,
+//     backgroundColor: COLORS.background,
+//   },
+//   offlineContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: COLORS.white,
+//     paddingHorizontal: 30,
+//   },
+//   offlineText: {
+//     marginTop: 20,
+//     fontSize: 16,
+//     color: COLORS.gray,
+//     textAlign: 'center',
+//     fontFamily: 'InterMedium',
+//     lineHeight: 24,
+//   },
+//   offlineButton: {
+//     marginTop: 30,
+//     backgroundColor: COLORS.primary,
+//     paddingVertical: 12,
+//     paddingHorizontal: 25,
+//     borderRadius: 8,
+//   },
+//   offlineButtonText: {
+//     color: COLORS.white,
+//     fontFamily: 'InterSemiBold',
+//     fontSize: 15,
+//   },
+//   contactText: {
+//     marginTop: 40,
+//     color: COLORS.gray,
+//     fontSize: 14,
+//     textAlign: 'center',
+//     lineHeight: 20,
+//   },
+//   contactNumber: {
+//     color: COLORS.primary,
+//     fontFamily: 'InterBold',
+//   },
+// });
+
+// export default App;
+
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { 
@@ -124,27 +412,33 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { NavigationContainer } from '@react-navigation/native';
 import { onAuthStateChanged } from 'firebase/auth';
 import NetInfo from '@react-native-community/netinfo';
+import { useFonts } from '@expo-google-fonts/inter';
+import { Ionicons } from '@expo/vector-icons';
+
+// Configurations et contextes
 import { auth } from './src/api/FirebaseConfig';
 import { UserProvider } from './context/AuthContext';
+import { COLORS } from './constants/Theme';
+import LinkingConfig from './LinkingConfig';
+
+// Navigation
 import AuthStack from './navigation/AuthStack';
 import DrawerNavigator from './navigation/DrawerNavigator';
-import { useFonts } from '@expo-google-fonts/inter';
-import { COLORS } from './constants/Theme';
-import * as Updates from 'expo-updates';
-import { Ionicons } from '@expo/vector-icons';
-import { useAutoUpdate } from './hook/useAutoUpdate'; // Hook pour la mise à jour automatique
-// import { NavigationContainer } from '@react-navigation/native';
-// import { Linking } from 'react-native';
-import LinkingConfig from './LinkingConfig';
+
+// Mise à jour OTA
+import { useAutoUpdate } from './hook/useAutoUpdate';
+
 const AppContent = () => {
-  const [state, setState] = useState({
+  const insets = useSafeAreaInsets();
+  
+  // État de l'application
+  const [appState, setAppState] = useState({
     isAuthenticated: false,
     isLoading: true,
     networkError: false
   });
 
-  const insets = useSafeAreaInsets();
-  
+  // Chargement des polices
   const [fontsLoaded] = useFonts({
     InterRegular: require('./assets/fonts/Inter_18pt-Regular.ttf'),
     InterMedium: require('./assets/fonts/Inter_18pt-Medium.ttf'),
@@ -152,133 +446,70 @@ const AppContent = () => {
     InterBold: require('./assets/fonts/Inter_18pt-Bold.ttf'),
   });
 
-//   useEffect(() => {
-//     // Vérification réseau
-//     const unsubscribeNetInfo = NetInfo.addEventListener(state => {
-//       setState(prev => ({
-//         ...prev,
-//         networkError: !state.isConnected
-//       }));
-//     });
-//      if (!__DEV__) {
-//   try {
-//      const update = async () => { await Updates.checkForUpdateAsync();
-//     if (update.isAvailable) {
-//       await Updates.fetchUpdateAsync();
-//       await Updates.reloadAsync();
-//     }
-//   }} catch (e) {
-//     console.error("Erreur de mise à jour:", e);
-//   }
-// }
+  // Gestion des mises à jour OTA
+  const { status, progress } = useAutoUpdate();
 
-
-//     // Vérification auth + mises à jour
-//     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-//       // if (!__DEV__) {
-//       //   try {
-//       //     const update = await Updates.checkForUpdateAsync();
-//       //     if (update.isAvailable) {
-//       //       await Updates.fetchUpdateAsync();
-//       //       await Updates.reloadAsync();
-//       //     }
-//       //   } catch (e) {
-//       //     console.error("Erreur de mise à jour:", e);
-//       //   }
-//       // }
-      
-//       setState({
-//         isAuthenticated: !!user,
-//         isLoading: false,
-//         networkError: false
-//       });
-//     });
-
-//     // Nettoyage
-//     return () => {
-//       unsubscribeNetInfo();
-//       unsubscribeAuth();
-//     };
-//   }, []);
-
-  // Vérification automatique du réseau toutes les 5s si offline
+  // Gestion réseau et authentification
   useEffect(() => {
-  // 1. Vérification réseau
-  const unsubscribeNetInfo = NetInfo.addEventListener(state => {
-    setState(prev => ({
-      ...prev,
-      networkError: !state.isConnected
-    }));
-  });
-
-  // 2. Mise à jour OTA au démarrage
-  if (!__DEV__) {
-    (async () => {
-      try {
-        const update = await Updates.checkForUpdateAsync();
-        if (update.isAvailable) {
-          await Updates.fetchUpdateAsync();
-          await Updates.reloadAsync();
-        }
-      } catch (e) {
-        console.error("Erreur de mise à jour OTA :", e);
-      }
-    })();
-  }
-
-  // 3. Auth Firebase
-  const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-    setState({
-      isAuthenticated: !!user,
-      isLoading: false,
-      networkError: false
+    // 1. Surveillance de la connexion réseau
+    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+      setAppState(prev => ({
+        ...prev,
+        networkError: !state.isConnected
+      }));
     });
-  });
 
-  // 4. Nettoyage
-  return () => {
-    unsubscribeNetInfo();
-    unsubscribeAuth();
-  };
-}, []);
+    // 2. Vérification de l'authentification
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setAppState({
+        isAuthenticated: !!user,
+        isLoading: false,
+        networkError: false
+      });
+    });
 
-  
+    return () => {
+      unsubscribeNetInfo();
+      unsubscribeAuth();
+    };
+  }, []);
+
+  // Vérification périodique du réseau si offline
   useEffect(() => {
-    if (!state.networkError) return;
+    if (!appState.networkError) return;
     
     const interval = setInterval(() => {
       NetInfo.fetch().then(networkState => {
         if (networkState.isConnected) {
-          setState(prev => ({...prev, networkError: false }));
+          setAppState(prev => ({...prev, networkError: false }));
         }
       });
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [state.networkError]);
+  }, [appState.networkError]);
 
- const { status, progress } = useAutoUpdate();
+  // Écran de chargement pendant l'initialisation
+  if (appState.isLoading || !fontsLoaded || status !== 'done') {
+    let message = 'Chargement de MonToit.bj...';
+    if (status === 'checking') message = 'Vérification des mises à jour...';
+    else if (status === 'downloading') message = `Téléchargement de la mise à jour (${progress}%)...`;
+    else if (status === 'reloading') message = 'Redémarrage de l\'application...';
+    else if (status === 'error') message = 'Erreur lors de la mise à jour.';
 
-if (state.isLoading || !fontsLoaded || status !== 'done') {
-  let message = 'Chargement de MonToit.bj...';
-  if (status === 'checking') message = 'Vérification des mises à jour...';
-  else if (status === 'downloading') message = `Téléchargement de la mise à jour (${progress}%)...`;
-  else if (status === 'reloading') message = 'Redémarrage de l’application...';
-  else if (status === 'error') message = 'Erreur lors de la mise à jour.';
+    return (
+      <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>{message}</Text>
+      </View>
+    );
+  }
 
-  return (
-    <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
-      <ActivityIndicator size="large" color={COLORS.primary} />
-      <Text style={styles.loadingText}>{message}</Text>
-    </View>
-  );
-}
-
-
-  if (state.networkError) {
+  // Écran d'erreur réseau
+  if (appState.networkError) {
     return (
       <View style={[styles.offlineContainer, { paddingTop: insets.top }]}>
-        <Ionicons name="wifi-off" size={50} color={COLORS.darkGray} />
+        <Ionicons name="wifi-off" size={50} color={COLORS.gray} />
         <Text style={styles.offlineText}>
           Oups! Pas de connexion internet.{'\n'}
           Vérifiez vos données mobiles ou WiFi.
@@ -287,7 +518,7 @@ if (state.isLoading || !fontsLoaded || status !== 'done') {
         <TouchableOpacity 
           style={styles.offlineButton}
           onPress={() => NetInfo.fetch().then(networkState => {
-            setState(prev => ({...prev, networkError: !networkState.isConnected }));
+            setAppState(prev => ({...prev, networkError: !networkState.isConnected }));
           })}
         >
           <Text style={styles.offlineButtonText}>RÉESSAYER</Text>
@@ -301,8 +532,7 @@ if (state.isLoading || !fontsLoaded || status !== 'done') {
     );
   }
 
-
-
+  // Interface principale de l'application
   return (
     <>
       <StatusBar 
@@ -316,7 +546,7 @@ if (state.isLoading || !fontsLoaded || status !== 'done') {
           paddingBottom: insets.bottom 
         }
       ]}>
-        {state.isAuthenticated ? (
+        {appState.isAuthenticated ? (
           <DrawerNavigator />
         ) : (
           <AuthStack />
@@ -326,11 +556,17 @@ if (state.isLoading || !fontsLoaded || status !== 'done') {
   );
 };
 
-
 const App = () => {
   return (
     <SafeAreaProvider>
-      <NavigationContainer linking={LinkingConfig} fallback={<View style={styles.loadingContainer}><ActivityIndicator size="large" color={COLORS.primary} /></View>}>
+      <NavigationContainer 
+        linking={LinkingConfig} 
+        fallback={
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          </View>
+        }
+      >
         <UserProvider>
           <AppContent />
         </UserProvider>

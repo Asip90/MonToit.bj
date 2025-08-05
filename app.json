@@ -4,14 +4,15 @@
     "slug": "montoibj",
     "owner": "jey_9658",
     "version": "1.0.0",
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": "1.0.1",
      "scheme": "montoitbj",
-     "deepLinking": true,
+    
     "platforms": ["android","ios","web"],
 
     "updates": {
       "url": "https://u.expo.dev/df8e546b-90f2-4dd2-8c16-d42aa9643ca4",
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
     },
 
     "orientation": "portrait",
@@ -29,18 +30,33 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Nous avons besoin de votre position pour afficher les annonces près de chez vous",
-        "NSPhotoLibraryUsageDescription": "Nous avons besoin d'accéder à votre galerie pour ajouter des photos"
+        "NSPhotoLibraryUsageDescription": "Nous avons besoin d'accéder à votre galerie pour ajouter des photos",
+         "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["montoitbj"]
+          }
+        ]
       }
     },
 
     "android": {
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            { "scheme": "montoitbj" },
+            { "scheme": "https", "host": "montoit.bj" }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.jey1nd.montoit",
-      "versionCode": 1,
+      "versionCode": 2,
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
         "ACCESS_FINE_LOCATION",
