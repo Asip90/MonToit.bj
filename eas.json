@@ -1,6 +1,6 @@
 {
   "build": {
-    "release": {
+    "production": { 
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
@@ -11,5 +11,8 @@
       "channel": "production",
       "distribution": "internal"
     }
-  }
+  },
+  "cli": {
+    "version": ">= 7.0.0" 
+}
 }
