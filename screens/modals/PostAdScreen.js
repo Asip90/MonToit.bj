@@ -277,6 +277,9 @@ const uploadToCloudinary = async (uri, isVideo = false) => {
         bathrooms: bathrooms ? parseInt(bathrooms) : null,
         livingRoom : livingRoom ? parseInt(livingRoom) : null,
         location,
+        locationDisplayName: typeof location === 'string' 
+    ? location 
+    : location?.display_name,
         features,
         imageUrls: uploadedImages,
         videoUrls: uploadedVideos,

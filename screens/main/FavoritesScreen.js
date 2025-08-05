@@ -106,7 +106,7 @@ const FavoritesScreen = ({ navigation }) => {
         <Text style={styles.authText}>Connectez-vous pour voir vos favoris</Text>
         <TouchableOpacity 
           style={styles.authButton}
-          onPress={() => navigation.navigate('Auth')}
+          onPress={() => navigation.navigate('Profile', { screen: 'Auth' })}
         >
           <Text style={styles.authButtonText}>Connexion / Inscription</Text>
         </TouchableOpacity>

@@ -141,7 +141,8 @@ export const COLORS = {
   lightGray: '#F5F5F5',     // Fond gris clair
   lightGray2: '#F5F5F5',
   black: '#2C3E50',         // Texte noir
-  orange:'rgb(255, 4, 0)',//'#ff9500',       // Orange pour les boutons
+  red:'rgb(255, 4, 0)',//'#ff9500',       // Orange pour les boutons
+  orange:'#ff9500',
   gold: '#ffffff' ,//'#FFD700',         // Or pour les badges ou les éléments importants
   notification: '#EB5757',  
 };

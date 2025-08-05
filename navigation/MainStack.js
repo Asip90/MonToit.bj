@@ -27,6 +27,7 @@ import OwnerInfo from '../components/OwnerInfo';
 import OwnerPostsScreen from '../screens/modals/OwnerPostsScreen';
 import CategoriesScreen from '../components/CategoriesScreen';
 import ReservationConfirmationScreen from '../screens/modals/ReservationConfirmationScreen';
+import PaymentScreen from '../screens/modals/PaymentScreen';
 // Importer les écrans de navigation
 // pour les écrans de type "Stack" (comme les détails d'une propriété, etc.)            
 // Initialisation du navigateur de type "Stack"
@@ -94,6 +95,11 @@ export default function MainStack() {
         name="ReservationConfirmation" 
         component={ReservationConfirmationScreen} 
         options={{ title: 'Confirmation' }}
+      />
+      <Stack.Screen 
+        name="Payment" 
+        component={PaymentScreen} 
+        options={{ title: 'Page de Paiement ' }}
       />
       <Stack.Screen
         name="Boostedlist" 

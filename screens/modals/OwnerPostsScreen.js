@@ -148,6 +148,12 @@ const OwnerPostsScreen = () => {
                 <Text style={styles.featureText}>{item.bathrooms}</Text>
               </View>
             )}
+            {/* {item.features.electricity  && (
+              <View style={styles.featureBadge}>
+                <MaterialIcons name="bathtub" size={14} color={COLORS.primary} />
+                <Text style={styles.featureText}>{item.bathrooms}</Text>
+              </View>
+            )} */}
             
             {item.area > 0 && (
               <View style={styles.featureBadge}>

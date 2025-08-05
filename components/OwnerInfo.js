@@ -365,7 +365,7 @@ import { useNavigation } from '@react-navigation/native';
   ------------------------------------------------------------------
 */
 const OwnerInfo = ({ userId }) => {
-  console.log('userId dans OwnerInfo:', userId);
+  // console.log('userId dans OwnerInfo:', userId);
   const navigation = useNavigation();
 
   // état des infos du propriétaire

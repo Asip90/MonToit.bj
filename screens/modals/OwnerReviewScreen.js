@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: SIZES.padding,
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
     borderBottomColor: COLORS.lightGray,
   },
   averageRating: {

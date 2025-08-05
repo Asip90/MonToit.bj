@@ -41,6 +41,7 @@ const LogInScreen = ({ navigation }) => {
       handleLoginError(error);
     } finally {
       setIsLoading(false);
+      navigation.navigate('Acceuil');
     }
   };
 

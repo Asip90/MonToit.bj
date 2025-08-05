@@ -1182,7 +1182,8 @@ import {
   TextInput
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { Video } from 'expo-video';
+import { VideoView, useVideoPlayer } from 'expo-video';
+
 import { Image } from 'expo-image';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -1199,6 +1200,9 @@ import SecureWatermarkedImage from '../../components/SecureWatermarkedImage';
 import OwnerInfo from '../../components/OwnerInfo';
 import PostDetailSkeleton from '../../components/skeletons/PostDetailSkeleton';
 import PoiList from '../../components/PoiList';
+import BoostedListings from '../../components/BoostedList';
+import SimilarListings from '../../components/SimilarListings';
+import GalleryItem from '../../components/GalleryItem';
 
 const { width, height } = Dimensions.get('window');
 
@@ -1240,14 +1244,21 @@ const PostDetailScreen = ({ navigation }) => {
         if (postSnap.exists()) {
           const postData = { id: postSnap.id, ...postSnap.data() };
           setPost(postData);
-
+          // Dans useEffect, remplacez setPost(postData) par :
+ console.log(postData.location)
           if (postData.userId) {
             const userRef = doc(db, 'users', postData.userId);
             const userSnap = await getDoc(userRef);
             if (userSnap.exists()) {
               setOwnerPhoneNumber(userSnap.data().phoneNumber);
             }
+
           }
+      //      if (scrollToTop) {
+      // setTimeout(() => {
+      //   scrollToTop();
+      // }, 100);
+    // }
         } else {
           Alert.alert("Erreur", "Annonce introuvable");
           navigation.goBack();
@@ -1270,7 +1281,8 @@ const PostDetailScreen = ({ navigation }) => {
       }
     };
     checkFavorite();
-  }, [postId, userData?.uid]);
+    scrollToTop();
+  }, [postId, userData?.uid ]);
 
   // Vérification des URLs
   const isValidUrl = (url) => {
@@ -1381,6 +1393,14 @@ const PostDetailScreen = ({ navigation }) => {
   };
 
   // Gestion du carousel
+  const scrollRef = useRef(null);
+
+// Ajoutez cette fonction
+const scrollToTop = () => {
+  if (scrollRef.current) {
+    scrollRef.current.scrollTo({ y: 0, animated: false });
+  }
+};
   const onScroll = useCallback(({ nativeEvent }) => {
     const slide = Math.round(nativeEvent.contentOffset.x / width);
     if (slide !== activeSlide) {
@@ -1400,32 +1420,91 @@ const PostDetailScreen = ({ navigation }) => {
   }, []);
 
   // Composant d'item pour le carousel
-  const GalleryItem = useCallback(({ item, index }) => (
-    <TouchableOpacity 
-      activeOpacity={0.9} 
-      onPress={() => item.type === 'image' ? openImage(index) : null}
-      style={galleryStyles.mediaWrapper}
-    >
-      {item.type === 'image' ? (
-        <SecureWatermarkedImage 
-          source={{ uri: item.url }}
-          style={galleryStyles.media}
-          watermarkSource={require('../../assets/images/filigrane.png')}
-          contentFit="cover"
-          transition={300}
-        />
-      ) : (
-        <Video
-          source={{ uri: item.url }}
-          style={galleryStyles.media}
-          resizeMode="cover"
-          shouldPlay={false}
-          useNativeControls
-        />
-      )}
-    </TouchableOpacity>
-  ), [openImage]);
+ 
 
+//   const GalleryItem = useCallback(({ item, index }) =>{ (
+//      const player = useVideoPlayer(item.url, player => {
+//   player.shouldPlay = false;
+//   // eventuellement player.loop = true, etc.
+// });
+// return (
+//     <TouchableOpacity 
+//       activeOpacity={0.9} 
+//       onPress={() => item.type === 'image' ? openImage(index) : null}
+//       style={galleryStyles.mediaWrapper}
+//     >
+//       {item.type === 'image' ? (
+//         <SecureWatermarkedImage 
+//           source={{ uri: item.url }}
+//           style={galleryStyles.media}
+//           watermarkSource={require('../../assets/images/filigrane.png')}
+//           contentFit="cover"
+//           transition={300}
+//         />
+//       ) : (
+//         <VideoView
+//   player={player}
+//   style={galleryStyles.media}
+//   allowsFullscreen
+//   allowsPictureInPicture
+// />
+
+       
+
+//       )}
+//     </TouchableOpacity>
+//   ), [openImage]);
+//   )}
+
+// const GalleryItem = useCallback(
+//   ({ item, index, openImage }) => {
+//     // 1. Initialisation du player
+//     const player = useVideoPlayer(item.url, player => {
+//       player.shouldPlay = false
+//       // player.loop = true // si besoin
+//     })
+
+//     // 2. Retour du JSX
+//     return (
+//       <TouchableOpacity
+//         activeOpacity={0.9}
+//         onPress={() =>
+//           item.type === 'image' ? openImage(index) : null
+//         }
+//         style={galleryStyles.mediaWrapper}
+//       >
+//         {item.type === 'image' ? (
+//           <SecureWatermarkedImage
+//             source={{ uri: item.url }}
+//             style={galleryStyles.media}
+//             watermarkSource={require('../../assets/images/filigrane.png')}
+//             contentFit="cover"
+//             transition={300}
+//           />
+//         ) : (
+//           <VideoView
+//             player={player}
+//             style={galleryStyles.media}
+//             allowsFullscreen
+//             allowsPictureInPicture
+//           />
+//         )}
+//       </TouchableOpacity>
+//     )
+//   },
+//   [openImage] // dépendance
+// )
+const renderGalleryItem = useCallback(
+  ({ item, index }) => (
+    <GalleryItem
+      item={item}
+      index={index}
+      openImage={openImage}
+      galleryStyles={galleryStyles}
+    />
+  ),
+  [openImage, galleryStyles]
+)
   // Gestion de la date
   const handleDateConfirm = (selectedDate) => {
     setShowDatePicker(false);
@@ -1437,18 +1516,7 @@ const PostDetailScreen = ({ navigation }) => {
     }
   };
 
-  // Confirmation finale
-  // const confirmVisit = () => {
-  //   Alert.alert(
-  //     'Visite confirmée!',
-  //     `Votre visite ${visitType === 'virtual' ? 'virtuelle' : 'sur place'} est prévue pour le ${date.toLocaleString()}`,
-  //     [{ text: 'OK', onPress: () => {
-  //       setModalVisible(false);
-  //       setContactPromptVisible(false);
-  //     }}]
-  //   );
-  //   // Ici: Envoyer la notification au propriétaire via Firebase
-  // };
+  
 const sendNotificationToOwner = async () => {
   // Utilisez Firebase Cloud Messaging ou votre service de notifications
   const ownerRef = doc(db, 'users', post.userId);
@@ -1483,54 +1551,68 @@ const sendNotificationToTenant = async () => {
     reservationDate: date.toISOString()
   });
 };
+
 const confirmVisit = async () => {
   try {
-    // 1. Redirection vers la page de finalisation
-    navigation.navigate('ReservationConfirmation', {
-      reservationDetails: {
-        postId: post.id,
-        date: date.toISOString(),
-        visitType,
-        contactMethod,
-        propertyTitle: post.title,
-        price: post.price
-      }
+    // 1. Préparer le payload FedaPay en mode TEST
+    const payload = {
+      amount: Number(post.price),
+      currency: 'XOF',
+      description: post.title,
+      reservationId: post.id,
+      // public_key: 'pk_test_xxx...', // Remplace par ta PUBLIC_KEY_TEST FedaPay
+      metadata: {
+        reservationId: post.id,
+        propertyTitle: post.title
+      },
+      customer: {
+        email: userData.email,
+        phone_number: userData.phone || '',
+        fisrtname: userData.name,
+        lastname: userData.surname || '',
+
+      },
+      // redirect_url: `montoitbj://payment/return/${post.id}`
+    };
+    console.log("Payload de paiement:", payload);
+    // 2. Envoyer la requête au backend FedaPay (sandbox)
+    const resp = await fetch('https://monbackend-production.up.railway.app/pay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
 
-    // 2. Envoyer la notification au propriétaire
-    await sendNotificationToOwner();
+    // 3. Lire la réponse
+    const result = await resp.json();
+    console.log("Réponse complète du backend:", result);
 
-    // 3. Envoyer la notification au locataire
-    await sendNotificationToTenant();
+    // 4. Vérifier le succès
+    if (!result.success) {
+      throw new Error(result.error || 'Échec de la création de la session de paiement');
+    }
 
-  } catch (error) {
-    console.error("Erreur lors de la confirmation:", error);
-    Alert.alert("Erreur", "Un problème est survenu lors de la réservation");
+    // 5. Vérifier et récupérer l'URL de paiement
+    if (!result.paymentUrl) {
+      throw new Error('URL de paiement manquante dans la réponse');
+    }
+    console.log("URL de paiement reçue:", result.paymentUrl);
+
+    // 6. Ouvrir l'URL dans le navigateur ou via deep link
+    navigation.navigate('Payment',{ paymentUrl : result.paymentUrl});
+  } catch (err) {
+    console.error('Erreur complète:', err);
+    Alert.alert(
+      'Erreur Paiement',
+      err.message || 'Une erreur inattendue est survenue'
+    );
   }
 };
-//POIs Point of Interest
 
+// Fonction pour afficher les POIS
 
-// Dans votre composant
 const [pois, setPois] = useState([]);
 
-// useEffect(() => {
-//   const fetchPOIs = async () => {
-    // // 1. Récupérer les coordonnées depuis votre objet Post
-    // // (vous devriez stocker lat/lng dans Firebase lors de la création)
-    // const { latitude, longitude } = post.location; 
-    
-    // // 2. Appeler l'API
-    // const nearbyPOIs = await fetchNearbyPOIs(latitude, longitude);
-    
-    // // 3. Formater les données
-    // const formattedPOIs = nearbyPOIs.map(poi => ({
-    //   id: poi.id,
-    //   name: poi.tags.name || 'Non nommé',
-    //   type: Object.entries(poi.tags)
-    //     .find(([key]) => key === 'amenity' || key === 'shop')[1],
-    //   distance: (poi.distance || 0).toFixed(0) + 'm'
-    // }));
+
    useEffect(() => {
     const loadPOIs = async () => {
       // Récupération des coordonnées quel que soit le format
@@ -1566,7 +1648,7 @@ const [pois, setPois] = useState([]);
     <View style={newStyles.actionBar}>
       <TouchableOpacity 
         style={[newStyles.actionButton, newStyles.reserveButton]}
-        onPress={() => Alert.alert('Réservation', 'Chambre réservée avec succès!')}
+        onPress={() => {confirmVisit()}}
       >
         <Ionicons name="bookmark" size={20} color="white" />
         <Text style={newStyles.buttonText}>Réserver</Text>
@@ -1674,10 +1756,10 @@ const [pois, setPois] = useState([]);
           <TouchableOpacity
             style={[newStyles.actionButton, { backgroundColor: COLORS.primary }]}
             onPress={() => {
-              if (!contactMethod) {
-                Alert.alert('Erreur', 'Veuillez entrer un moyen de contact');
-                return;
-              }
+              // if (!contactMethod) {
+              //   Alert.alert('Erreur', 'Veuillez entrer un moyen de contact');
+              //   return;
+              // }
               confirmVisit();
             }}
           >
@@ -1725,6 +1807,7 @@ const [pois, setPois] = useState([]);
   return (
     <SafeAreaView style={styles.safeArea}>
       <Animated.ScrollView 
+        ref={scrollRef}
         style={{ opacity: fadeAnim }}
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
@@ -1737,7 +1820,7 @@ const [pois, setPois] = useState([]);
             pagingEnabled
             data={mediaItems}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={GalleryItem}
+            renderItem={ renderGalleryItem}
             showsHorizontalScrollIndicator={false}
             onScroll={onScroll}
             scrollEventThrottle={16}
@@ -1909,6 +1992,15 @@ const [pois, setPois] = useState([]);
      
          <OwnerInfo userId={post.userId} />
         <PoiList post={post}/>
+        {/* <BoostedListings/> */}
+        {/*section sugestion*/}
+        <View style={styles.sectionContainer}>
+  <SimilarListings 
+    currentPostId={post.id}
+    
+    navigation={navigation}
+  />
+</View>
       </Animated.ScrollView>
          
       {/* Boutons d'action */}

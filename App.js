@@ -133,6 +133,9 @@ import { COLORS } from './constants/Theme';
 import * as Updates from 'expo-updates';
 import { Ionicons } from '@expo/vector-icons';
 import { useAutoUpdate } from './hook/useAutoUpdate'; // Hook pour la mise à jour automatique
+// import { NavigationContainer } from '@react-navigation/native';
+// import { Linking } from 'react-native';
+import LinkingConfig from './LinkingConfig';
 const AppContent = () => {
   const [state, setState] = useState({
     isAuthenticated: false,
@@ -298,6 +301,8 @@ if (state.isLoading || !fontsLoaded || status !== 'done') {
     );
   }
 
+
+
   return (
     <>
       <StatusBar 
@@ -321,10 +326,11 @@ if (state.isLoading || !fontsLoaded || status !== 'done') {
   );
 };
 
+
 const App = () => {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
+      <NavigationContainer linking={LinkingConfig} fallback={<View style={styles.loadingContainer}><ActivityIndicator size="large" color={COLORS.primary} /></View>}>
         <UserProvider>
           <AppContent />
         </UserProvider>

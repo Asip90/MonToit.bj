@@ -1,195 +1,4 @@
-// import React, { useState, useEffect } from 'react';
-// import { 
-//   View, 
-//   Text, 
-//   StyleSheet, 
-//   FlatList, 
-//   Image, 
-//   TouchableOpacity, 
-//   Dimensions,
-//   ScrollView,
-//     ActivityIndicator
-// } from 'react-native';
-// import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-// import { COLORS, SIZES, FONTS } from '../constants/Theme';
-// import { db } from '../src/api/FirebaseConfig';
-// import { collection, query, where, getDocs } from 'firebase/firestore';
-// // import { ActivityIndicator } from 'react-native-paper';
-// const { width } = Dimensions.get('window');
 
-// const BoostedListings = ({ navigation }) => {
-//   const [boostedListings, setBoostedListings] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     fetchBoostedListings();
-//   }, []);
-
-//   const fetchBoostedListings = async () => {
-//     try {
-//       const listingsRef = collection(db, 'posts');
-//       const q = query(listingsRef, where('isBoosted', '==', true));
-//       const querySnapshot = await getDocs(q);
-      
-//       const listingsData = [];
-//       querySnapshot.forEach((doc) => {
-//         listingsData.push({ id: doc.id, ...doc.data() });
-//       });
-      
-//       setBoostedListings(listingsData);
-//     } catch (error) {
-//       console.error("Error fetching boosted listings:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const renderBoostedItem = ({ item }) => (
-//     <TouchableOpacity 
-//       style={styles.boostedCard}
-//       onPress={() => navigation.navigate('PostDetail', { postId: item.id })}
-//     >
-//       <Image 
-//         source={{ uri: item.imageUrls?.[0] || 'https://via.placeholder.com/300' }} 
-//         style={styles.boostedImage} 
-//       />
-      
-//       <View style={styles.boostedBadge}>
-//         <FontAwesome name="bolt" size={12} color={COLORS.white} />
-//         <Text style={styles.boostedBadgeText}>BOOSTÉ</Text>
-//       </View>
-      
-//       <View style={styles.boostedDetails}>
-//         <Text style={styles.boostedPrice}>{item.price} FCFA</Text>
-//         <Text style={styles.boostedTitle} numberOfLines={1}>{item.title}</Text>
-//         <View style={styles.boostedLocation}>
-//           <MaterialIcons name="location-on" size={12} color={COLORS.gray} />
-//           <Text style={styles.boostedLocationText} numberOfLines={1}>
-//             {item.location?.display_name || item.location || 'Non spécifié'}
-//           </Text>
-//         </View>
-//       </View>
-//     </TouchableOpacity>
-//   );
-
-//   if (loading) {
-//     return (
-//       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="small" color={COLORS.primary} />
-//       </View>
-//     );
-//   }
-
-//   if (boostedListings.length === 0) {
-//     return null; // Ne rien afficher s'il n'y a pas d'annonces boostées
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.header}>
-//         <Text style={styles.headerTitle}>Annonces en vedette</Text>
-//         <FontAwesome name="bolt" size={16} color={COLORS.primary} />
-//       </View>
-      
-//       <FlatList
-//         data={boostedListings}
-//         renderItem={renderBoostedItem}
-//         keyExtractor={item => item.id}
-//         horizontal
-//         showsHorizontalScrollIndicator={false}
-//         contentContainerStyle={styles.listContent}
-//         snapToInterval={width * 0.8 + SIZES.padding}
-//         decelerationRate="fast"
-//       />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     marginTop: SIZES.padding,
-//     marginBottom: SIZES.padding * 1.5,
-//   },
-//   header: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     paddingHorizontal: SIZES.padding,
-//     marginBottom: SIZES.base,
-//   },
-//   headerTitle: {
-//     ...FONTS.h3,
-//     color: COLORS.black,
-//     fontWeight: 'bold',
-//   },
-//   loadingContainer: {
-//     height: 200,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   listContent: {
-//     paddingLeft: SIZES.padding,
-//     paddingRight: SIZES.padding / 2,
-//   },
-//   boostedCard: {
-//     width: width * 0.8,
-//     backgroundColor: COLORS.white,
-//     borderRadius: SIZES.radius,
-//     marginRight: SIZES.padding,
-//     elevation: 3,
-//     shadowColor: COLORS.black,
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 4,
-//     overflow: 'hidden',
-//   },
-//   boostedImage: {
-//     width: '100%',
-//     height: 150,
-//   },
-//   boostedBadge: {
-//     position: 'absolute',
-//     top: 10,
-//     left: 10,
-//     backgroundColor: COLORS.primary,
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     paddingVertical: 3,
-//     paddingHorizontal: 8,
-//     borderRadius: 10,
-//   },
-//   boostedBadgeText: {
-//     ...FONTS.body5,
-//     color: COLORS.white,
-//     marginLeft: 4,
-//     fontWeight: 'bold',
-//   },
-//   boostedDetails: {
-//     padding: SIZES.padding,
-//   },
-//   boostedPrice: {
-//     ...FONTS.h3,
-//     color: COLORS.primary,
-//     fontWeight: 'bold',
-//     marginBottom: 4,
-//   },
-//   boostedTitle: {
-//     ...FONTS.body2,
-//     color: COLORS.black,
-//     marginBottom: 4,
-//   },
-//   boostedLocation: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//   },
-//   boostedLocationText: {
-//     ...FONTS.body4,
-//     color: COLORS.gray,
-//     marginLeft: 4,
-//   },
-// });
-
-// export default BoostedListings;
 
 import React, { useState, useEffect, useContext } from 'react';
 import { 
@@ -276,7 +85,7 @@ const BoostedListings = ({ navigation }) => {
         
         <View style={styles.boostedBadge}>
           <AntDesign name="star" size={14} color={COLORS.gold} />
-          <Text style={styles.boostedBadgeText}>boosted</Text>
+          <Text style={styles.boostedBadgeText}>sponsorisé</Text>
         </View>
         
         <TouchableOpacity 
@@ -459,14 +268,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 12,
-    backgroundColor: COLORS.orange,
+    backgroundColor: COLORS.red,
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: COLORS.gold,
+    borderColor: COLORS.gray ,
   },
   boostedBadgeText: {
     ...FONTS.body5,
