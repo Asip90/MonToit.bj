@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MyListingsScreen from '../screens/drawer/MyListingScreen';
 import EditListingScreen from '../screens/drawer/EditListingScreen';
 import PostAdScreen from '../screens/modals/PostAdScreen';
+import PaymentScreen from '../screens/modals/PaymentScreen';
 
 const Stack = createNativeStackNavigator();
 const MylistingStack = ()=>{
@@ -13,6 +14,9 @@ const MylistingStack = ()=>{
         <Stack.Screen name="MyListings" component={MyListingsScreen} />
         <Stack.Screen name="EditListing" component={EditListingScreen} />
         <Stack.Screen name="PostAdScreen" component={PostAdScreen} options={{ headerShown: false, title: 'Poster une annonce' }} />
+        <Stack.Screen name="Payment" component={PaymentScreen} options={{ headerShown: false, title: 'Poster une annonce' }} />
+        
+        
         </Stack.Navigator>
 )
 }

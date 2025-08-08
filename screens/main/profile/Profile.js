@@ -1104,17 +1104,17 @@ const ProfileScreen = ({ navigation }) => {
 
       {/* Options du menu */}
       <View style={styles.menuSection}>
-        <TouchableOpacity style={styles.menuItem}>
+        {/* <TouchableOpacity style={styles.menuItem}>
           <Ionicons name="notifications-outline" size={22} color={COLORS.black} />
           <Text style={styles.menuText}>Notifications</Text>
           <MaterialIcons name="keyboard-arrow-right" size={24} color={COLORS.gray} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity onPress={()=>{ navigation.navigate('Subscription')}}  style={styles.menuItem}>
+        {/* <TouchableOpacity onPress={()=>{ navigation.navigate('Subscription')}}  style={styles.menuItem}>
           <Ionicons name="wallet-outline" size={22} color={COLORS.black} />
           <Text style={styles.menuText}>Abonnements</Text>
           <MaterialIcons name="keyboard-arrow-right" size={24} color={COLORS.gray} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity onPress={handleLogout} style={styles.menuItem}>
           <Ionicons name='log-out' size={22} color={COLORS.error || '#e74c3c'} />

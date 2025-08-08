@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   boostedText: {
     color: 'white',
-    fontSize: 10,
+    // fontSize: 10,
     fontWeight: 'bold',
   },
   listContent: {

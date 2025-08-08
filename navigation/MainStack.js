@@ -8,12 +8,12 @@ import TabNavigator from './TabNavigator';
 
 // import PropertyDetailsScreen from '../screens/stack/PropertyDetailsScreen';
 // import SearchResultsScreen from '../screens/stack/SearchResultsScreen';
-import HelpScreen from '../screens/drawer/HelpScreen'; // Écran d'aide
-import MyListingsScreen from '../screens/drawer/MyListingScreen'; // Écran de mes annonces
-import SettingsScreen from '../screens/drawer/SettingScreen'; // Écran de paramètres    
+// import HelpScreen from '../screens/drawer/HelpScreen'; // Écran d'aide
+// import MyListingsScreen from '../screens/drawer/MyListingScreen'; // Écran de mes annonces
+// import SettingsScreen from '../screens/drawer/SettingScreen'; // Écran de paramètres    
 import PostAdScreen from '../screens/modals/PostAdScreen'; // Écran de publication d'annonce
 import { COLORS } from '../constants/Theme'; // Importer les couleurs si nécessaire
-import PostDetail from '../screens/modals/PostDetailScreen';
+
 import PostDetailScreen from '../screens/modals/PostDetailScreen';
 import CategoryResultsScreen from '../screens/modals/CategoryResultsScreen';
 import SearchScreen from '../screens/modals/SearchScreen';
@@ -28,6 +28,8 @@ import OwnerPostsScreen from '../screens/modals/OwnerPostsScreen';
 import CategoriesScreen from '../components/CategoriesScreen';
 import ReservationConfirmationScreen from '../screens/modals/ReservationConfirmationScreen';
 import PaymentScreen from '../screens/modals/PaymentScreen';
+
+import PaymentResultScreen from '../screens/modals/PaymentResultScreen';
 // Importer les écrans de navigation
 // pour les écrans de type "Stack" (comme les détails d'une propriété, etc.)            
 // Initialisation du navigateur de type "Stack"
@@ -116,6 +118,14 @@ export default function MainStack() {
       <Stack.Screen
         name="SearchScreen"
         component={SearchScreen}
+        options={{
+          presentation: 'modal', // Animation de type modale
+          headerShown: false,    // La modale gère son propre header (ex: un bouton "Fermer")
+        }}
+      />
+      <Stack.Screen
+        name="PaymentResult"
+        component={PaymentResultScreen}
         options={{
           presentation: 'modal', // Animation de type modale
           headerShown: false,    // La modale gère son propre header (ex: un bouton "Fermer")
