@@ -1,8 +1,17 @@
-
-//  SearchScreen;
-
+// SearchScreen.jsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  Modal,
+  FlatList,
+  Platform
+} from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { COLORS, SIZES, FONTS } from '../../constants/Theme';
 import { db } from '../../src/api/FirebaseConfig';
@@ -47,241 +56,182 @@ const SearchScreen = ({ navigation }) => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [selectedBedrooms, setSelectedBedrooms] = useState('');
-  //modif
   const [selectedPropertyType, setSelectedPropertyType] = useState('');
 
-  // const handleSearch = () => {
-  //   navigation.navigate('SearchResults', { 
-  //     searchQuery,
-  //     transactionType,
-  //     location: selectedlocation,
-  //     minPrice,
-  //     maxPrice,
-  //     bedrooms: selectedBedrooms
-  //   });
-  // };
+  // (La logique reste la même — imports db/getDocs laissés tels quels)
+  // const handleSearch = () => { ... } remplacé par l'implémentation suivante (identique à la tienne)
   const handleSearch = () => {
-  navigation.navigate('SearchResults', { 
-    searchQuery,
-    transactionType,
-    location: selectedlocation,
-    minPrice,
-    maxPrice,
-    bedrooms: selectedBedrooms,
-    propertyType: selectedPropertyType
-  });
-};
-
+    navigation.navigate('SearchResults', {
+      searchQuery,
+      transactionType,
+      location: selectedlocation,
+      minPrice,
+      maxPrice,
+      bedrooms: selectedBedrooms,
+      propertyType: selectedPropertyType
+    });
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
+        <Text style={styles.headerSubtitle}>Trouver rapidement</Text>
         <Text style={styles.headerTitle}>Rechercher un bien</Text>
       </View>
 
-      {/* Search Bar */}
-      {/* <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={COLORS.gray} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Rechercher par ville, quartier..."
-          placeholderTextColor={COLORS.gray}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View> */}
-
-      {/* Transaction Type */}
-      <View style={styles.section}>
-        <View style={styles.typeContainer}>
-          <TouchableOpacity
-            style={[
-              styles.typeButton,
-              transactionType === 'rent' && styles.activeTypeButton
-            ]}
-            onPress={() => setTransactionType('rent')}
-          >
-            <Text style={[
-              styles.typeText,
-              transactionType === 'rent' && styles.activeTypeText
-            ]}>
-              À louer
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.typeButton,
-              transactionType === 'buy' && styles.activeTypeButton
-            ]}
-            onPress={() => setTransactionType('buy')}
-          >
-            <Text style={[
-              styles.typeText,
-              transactionType === 'buy' && styles.activeTypeText
-            ]}>
-              À acheter
-            </Text>
-          </TouchableOpacity>
+      {/* Search bar */}
+      <View style={styles.searchRow}>
+        <View style={styles.searchBox}>
+          <Ionicons name="search" size={20} color={COLORS.gray} style={styles.searchIcon} />
+          <TextInput
+            placeholder="Ville, quartier, mot-clé..."
+            placeholderTextColor={COLORS.gray}
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            returnKeyType="search"
+            onSubmitEditing={handleSearch}
+          />
         </View>
-      </View>
-      {/* Property Type */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Type de propriété</Text>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.typesScroll}
-          >
-            {/* {propertyTypes.map((type) => (
-              <TouchableOpacity 
-                key={type.id}
-                style={styles.typeCard}
-                onPress={() => navigation.navigate('SearchResults', {
-                  propertyType: type.id,
-                  transactionType
-                })}
-              >
-                <View style={styles.typeIconContainer}>
-                  <MaterialIcons name={type.icon} size={24} color={COLORS.primary} />
-                </View>
-                <Text style={styles.typeName}>{type.name}</Text>
-              </TouchableOpacity>
-            ))} */}
-            {/* {propertyTypes.map((type) => (
-              <TouchableOpacity 
-                key={type.id}
-                style={[
-                  styles.typeCard,
-                  selectedPropertyType === type.id && { borderColor: COLORS.primary, borderWidth: 2 }
-                ]}
-                onPress={() => setSelectedPropertyType(type.id)}
-              >
-                <View style={styles.typeIconContainer}>
-                  <MaterialIcons name={type.icon} size={24} color={COLORS.primary} />
-                </View>
-                <Text style={styles.typeName}>{type.name}</Text>
-              </TouchableOpacity>
-            ))}
-
-          </ScrollView>
-        </View> */}
-        {/* Property Type */}
-        
-          {propertyTypes.map((type) => (
-            <TouchableOpacity 
-              key={type.id}
-              style={[
-                styles.typeCard,
-                selectedPropertyType === type.id && styles.selectedTypeCard
-              ]}
-              onPress={() => {
-                // Permet de sélectionner/désélectionner
-                if (selectedPropertyType === type.id) {
-                  setSelectedPropertyType('');
-                } else {
-                  setSelectedPropertyType(type.id);
-                }
-              }}
-            >
-              <View style={[
-                styles.typeIconContainer,
-                selectedPropertyType === type.id && styles.selectedTypeIconContainer
-              ]}>
-                <MaterialIcons 
-                  name={type.icon} 
-                  size={24} 
-                  color={selectedPropertyType === type.id ? COLORS.white : COLORS.primary} 
-                />
-              </View>
-              <Text style={[
-                styles.typeName,
-                selectedPropertyType === type.id && styles.selectedTypeName
-              ]}>
-                {type.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        </View>
-      {/* Filters */}
-      <ScrollView style={styles.filtersContainer}>
-        {/* Location Filter */}
-        <TouchableOpacity 
-          style={styles.filterItem} 
+        <Pressable
+          style={({ pressed }) => [
+            styles.filterQuick,
+            pressed && styles.filterQuickPressed
+          ]}
           onPress={() => setShowLocationModal(true)}
         >
-          <Text style={styles.filterLabel}>Localisation</Text>
-          <View style={styles.filterValueContainer}>
-            <Text style={styles.filterValue}>{selectedlocation || 'Toutes les villes'}</Text>
-            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
+          <Ionicons name="options" size={20} color={COLORS.white} />
+        </Pressable>
+      </View>
+
+      {/* Transaction Type */}
+      <View style={styles.segment}>
+        <Pressable
+          style={[
+            styles.segmentBtn,
+            transactionType === 'rent' && styles.segmentBtnActive
+          ]}
+          onPress={() => setTransactionType('rent')}
+        >
+          <Text style={[
+            styles.segmentText,
+            transactionType === 'rent' && styles.segmentTextActive
+          ]}>À louer</Text>
+        </Pressable>
+        <Pressable
+          style={[
+            styles.segmentBtn,
+            transactionType === 'buy' && styles.segmentBtnActive
+          ]}
+          onPress={() => setTransactionType('buy')}
+        >
+          <Text style={[
+            styles.segmentText,
+            transactionType === 'buy' && styles.segmentTextActive
+          ]}>À acheter</Text>
+        </Pressable>
+      </View>
+
+      {/* Property Types */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Type de propriété</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.typesScroll}
+        >
+          {propertyTypes.map((type) => {
+            const selected = selectedPropertyType === type.id;
+            return (
+              <Pressable
+                key={type.id}
+                android_ripple={{ color: COLORS.lightPrimary }}
+                onPress={() => setSelectedPropertyType(selected ? '' : type.id)}
+                style={[styles.typeCard, selected && styles.typeCardSelected]}
+              >
+                <View style={[styles.typeIconWrap, selected && styles.typeIconWrapSelected]}>
+                  <MaterialIcons
+                    name={type.icon}
+                    size={22}
+                    color={selected ? COLORS.white : COLORS.primary}
+                  />
+                </View>
+                <Text style={[styles.typeLabel, selected && styles.typeLabelSelected]}>
+                  {type.name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* Filters */}
+      <ScrollView style={styles.filtersContainer} contentContainerStyle={{ paddingBottom: 24 }}>
+        <TouchableOpacity style={styles.filterItem} onPress={() => setShowLocationModal(true)}>
+          <View>
+            <Text style={styles.filterLabel}>Localisation</Text>
+            <Text style={styles.filterValueSmall}>{selectedlocation || 'Toutes les villes'}</Text>
           </View>
+          <MaterialIcons name="keyboard-arrow-right" size={22} color={COLORS.gray} />
         </TouchableOpacity>
 
-        {/* Price Filter */}
-        <TouchableOpacity 
-          style={styles.filterItem} 
-          onPress={() => setShowPriceModal(true)}
-        >
-          <Text style={styles.filterLabel}>Prix</Text>
-          <View style={styles.filterValueContainer}>
-            <Text style={styles.filterValue}>
+        <TouchableOpacity style={styles.filterItem} onPress={() => setShowPriceModal(true)}>
+          <View>
+            <Text style={styles.filterLabel}>Prix (FCFA)</Text>
+            <Text style={styles.filterValueSmall}>
               {minPrice || maxPrice ? `${minPrice || 'Min'} - ${maxPrice || 'Max'}` : 'Tous les prix'}
             </Text>
-            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
           </View>
+          <MaterialIcons name="keyboard-arrow-right" size={22} color={COLORS.gray} />
         </TouchableOpacity>
 
-        {/* Bedrooms Filter */}
-        <TouchableOpacity 
-          style={styles.filterItem} 
-          onPress={() => setShowBedroomModal(true)}
-        >
-          <Text style={styles.filterLabel}>Chambres</Text>
-          <View style={styles.filterValueContainer}>
-            <Text style={styles.filterValue}>{selectedBedrooms || 'Toutes'}</Text>
-            <MaterialIcons name="keyboard-arrow-down" size={20} color={COLORS.gray} />
+        <TouchableOpacity style={styles.filterItem} onPress={() => setShowBedroomModal(true)}>
+          <View>
+            <Text style={styles.filterLabel}>Chambres</Text>
+            <Text style={styles.filterValueSmall}>{selectedBedrooms || 'Toutes'}</Text>
           </View>
+          <MaterialIcons name="keyboard-arrow-right" size={22} color={COLORS.gray} />
         </TouchableOpacity>
 
-        
-        </ScrollView>
+      </ScrollView>
 
       {/* Search Button */}
-      <TouchableOpacity 
-        style={styles.searchButton}
-        onPress={handleSearch}
-      >
+      <TouchableOpacity activeOpacity={0.9} style={styles.searchButton} onPress={handleSearch}>
         <Text style={styles.searchButtonText}>Rechercher</Text>
       </TouchableOpacity>
 
+      {/* Modals */}
+
       {/* Location Modal */}
       <Modal visible={showLocationModal} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Sélectionner une ville</Text>
               <TouchableOpacity onPress={() => setShowLocationModal(false)}>
-                <Ionicons name="close" size={24} color={COLORS.gray} />
+                <Ionicons name="close" size={22} color={COLORS.gray} />
               </TouchableOpacity>
             </View>
+
             <FlatList
               data={beninCities}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={styles.modalItem}
+                  style={styles.modalRow}
                   onPress={() => {
                     setSelectedlocation(item);
                     setShowLocationModal(false);
                   }}
                 >
-                  <Text style={styles.modalItemText}>{item}</Text>
+                  <Text style={styles.modalRowText}>{item}</Text>
                   {selectedlocation === item && (
-                    <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+                    <Ionicons name="checkmark-circle" size={20} color={COLORS.primary} />
                   )}
                 </TouchableOpacity>
               )}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </View>
         </View>
@@ -289,41 +239,43 @@ const SearchScreen = ({ navigation }) => {
 
       {/* Price Modal */}
       <Modal visible={showPriceModal} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Filtrer par prix (FCFA)</Text>
               <TouchableOpacity onPress={() => setShowPriceModal(false)}>
-                <Ionicons name="close" size={24} color={COLORS.gray} />
+                <Ionicons name="close" size={22} color={COLORS.gray} />
               </TouchableOpacity>
             </View>
-            <View style={styles.priceInputContainer}>
-              <View style={styles.priceInputWrapper}>
-                <Text style={styles.priceLabel}>Minimum</Text>
+
+            <View style={styles.priceRow}>
+              <View style={styles.priceBox}>
+                <Text style={styles.smallLabel}>Minimum</Text>
                 <TextInput
-                  style={styles.priceInput}
-                  placeholder="0"
-                  keyboardType="numeric"
                   value={minPrice}
                   onChangeText={setMinPrice}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor={COLORS.gray}
+                  style={styles.priceInput}
                 />
               </View>
-              <View style={styles.priceInputWrapper}>
-                <Text style={styles.priceLabel}>Maximum</Text>
+
+              <View style={styles.priceBox}>
+                <Text style={styles.smallLabel}>Maximum</Text>
                 <TextInput
-                  style={styles.priceInput}
-                  placeholder="Aucune limite"
-                  keyboardType="numeric"
                   value={maxPrice}
                   onChangeText={setMaxPrice}
+                  keyboardType="numeric"
+                  placeholder="Aucune limite"
+                  placeholderTextColor={COLORS.gray}
+                  style={styles.priceInput}
                 />
               </View>
             </View>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => setShowPriceModal(false)}
-            >
-              <Text style={styles.modalButtonText}>Appliquer</Text>
+
+            <TouchableOpacity style={styles.modalApply} onPress={() => setShowPriceModal(false)}>
+              <Text style={styles.modalApplyText}>Appliquer</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -331,31 +283,33 @@ const SearchScreen = ({ navigation }) => {
 
       {/* Bedroom Modal */}
       <Modal visible={showBedroomModal} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Nombre de chambres</Text>
               <TouchableOpacity onPress={() => setShowBedroomModal(false)}>
-                <Ionicons name="close" size={24} color={COLORS.gray} />
+                <Ionicons name="close" size={22} color={COLORS.gray} />
               </TouchableOpacity>
             </View>
+
             <FlatList
               data={['Toutes', ...bedrooms]}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={styles.modalItem}
+                  style={styles.modalRow}
                   onPress={() => {
                     setSelectedBedrooms(item === 'Toutes' ? '' : item);
                     setShowBedroomModal(false);
                   }}
                 >
-                  <Text style={styles.modalItemText}>{item}</Text>
+                  <Text style={styles.modalRowText}>{item}</Text>
                   {(selectedBedrooms === item || (item === 'Toutes' && !selectedBedrooms)) && (
-                    <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+                    <Ionicons name="checkmark-circle" size={20} color={COLORS.primary} />
                   )}
                 </TouchableOpacity>
               )}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </View>
         </View>
@@ -364,231 +318,259 @@ const SearchScreen = ({ navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.background || COLORS.white,
     padding: SIZES.padding,
   },
   header: {
-    marginBottom: SIZES.padding,
+    marginBottom: SIZES.base,
+  },
+  headerSubtitle: {
+    ...FONTS.body5,
+    color: COLORS.gray,
+    marginBottom: 4,
   },
   headerTitle: {
     ...FONTS.h2,
     color: COLORS.black,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
-  searchContainer: {
+  searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: SIZES.base,
+    marginBottom: 14,
+  },
+  searchBox: {
+    flex: 1,
+    flexDirection: 'row',
     backgroundColor: COLORS.white,
-    borderRadius: SIZES.radius,
-    paddingHorizontal: SIZES.padding,
-    paddingVertical: SIZES.base * 1.5,
-    borderWidth: 1,
-    borderColor: COLORS.lightGray,
-    marginBottom: SIZES.padding,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    marginRight: 10,
   },
   searchIcon: {
-    marginRight: SIZES.base,
+    marginRight: 8,
   },
   searchInput: {
-    flex: 1,
     ...FONTS.body4,
     color: COLORS.black,
+    flex: 1,
     paddingVertical: 0,
   },
-  typeContainer: {
-    flexDirection: 'row',
-    borderRadius: SIZES.radius,
-    backgroundColor: COLORS.lightGray,
-    overflow: 'hidden',
-    marginBottom: SIZES.padding,
-  },
-  typeButton: {
-    flex: 1,
-    paddingVertical: SIZES.base * 1.5,
+  filterQuick: {
+    width: 46,
+    height: 46,
+    borderRadius: 12,
+    backgroundColor: COLORS.primary,
     alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
   },
-  activeTypeButton: {
+  filterQuickPressed: {
+    opacity: 0.85,
+  },
+  segment: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.lightGray,
+    borderRadius: 999,
+    padding: 4,
+    marginBottom: 16,
+    overflow: 'hidden'
+  },
+  segmentBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 999,
+  },
+  segmentBtnActive: {
     backgroundColor: COLORS.primary,
   },
-  typeText: {
+  segmentText: {
     ...FONTS.body4,
     color: COLORS.gray,
+    fontWeight: '500'
   },
-  activeTypeText: {
+  segmentTextActive: {
+    color: COLORS.white
+  },
+  section: {
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    ...FONTS.h4,
+    fontWeight: '700',
+    color: COLORS.black,
+    marginBottom: 10
+  },
+  typesScroll: {
+    paddingHorizontal: 2,
+  },
+  typeCard: {
+    width: 92,
+    height: 92,
+    borderRadius: 12,
+    backgroundColor: COLORS.white,
+    marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+  },
+  typeCardSelected: {
+    backgroundColor: COLORS.primary,
+  },
+  typeIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.lightGray,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6
+  },
+  typeIconWrapSelected: {
+    backgroundColor: COLORS.white + '00', // keep icon visible via color toggle
+  },
+  typeLabel: {
+    ...FONTS.body5,
+    color: COLORS.darkGray,
+    textAlign: 'center'
+  },
+  typeLabelSelected: {
     color: COLORS.white,
-    fontWeight: 'bold',
+    fontWeight: '700'
   },
   filtersContainer: {
-    flex: 1,
+    marginTop: 6,
+    marginBottom: 8,
+    flex: 1
   },
   filterItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: SIZES.padding,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    backgroundColor: COLORS.surface || COLORS.white,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    marginBottom: 10,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.02,
+    shadowRadius: 3,
   },
   filterLabel: {
     ...FONTS.body4,
     color: COLORS.black,
+    fontWeight: '600',
   },
-  filterValueContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  filterValue: {
-    ...FONTS.body4,
-    color: COLORS.gray,
-    marginRight: SIZES.base,
-  },
-  section: {
-    marginBottom: SIZES.padding,
-  },
-  sectionTitle: {
-    ...FONTS.h4,
-    color: COLORS.black,
-    fontWeight: 'bold',
-    marginBottom: SIZES.base * 2,
-  },
-  typesScroll: {
-    paddingRight: SIZES.padding,
-  },
-  typeCard: {
-    width: 80,
-    alignItems: 'center',
-    marginRight: SIZES.base * 2,
-    padding: SIZES.base,
-    borderRadius: SIZES.radius,
-  },
-  selectedTypeCard: {
-    backgroundColor: COLORS.lightPrimary, // Une version plus claire de votre couleur primaire
-  },
-  typeIconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: COLORS.lightGray,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: SIZES.base,
-  },
-  selectedTypeIconContainer: {
-    backgroundColor: COLORS.primary,
-  },
-  typeName: {
+  filterValueSmall: {
     ...FONTS.body5,
-    color: COLORS.darkGray,
-    textAlign: 'center',
+    color: COLORS.gray,
+    marginTop: 4
   },
-  selectedTypeName: {
-    color: COLORS.primary,
-    fontWeight: 'bold',
-  },
-/////
-  // typeCard: {
-  //   width: 100,
-  //   alignItems: 'center',
-  //   marginRight: SIZES.base * 2,
-  // },
-  // typeIconContainer: {
-  //   width: 60,
-  //   height: 60,
-  //   borderRadius: 30,
-  //   backgroundColor: COLORS.lightGray,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   marginBottom: SIZES.base,
-  // },
-  // typeName: {
-  //   ...FONTS.body4,
-  //   color: COLORS.black,
-  //   textAlign: 'center',
-  // },
   searchButton: {
     backgroundColor: COLORS.primary,
-    borderRadius: SIZES.radius,
-    padding: SIZES.padding,
+    borderRadius: 14,
+    paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: SIZES.base,
+    marginTop: 8,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
   },
   searchButtonText: {
     ...FONTS.h4,
     color: COLORS.white,
-    fontWeight: 'bold',
+    fontWeight: '800'
   },
-  modalContainer: {
+
+  /* Modals */
+  modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'flex-end'
   },
-  modalContent: {
+  modalCard: {
     backgroundColor: COLORS.white,
-    borderTopLeftRadius: SIZES.radius * 2,
-    borderTopRightRadius: SIZES.radius * 2,
-    padding: SIZES.padding,
-    maxHeight: '80%',
+    padding: 16,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    maxHeight: '80%'
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SIZES.padding,
+    marginBottom: 12
   },
   modalTitle: {
     ...FONTS.h4,
-    color: COLORS.black,
-    fontWeight: 'bold',
+    fontWeight: '700'
   },
-  modalItem: {
+  modalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: SIZES.padding,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    paddingVertical: 12,
+    alignItems: 'center'
   },
-  modalItemText: {
+  modalRowText: {
     ...FONTS.body4,
-    color: COLORS.black,
+    color: COLORS.black
   },
-  priceInputContainer: {
+  separator: {
+    height: 1,
+    backgroundColor: COLORS.lightGray
+  },
+  priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: SIZES.padding,
+    marginTop: 6
   },
-  priceInputWrapper: {
-    width: '48%',
+  priceBox: {
+    width: '48%'
   },
-  priceLabel: {
-    ...FONTS.body4,
+  smallLabel: {
+    ...FONTS.body5,
     color: COLORS.gray,
-    marginBottom: SIZES.base,
+    marginBottom: 6
   },
   priceInput: {
     borderWidth: 1,
     borderColor: COLORS.lightGray,
-    borderRadius: SIZES.radius,
-    padding: SIZES.base * 1.5,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     ...FONTS.body4,
+    backgroundColor: '#FAFAFA'
   },
-  modalButton: {
+  modalApply: {
+    marginTop: 16,
     backgroundColor: COLORS.primary,
-    borderRadius: SIZES.radius,
-    padding: SIZES.padding,
-    alignItems: 'center',
-    marginTop: SIZES.base,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center'
   },
-  modalButtonText: {
+  modalApplyText: {
     ...FONTS.body4,
     color: COLORS.white,
-    fontWeight: 'bold',
-  },
+    fontWeight: '700'
+  }
 });
+
 export default SearchScreen;
-// ... (les styles restent les mêmes que dans le code précédent)
