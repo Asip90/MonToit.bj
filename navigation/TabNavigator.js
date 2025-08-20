@@ -463,7 +463,7 @@ export default function ZameenTabNavigator() {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: 'relative',
     left: 0,
     right: 0,
     bottom: 0,

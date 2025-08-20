@@ -134,7 +134,7 @@
 
 export const COLORS = {
  
-  primary:'#5D774E',//'rgb(53, 171, 85)',//vertdoux//'rgb(53, 171, 85)',//#4a6fa5',//'#03305F',//#4a6fa5',//#27AE60',//'#2DCC70',       // Vert Zameen caractéristique
+  primary:'#4a6fa5',//#5D774E',//'rgb(53, 171, 85)',//vertdoux//'rgb(53, 171, 85)',//#4a6fa5',//'#03305F',//#4a6fa5',//#27AE60',//'#2DCC70',       // Vert Zameen caractéristique
   secondary: '#27AE60',     // Vert légèrement plus foncé
   white: '#FAF9F5',//'#FFFFFF',
   gray: '#7F8C8D',          // Texte gris

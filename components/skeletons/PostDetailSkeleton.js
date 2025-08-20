@@ -16,11 +16,11 @@ const PostDetailSkeleton = () => {
     },
     // Effet de "wave" pour un mouvement plus visible
     // (décommentez si vous voulez essayer)
-    // transition: {
-    //   type: 'spring',
-    //   damping: 10,
-    //   loop: true,
-    // },
+    transition: {
+      type: 'spring',
+      damping: 10,
+      loop: true,
+    },
   };
 
   return (

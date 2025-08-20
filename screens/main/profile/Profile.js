@@ -2002,7 +2002,7 @@ const ProfileScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Verification Modal */}
+      {/* Verification Modarl */}
       <VerificationModal
         visible={verificationModalVisible}
         onClose={() => setVerificationModalVisible(false)}
@@ -2136,13 +2136,16 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: 16,
+    // marginHorizontal: 16,
+    // paddingVertical: 12,
+    marginLeft:16,
+    marginRight: 16,
     marginTop: 12,
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   statItem: {
     alignItems: 'center',
-    width: '33%',
+    width: '30%',
     paddingVertical: 12,
     backgroundColor: COLORS.white,
     borderRadius: 12,

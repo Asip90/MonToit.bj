@@ -1147,7 +1147,8 @@ import {
   Image,
   RefreshControl,
   ActivityIndicator,
-  Dimensions
+  Dimensions,
+  Button
 } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -1157,6 +1158,7 @@ import { db } from '../../src/api/FirebaseConfig';
 import { COLORS } from '../../constants/Theme';
 import BoostedListings from '../../components/BoostedList';
 import CategoriesScreen from '../../components/CategoriesScreen';
+import * as Linking from 'expo-linking';
 
 const { width, height } = Dimensions.get('window');
 const HEADER_MAX_HEIGHT = height * 0.16;
@@ -1376,7 +1378,13 @@ const HomeScreen = () => {
       return diffDays < 3;
     };
     
+
     return (
+    <View>
+      {/* <Button
+        title="Ouvrir le deep link"
+        onPress={() => Linking.openURL(url).catch(err => console.warn('openURL error', err))}
+      /> */}
       <TouchableOpacity 
         style={styles.postItem}
         onPress={() => handlePostPress(item.id)}
@@ -1422,10 +1430,13 @@ const HomeScreen = () => {
           </View>
         </View>
       </TouchableOpacity>
+    </View>
     );
   };
+   
 
   const renderFilterItem = ({ item }) => (
+    
     <TouchableOpacity
       style={[
         styles.filterButton,

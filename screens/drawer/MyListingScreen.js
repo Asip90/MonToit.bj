@@ -1126,9 +1126,9 @@ const MyListingsScreen = ({ navigation }) => {
     try {
         const newAvailability = !currentAvailability;
         const listingRef = doc(db, 'posts', listingId);
-        await updateDoc(listingRef, { available: newAvailability });
+        await updateDoc(listingRef, { isAvailable: newAvailability });
         setListings(listings.map(item =>
-          item.id === listingId ? { ...item, available: newAvailability } : item
+          item.id === listingId ? { ...item, isAvailable: newAvailability } : item
         ));
         Alert.alert("Statut modifié", `Votre annonce est maintenant ${newAvailability ? "disponible" : "non disponible"}.`);
       } catch (error) {

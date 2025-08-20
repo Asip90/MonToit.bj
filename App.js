@@ -546,11 +546,12 @@ const AppContent = () => {
           paddingBottom: insets.bottom 
         }
       ]}>
-        {appState.isAuthenticated ? (
+        {/* {appState.isAuthenticated ? ( */}
           <DrawerNavigator />
-        ) : (
-          <AuthStack />
-        )}
+        {/* // ) : ( */}
+        {/* //   <AuthStack /> */}
+        {/* ) */}
+        {/* } */}
       </View>
     </>
   );

@@ -5,8 +5,11 @@ import * as Linking from 'expo-linking';
 const config = {
   screens: {
     // Configuration existante pour le paiement
-    Payment: {
-      path: 'payment/return/:reservationId',
+    MesFavories :{
+      path: 'MesFavories',
+    },
+    PaymentResult: {
+      path: 'PaymentResult/return/:reservationId',
       parse: { reservationId: (id) => id },
     },
     

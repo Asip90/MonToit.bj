@@ -15,14 +15,14 @@ const CATEGORIES = [
   },
   { 
     id: 'studio', 
-    name: 'Studio', 
+    name: 'Entrer-coucher', 
     icon: 'apartment', 
     image: require('../assets/images/studio.jpeg'),
     color: '#4ECDC4'
   },
   { 
     id: 'commercial', 
-    name: 'Commercial', 
+    name: 'boutique-magasin', 
     icon: 'store', 
     image: require('../assets/images/commercial.jpeg'),
     color: '#FFBE0B'
